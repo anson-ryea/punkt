@@ -36,11 +36,11 @@ jobs:
           # Post a job summary containing a Native Image build report.
           native-image-job-reports: 'true'
 
-      - name: Build with Gradle
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
           
       - name: Build GraalVM Native Image with Gradle Wrapper
-        run: ./gradlew nativeBuild
+        run: ./gradlew nativeCompile
         
       
           
