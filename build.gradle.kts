@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-    implementation("slf4j:slf4j-api:2.0.17")
+    implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
     implementation("com.github.ajalt.clikt:clikt:5.0.3")
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") // Must not change its version to guarantee GraalVM compatibility
