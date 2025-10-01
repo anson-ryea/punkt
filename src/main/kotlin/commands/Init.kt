@@ -1,15 +1,16 @@
 package com.an5on.commands
 
 import com.an5on.commands.GitUtils.buildCredentialsProvider
+import com.an5on.commands.GitUtils.parseRepoUrl
 import com.an5on.commands.GitUtils.remoteRepoPatterns
 import com.an5on.commands.GitUtils.sshSessionFactory
 import com.an5on.config.Configuration
-import com.an5on.commands.GitUtils.parseRepoUrl
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.int
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.transport.SshTransport
@@ -23,12 +24,24 @@ private val logger = KotlinLogging.logger {}
  * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository is initialised at [Configuration.localDirAbsPath].
  * Currently, [repo] supports the formats specified in [remoteRepoPatterns].
  * @property ssh A flag indicating whether to use SSH for cloning the remote Punkt repository.
+ * @property branch The branch of the remote Punkt repository to clone. If not provided, the default branch is cloned.
+ * @property depth The depth for a shallow clone of the remote Punkt repository. If not provided, a full clone is performed.
  * @see remoteRepoPatterns
  * @author Anson Ng
  */
-class Init: CliktCommand() {
-    val repo: String? by argument().optional()
-    val ssh: Boolean? by option().flag()
+class Init : CliktCommand() {
+    val repo: String? by argument(
+        help = "Clone from the specified remote Punkt repository"
+    ).optional()
+    val ssh: Boolean? by option(
+        help = "Use SSH for cloning"
+    ).flag()
+    val branch: String? by option(
+        help = "Set the branch of the remote Punkt repository to clone"
+    )
+    val depth: Int? by option(
+        help = "Clone the remote Punkt repository shallowly with the specified depth"
+    ).int()
 
     override fun run() {
         if (checkLocalExists()) {
@@ -51,18 +64,24 @@ class Init: CliktCommand() {
 
             try {
                 val git = Git.cloneRepository().apply {
-                        setURI(repoUrl)
-                        setDirectory(File(Configuration.localDirAbsPath))
-                        if (ssh == true) {
-                            setTransportConfigCallback { transport ->
-                                if (transport is SshTransport) {
-                                    transport.sshSessionFactory = sshSessionFactory
-                                }
-                            }
-                        } else {
-                            setCredentialsProvider(buildCredentialsProvider())
-                        }
+                    setDirectory(File(Configuration.localDirAbsPath))
+                    setURI(repoUrl)
+
+                    when {
+                        branch != null -> setBranch(branch)
+                        depth != null -> setDepth(depth!!)
                     }
+
+                    if (ssh == true) {
+                        setTransportConfigCallback { transport ->
+                            if (transport is SshTransport) {
+                                transport.sshSessionFactory = sshSessionFactory
+                            }
+                        }
+                    } else {
+                        setCredentialsProvider(buildCredentialsProvider())
+                    }
+                }
                     .call()
                 echo("Cloned Punkt repository from $repoUrl to ${git.repository.directory}")
             } catch (e: Exception) {
