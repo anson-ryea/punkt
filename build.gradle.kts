@@ -9,11 +9,7 @@ plugins {
 group = "com.an5on"
 version = "1.0-SNAPSHOT"
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(24))
-    }
-}
+val cliktVersion = "5.0.3"
 
 repositories {
     mavenCentral()
@@ -27,7 +23,8 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
-    implementation("com.github.ajalt.clikt:clikt:5.0.3")
+    implementation("com.github.ajalt.clikt:clikt:${cliktVersion}")
+    implementation("com.github.ajalt.clikt:clikt-markdown:${cliktVersion}")
     implementation("com.github.mwiede:jsch:2.27.3")
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") // Must not change its version to guarantee GraalVM compatibility
     implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:6.5.0.202303070854-r"){
@@ -61,5 +58,11 @@ graalvmNative {
     agent {
         defaultMode = "standard"
         enabled.set(true)
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
     }
 }
