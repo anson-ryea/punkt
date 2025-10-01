@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.2.20"
+    kotlin("plugin.serialization") version "2.2.20"
     id("org.graalvm.buildtools.native") version "0.11.1"
     id("org.jetbrains.dokka") version "2.0.0"
 }
@@ -12,7 +13,9 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("com.github.ajalt.clikt:clikt:5.0.3")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") // Must not change its version to guarantee GraalVM compatibility
     testImplementation(kotlin("test"))
 }
 
