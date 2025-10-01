@@ -1,28 +1,19 @@
 package com.an5on
 
-import com.github.ajalt.clikt.core.CliktCommand
+import com.an5on.command.Command
+import com.an5on.command.Init
 import com.github.ajalt.clikt.core.main
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.help
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.prompt
-import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.clikt.core.subcommands
 
 /**
- * This class has no useful logic; it's just only a placeholder.
+ * Serves as the entry point for Punkt.
+ * It initialises the [Command] class and adds subcommands to it.
  *
+ * @param args Command-line arguments passed to Punkt.
+ * @return [Unit]
  * @author Anson Ng
- * @constructor Creates a CliktCommand.
  */
-class Hello : CliktCommand() {
-    val count: Int by option().int().default(1).help("Number of greetings")
-    val name: String by option().prompt("Your name").help("The person to greet")
+fun main(args: Array<String>) = Command().subcommands(
+    Init(),
 
-    override fun run() {
-        repeat(count) {
-            echo("Hello $name!")
-        }
-    }
-}
-
-fun main(args: Array<String>) = Hello().main(args)
+).main(args)
