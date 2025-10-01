@@ -95,9 +95,11 @@ override fun help(context: Context) = """
                     setDirectory(File(Configuration.localDirAbsPath))
                     setURI(repoUrl)
 
-                    when {
-                        branch != null -> setBranch(branch)
-                        depth != null -> setDepth(depth!!)
+                    if (branch != null) {
+                        setBranch(branch)
+                    }
+                    if (depth != null) {
+                        setDepth(depth!!)
                     }
 
                     if (ssh == true) {
