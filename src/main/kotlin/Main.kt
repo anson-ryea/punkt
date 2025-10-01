@@ -1,7 +1,7 @@
 package com.an5on
 
-import com.an5on.commands.Command
-import com.an5on.commands.Init
+import com.an5on.command.Command
+import com.an5on.command.Init
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
 

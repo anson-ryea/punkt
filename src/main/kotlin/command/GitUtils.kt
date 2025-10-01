@@ -1,4 +1,4 @@
-package com.an5on.commands
+package com.an5on.command
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
