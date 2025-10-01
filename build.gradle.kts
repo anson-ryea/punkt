@@ -1,4 +1,5 @@
 plugins {
+    application
     kotlin("jvm") version "2.2.20"
     kotlin("plugin.serialization") version "2.2.20"
     id("org.graalvm.buildtools.native") version "0.11.1"
@@ -8,6 +9,12 @@ plugins {
 group = "com.an5on"
 version = "1.0-SNAPSHOT"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -15,14 +22,26 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation(platform("org.apache.logging.log4j:log4j-bom:2.25.2"))
+    implementation("org.apache.logging.log4j:log4j-api")
+    implementation("org.apache.logging.log4j:log4j-core")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
     implementation("com.github.ajalt.clikt:clikt:5.0.3")
+    implementation("com.github.mwiede:jsch:2.27.3")
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") // Must not change its version to guarantee GraalVM compatibility
+    implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:6.5.0.202303070854-r"){
+        exclude(group="com.jcraft", module="jsch") // Strip off original jsch as it is abandoned
+    }
     testImplementation(kotlin("test"))
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass.set("com.an5on.MainKt")
 }
 
 graalvmNative {
@@ -33,6 +52,14 @@ graalvmNative {
             debug.set(true)
             verbose.set(true)
             fallback.set(true)
+            buildArgs.addAll(listOf(
+                "--enable-url-protocols=https"
+            ))
         }
+    }
+
+    agent {
+        defaultMode = "standard"
+        enabled.set(true)
     }
 }
