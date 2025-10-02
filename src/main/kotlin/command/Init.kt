@@ -1,9 +1,9 @@
 package com.an5on.command
 
-import com.an5on.command.GitUtils.buildCredentialsProvider
-import com.an5on.command.GitUtils.parseRepoUrl
-import com.an5on.command.GitUtils.remoteRepoPatterns
-import com.an5on.command.GitUtils.sshSessionFactory
+import com.an5on.utils.GitUtils.buildCredentialsProvider
+import com.an5on.utils.GitUtils.parseRepoUrl
+import com.an5on.utils.GitUtils.remoteRepoPatterns
+import com.an5on.utils.GitUtils.sshSessionFactory
 import com.an5on.config.Configuration
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
