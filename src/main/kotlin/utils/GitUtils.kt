@@ -1,4 +1,4 @@
-package com.an5on.command
+package com.an5on.utils
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
@@ -48,7 +48,7 @@ object GitUtils {
     }
 
     /**
-     * Builds a [CredentialsProvider] using retrieve stored credentials for HTTPS authentication.
+     * Builds a [org.eclipse.jgit.transport.CredentialsProvider] using retrieve stored credentials for HTTPS authentication.
      * Currently, supports:
      * - Git Credential Manager (GCM)
      */
@@ -82,7 +82,7 @@ object GitUtils {
     /** Attempts to build a [CredentialsProvider] by querying Git Credential Manager (GCM) for stored credentials.
      * If GCM is not installed or no credentials are found, returns null.
      *
-     * @return A [UsernamePasswordCredentialsProvider] with the retrieved username and password, or null if not found.
+     * @return A [org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider] with the retrieved username and password, or null if not found.
      */
     private fun buildCredentialsProviderFromGitCredentialManager(): CredentialsProvider? {
         // ask GCM for host=github.com over HTTPS
