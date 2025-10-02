@@ -11,5 +11,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data object Configuration {
-    val localDirAbsPath: String = "${System.getProperty("user.home")}/.local/share/punkt"
+    val homeDirAbsPath: String = System.getProperty("user.home")
+    val localDirAbsPath = "$homeDirAbsPath/.local/share/punkt"
+    val trackedDbAbsPath = "$homeDirAbsPath/Library/Application Support/punkt/tracked"
 }

@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.25.2"))
     implementation("org.apache.logging.log4j:log4j-api")
@@ -30,7 +30,7 @@ dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:6.5.0.202303070854-r"){
         exclude(group="com.jcraft", module="jsch") // Strip off original jsch as it is abandoned
     }
-    implementation("org.eclipse.store:storage-embedded:3.0.1")
+    implementation("com.h2database:h2:2.4.240")
     testImplementation(kotlin("test"))
 }
 
@@ -40,6 +40,9 @@ tasks.test {
 
 application {
     mainClass.set("com.an5on.MainKt")
+    applicationDefaultJvmArgs = listOf(
+        "--enable-native-access=ALL-UNNAMED"
+    )
 }
 
 graalvmNative {
