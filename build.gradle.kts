@@ -30,6 +30,7 @@ dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:6.5.0.202303070854-r"){
         exclude(group="com.jcraft", module="jsch") // Strip off original jsch as it is abandoned
     }
+    implementation("org.eclipse.store:storage-embedded:3.0.1")
     testImplementation(kotlin("test"))
 }
 
