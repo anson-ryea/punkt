@@ -1,0 +1,6 @@
+package com.an5on.operation
+
+class SyncOptions (
+    val recursive: Boolean,
+    val exclude: Regex
+)

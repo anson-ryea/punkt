@@ -2,6 +2,7 @@ package com.an5on
 
 import com.an5on.command.Command
 import com.an5on.command.Init
+import com.an5on.command.Sync
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
 
@@ -15,5 +16,5 @@ import com.github.ajalt.clikt.core.subcommands
  */
 fun main(args: Array<String>) = Command().subcommands(
     Init(),
-
+    Sync()
 ).main(args)
