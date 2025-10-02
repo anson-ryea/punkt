@@ -14,4 +14,5 @@ data object Configuration {
     val homeDirAbsPath: String = System.getProperty("user.home")
     val localDirAbsPath = "$homeDirAbsPath/.local/share/punkt"
     val trackedDbAbsPath = "$homeDirAbsPath/Library/Application Support/punkt/tracked"
+    val dotReplacementString = "punkt_"
 }
