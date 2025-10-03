@@ -23,7 +23,7 @@ private val logger = KotlinLogging.logger {}
 /**
  * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
  *
- * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository is initialised at [Configuration.localDirAbsPath].
+ * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository is initialised at [Configuration.localDirAbsPathname].
  * Currently, [repo] supports the formats specified in [remoteRepoPatterns].
  * @property ssh A flag indicating whether to use SSH for cloning the remote Punkt repository.
  * @property branch The branch of the remote Punkt repository to clone. If not provided, the default branch is cloned.
@@ -52,10 +52,10 @@ class Init : CliktCommand() {
     ).int()
 
 override fun help(context: Context) = """
-    Initialises a Punkt local repository at ${Configuration.localDirAbsPath}.
+    Initialises a Punkt local repository at ${Configuration.active.localDirAbsPathname}.
             
-    If a remote Punkt repository URL is provided, it clones the repository to ${Configuration.localDirAbsPath}.
-    Otherwise, it initialises an empty Punkt local repository at ${Configuration.localDirAbsPath}.
+    If a remote Punkt repository URL is provided, it clones the repository to ${Configuration.active.localDirAbsPathname}.
+    Otherwise, it initialises an empty Punkt local repository at ${Configuration.active.localDirAbsPathname}.
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
@@ -73,26 +73,26 @@ override fun help(context: Context) = """
 
     override fun run() {
         if (checkLocalExists()) {
-            echo("Punkt is already initialised at ${Configuration.localDirAbsPath}")
+            echo("Punkt is already initialised at ${Configuration.active.localDirAbsPathname}")
             return
         }
 
         if (repo == null) {
             try {
                 val git = Git.init()
-                    .setDirectory(File(Configuration.localDirAbsPath))
+                    .setDirectory(File(Configuration.active.localDirAbsPathname))
                     .call()
                 echo("Initialised empty Punkt local repository at ${git.repository.directory}")
             } catch (e: Exception) {
-                logger.error(e) { "Failed to initialise empty Punkt local repository at ${Configuration.localDirAbsPath}" }
-                echo("Failed to initialise empty Punkt local repository at ${Configuration.localDirAbsPath}")
+                logger.error(e) { "Failed to initialise empty Punkt local repository at ${Configuration.active.localDirAbsPathname}" }
+                echo("Failed to initialise empty Punkt local repository at ${Configuration.active.localDirAbsPathname}")
             }
         } else {
             val repoUrl = parseRepoUrl(repo!!, ssh == true)
 
             try {
                 val git = Git.cloneRepository().apply {
-                    setDirectory(File(Configuration.localDirAbsPath))
+                    setDirectory(File(Configuration.active.localDirAbsPathname))
                     setURI(repoUrl)
 
                     if (branch != null) {
@@ -115,8 +115,8 @@ override fun help(context: Context) = """
                     .call()
                 echo("Cloned Punkt repository from $repoUrl to ${git.repository.directory}")
             } catch (e: Exception) {
-                logger.error(e) { "Failed to clone Punkt repository from $repoUrl to ${Configuration.localDirAbsPath}" }
-                echo("Failed to clone Punkt repository from $repoUrl to ${Configuration.localDirAbsPath}")
+                logger.error(e) { "Failed to clone Punkt repository from $repoUrl to ${Configuration.active.localDirAbsPathname}" }
+                echo("Failed to clone Punkt repository from $repoUrl to ${Configuration.active.localDirAbsPathname}")
             }
         }
     }
@@ -125,5 +125,5 @@ override fun help(context: Context) = """
      *
      * @return `true` if the local Punkt repository exists, `false` otherwise.
      */
-    private fun checkLocalExists() = File(Configuration.localDirAbsPath).exists()
+    private fun checkLocalExists() = File(Configuration.active.localDirAbsPathname).exists()
 }

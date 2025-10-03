@@ -1,6 +1,6 @@
 package com.an5on.states.tracked
 
-import com.an5on.config.Configuration.trackedDbAbsPath
+import com.an5on.config.Configuration
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
 import org.h2.mvstore.MVStore
@@ -12,12 +12,12 @@ object TrackedEntriesStore {
     private var trackedEntriesMap: MutableMap<String, ByteArray>? = null
 
     fun connect() {
-        trackedStore = MVStore.open(trackedDbAbsPath)
+        trackedStore = MVStore.open(Configuration.active.trackedDbAbsPathname)
         trackedEntriesMap = trackedStore!!.openMap("trackedEntriesMap")
     }
 
     fun get(key: Path): TrackedEntry? = trackedEntriesMap!![key.toString()]?.let {
-        Cbor.decodeFromByteArray<TrackedEntry>(TrackedEntry.serializer(), it)
+        Cbor.decodeFromByteArray(TrackedEntry.serializer(), it)
     }
 
     fun put(key: Path, value: TrackedEntry) {
