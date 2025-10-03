@@ -33,6 +33,7 @@ dependencies {
         exclude(group="com.jcraft", module="jsch") // Strip off original jsch as it is abandoned
     }
     implementation("com.h2database:h2:2.4.240")
+    implementation("commons-codec:commons-codec:1.19.0")
     testImplementation(kotlin("test"))
 }
 
