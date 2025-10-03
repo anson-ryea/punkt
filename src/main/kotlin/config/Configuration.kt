@@ -1,18 +1,27 @@
 package com.an5on.config
 
 import kotlinx.serialization.Serializable
+import kotlin.io.path.Path
 
 /**
- * Configuration object containing application-wide settings.
+ * Configuration class containing application-wide settings.
  *
- * @property localDirAbsPath The absolute path to the local directory where Punkt stores its data.
+ * @property localDirAbsPathname The absolute path to the local directory where Punkt stores its data.
  * By default, it is `~/.local/share/punkt` in UNIX environments.
  * @author Anson Ng
  */
 @Serializable
-data object Configuration {
-    val homeDirAbsPath: String = System.getProperty("user.home")
-    val localDirAbsPath = "$homeDirAbsPath/.local/share/punkt"
-    val trackedDbAbsPath = "$homeDirAbsPath/Library/Application Support/punkt/tracked"
-    val dotReplacementString = "punkt_"
+data class Configuration (
+    val homeDirAbsPathname: String = System.getProperty("user.home"),
+    val localDirAbsPathname: String = "$homeDirAbsPathname/.local/share/punkt",
+    val trackedDbAbsPathname: String = "$homeDirAbsPathname/Library/Application Support/punkt/tracked",
+    val dotReplacementString: String = "punkt_",
+) {
+    val homeDirAbsPath = Path(homeDirAbsPathname)
+    val localDirAbsPath = Path(localDirAbsPathname)
+    val trackedDbAbsPath = Path(trackedDbAbsPathname)
+
+    companion object {
+        val active = Configuration()
+    }
 }
