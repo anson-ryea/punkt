@@ -2,7 +2,7 @@ package com.an5on.command
 
 import com.an5on.operation.ManageState.sync
 import com.an5on.operation.SyncOptions
-import com.an5on.utils.FileUtils.replaceTildeWithAbsPath
+import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.flag
@@ -23,7 +23,7 @@ class Sync: CliktCommand() {
             exclude?.toRegex() ?: Regex("$^") // Matches nothing if exclude is null
         )
 
-        val targetFile = File(replaceTildeWithAbsPath(target))
+        val targetFile = File(replaceTildeWithAbsPathname(target))
 
         sync(targetFile, options, ::echo)
     }
