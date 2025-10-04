@@ -1,13 +1,14 @@
 package com.an5on.utils
 
-import com.an5on.config.Configuration
+import com.an5on.config.ActiveConfiguration
 import org.apache.commons.codec.digest.Blake3
 import java.io.File
+import kotlin.io.path.pathString
 
 object FileUtils {
     fun replaceTildeWithAbsPathname(pathname: String): String {
         return if (pathname.startsWith("~")) {
-            pathname.replaceFirst("~", Configuration.active.homeDirAbsPathname)
+            pathname.replaceFirst("~", ActiveConfiguration.homeDirAbsPath.pathString)
         } else {
             pathname
         }

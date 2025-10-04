@@ -1,7 +1,7 @@
 package com.an5on.states.local
 
-import com.an5on.config.Configuration
-import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
+import com.an5on.config.ActiveConfiguration
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -9,14 +9,17 @@ import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
 
 object LocalState {
-    fun copyFileFromActiveToLocal(activePathname: String) {
-        val activePathnameWithTildeRemoved = replaceTildeWithAbsPathname(activePathname)
-        val activeAbsPath = Path(activePathnameWithTildeRemoved).toAbsolutePath()
+    fun copyFileFromActiveToLocal(activePath: Path) {
+        val activeAbsPath = activePath.toAbsolutePath()
 
-        Files.copy(activeAbsPath, getLocalPath(activeAbsPath.relativeTo(Configuration.active.homeDirAbsPath).pathString))
+        Files.copy(activeAbsPath, getLocalAbsPath(activeAbsPath.relativeTo(ActiveConfiguration.homeDirAbsPath)))
     }
 
-    fun getLocalRelPathname(relPathname: String): String = relPathname.replace(Regex("^\\.(?!/)|(?<=/)\\."), Configuration.active.dotReplacementString)
+    fun getLocalRelPathname(relPathname: String): String = relPathname.replace(Regex("^\\.(?!/)|(?<=/)\\."), ActiveConfiguration.dotReplacementString)
 
-    fun getLocalPath(relPathname: String): Path = Path(Configuration.active.localDirAbsPathname + "/" + getLocalRelPathname(relPathname))
+    fun getLocalAbsPath(relPathname: String): Path = Path(ActiveConfiguration.localDirAbsPathname + "/" + getLocalRelPathname(relPathname))
+
+    fun getLocalAbsPath(relPath: Path): Path = getLocalAbsPath(relPath.pathString)
+
+    fun getLocalFile(relPath: Path): File = File(getLocalAbsPath(relPath).pathString)
 }
