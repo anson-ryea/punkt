@@ -11,10 +11,9 @@ import kotlin.io.path.Path
  * @author Anson Ng
  */
 @Serializable
-data class Configuration (
-    val homeDirAbsPathname: String = System.getProperty("user.home"),
-    val localDirAbsPathname: String = "$homeDirAbsPathname/.local/share/punkt",
-    val trackedDbAbsPathname: String = "$homeDirAbsPathname/Library/Application Support/punkt/tracked",
+open class Configuration (
+    val localDirAbsPathname: String = getDefaultLocalDirAbsPathname(),
+    val trackedDbAbsPathname: String = getDefaultTrackedDbAbsPathname(),
     val dotReplacementString: String = "punkt_",
 ) {
     val homeDirAbsPath = Path(homeDirAbsPathname)
@@ -22,6 +21,14 @@ data class Configuration (
     val trackedDbAbsPath = Path(trackedDbAbsPathname)
 
     companion object {
-        val active = Configuration()
+        val homeDirAbsPathname: String = System.getProperty("user.home")
+        val osName = System.getProperty("os.name").lowercase()
+
+        private fun getDefaultLocalDirAbsPathname() = "${homeDirAbsPathname}/.local/share/punkt"
+        private fun getDefaultTrackedDbAbsPathname() = when {
+            osName.contains("windows") -> "${homeDirAbsPathname}\\AppData\\Roaming\\punkt\\tracked"
+            osName.contains("mac") -> "${homeDirAbsPathname}/Library/Application Support/punkt/tracked"
+            else -> "${homeDirAbsPathname}/.config/punkt/tracked"
+        }
     }
 }
