@@ -1,11 +1,10 @@
-package com.an5on.utils
+package com.an5on.git
 
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.an5on.config.ActiveConfiguration
 import com.an5on.error.GitError
-import com.an5on.error.PunktError
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -63,7 +62,7 @@ object GitUtils {
      * Currently, supports:
      * - Git Credential Manager (GCM)
      */
-    fun buildCredentialsProvider(): Either<PunktError, CredentialsProvider> = either{
+    fun buildCredentialsProvider(): Either<GitError, CredentialsProvider> = either {
         buildCredentialsProviderFromGitCredentialManager().bind()
     }
 
@@ -95,7 +94,7 @@ object GitUtils {
      *
      * @return A [org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider] with the retrieved username and password, or null if not found.
      */
-    private fun buildCredentialsProviderFromGitCredentialManager(): Either<PunktError, CredentialsProvider> = either {
+    private fun buildCredentialsProviderFromGitCredentialManager(): Either<GitError, CredentialsProvider> = either {
         try {
             // ask GCM for host=github.com over HTTPS
             val process = ProcessBuilder("git-credential-manager", "get")
