@@ -28,7 +28,7 @@ open class Configuration (
 
         private fun getDefaultLocalDirAbsPathname() = "${homeDirAbsPathname}/.local/share/punkt"
         private fun getDefaultTrackedDbAbsPathname() = when {
-            osName.contains("windows") -> "${homeDirAbsPathname}\\AppData\\Roaming\\punkt\\tracked"
+            osName.contains("windows") -> "${homeDirAbsPathname}\\AppData\\Roaming\\Punkt\\tracked"
             osName.contains("mac") -> "${homeDirAbsPathname}/Library/Application Support/punkt/tracked"
             else -> "${homeDirAbsPathname}/.config/punkt/tracked"
         }
