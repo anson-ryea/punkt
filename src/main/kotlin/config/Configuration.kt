@@ -14,6 +14,8 @@ import kotlin.io.path.Path
 open class Configuration (
     val localDirAbsPathname: String = getDefaultLocalDirAbsPathname(),
     val trackedDbAbsPathname: String = getDefaultTrackedDbAbsPathname(),
+    val sshPathname: String = "${homeDirAbsPathname}/.ssh",
+    val sshPrivateKeyPathname: String? = null,
     val dotReplacementString: String = "punkt_",
 ) {
     val homeDirAbsPath = Path(homeDirAbsPathname)
