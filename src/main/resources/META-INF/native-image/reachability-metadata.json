@@ -4,6 +4,12 @@
       "type": "[Lorg.apache.logging.log4j.core.Appender;"
     },
     {
+      "type": "[Lorg.apache.logging.log4j.core.Filter;"
+    },
+    {
+      "type": "[Lorg.apache.logging.log4j.core.appender.rolling.TriggeringPolicy;"
+    },
+    {
       "type": "[Lorg.apache.logging.log4j.core.config.AppenderRef;"
     },
     {
@@ -11,15 +17,6 @@
     },
     {
       "type": "[Lorg.apache.logging.log4j.core.config.Property;"
-    },
-    {
-      "type": "apple.security.AppleProvider",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
     },
     {
       "type": "com.fasterxml.jackson.databind.ObjectMapper"
@@ -32,219 +29,6 @@
     },
     {
       "type": "com.github.ajalt.mordant.terminal.terminalinterface.nativeimage.TerminalInterfaceProviderNativeImage"
-    },
-    {
-      "type": "com.jcraft.jsch.DH25519",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.DH25519MLKEM768",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.DH25519SNTRUP761",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.DH448",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.DHEC256MLKEM768",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.DHEC384MLKEM1024",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.UserAuthNone",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.UserAuthPublicKey",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.bc.SNTRUP761"
-    },
-    {
-      "type": "com.jcraft.jsch.jce.AES128GCM",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.ECDHN",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.HMACSHA1",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.MLKEM1024",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.MLKEM768",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.Random",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.SHA256",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.SHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.SHA512",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.SignatureEd25519",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.SignatureEd448",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.jcraft.jsch.jce.XDH",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.GaloisCounterMode$AESGCM",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.ML_KEM_Impls$K",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.ML_KEM_Impls$KPG",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.CallbackProxy"
     },
     {
       "type": "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl",
@@ -263,43 +47,7 @@
       "allDeclaredFields": true
     },
     {
-      "type": "java.lang.Throwable"
-    },
-    {
-      "type": "java.lang.invoke.MethodHandle"
-    },
-    {
-      "type": "java.lang.invoke.MethodHandles"
-    },
-    {
-      "type": "java.lang.invoke.MethodHandles$Lookup"
-    },
-    {
-      "type": "java.lang.invoke.MethodType"
-    },
-    {
-      "type": "java.lang.reflect.Method",
-      "methods": [
-        {
-          "name": "isDefault",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.Buffer"
-    },
-    {
-      "type": "java.security.AlgorithmParametersSpi"
-    },
-    {
       "type": "java.security.MessageDigestSpi"
-    },
-    {
-      "type": "java.security.interfaces.ECPrivateKey"
-    },
-    {
-      "type": "java.security.interfaces.ECPublicKey"
     },
     {
       "type": "java.security.interfaces.RSAPrivateKey"
@@ -342,17 +90,7 @@
       "type": "org.apache.logging.log4j.core.appender.AsyncAppender"
     },
     {
-      "type": "org.apache.logging.log4j.core.appender.ConsoleAppender",
-      "methods": [
-        {
-          "name": "newBuilder",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.apache.logging.log4j.core.appender.ConsoleAppender$Builder",
-      "allDeclaredFields": true
+      "type": "org.apache.logging.log4j.core.appender.ConsoleAppender"
     },
     {
       "type": "org.apache.logging.log4j.core.appender.CountingNoOpAppender"
@@ -382,7 +120,17 @@
       "type": "org.apache.logging.log4j.core.appender.RandomAccessFileAppender"
     },
     {
-      "type": "org.apache.logging.log4j.core.appender.RollingFileAppender"
+      "type": "org.apache.logging.log4j.core.appender.RollingFileAppender",
+      "methods": [
+        {
+          "name": "newBuilder",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.logging.log4j.core.appender.RollingFileAppender$Builder",
+      "allDeclaredFields": true
     },
     {
       "type": "org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender"
@@ -445,7 +193,15 @@
       "type": "org.apache.logging.log4j.core.appender.rewrite.RewriteAppender"
     },
     {
-      "type": "org.apache.logging.log4j.core.appender.rolling.CompositeTriggeringPolicy"
+      "type": "org.apache.logging.log4j.core.appender.rolling.CompositeTriggeringPolicy",
+      "methods": [
+        {
+          "name": "createPolicy",
+          "parameterTypes": [
+            "org.apache.logging.log4j.core.appender.rolling.TriggeringPolicy[]"
+          ]
+        }
+      ]
     },
     {
       "type": "org.apache.logging.log4j.core.appender.rolling.CronTriggeringPolicy"
@@ -463,10 +219,34 @@
       "type": "org.apache.logging.log4j.core.appender.rolling.OnStartupTriggeringPolicy"
     },
     {
+      "type": "org.apache.logging.log4j.core.appender.rolling.RollingFileManager",
+      "fields": [
+        {
+          "name": "patternProcessor"
+        },
+        {
+          "name": "rolloverStrategy"
+        },
+        {
+          "name": "triggeringPolicy"
+        }
+      ]
+    },
+    {
       "type": "org.apache.logging.log4j.core.appender.rolling.SizeBasedTriggeringPolicy"
     },
     {
-      "type": "org.apache.logging.log4j.core.appender.rolling.TimeBasedTriggeringPolicy"
+      "type": "org.apache.logging.log4j.core.appender.rolling.TimeBasedTriggeringPolicy",
+      "methods": [
+        {
+          "name": "newBuilder",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.apache.logging.log4j.core.appender.rolling.TimeBasedTriggeringPolicy$Builder",
+      "allDeclaredFields": true
     },
     {
       "type": "org.apache.logging.log4j.core.appender.rolling.action.DeleteAction"
@@ -961,7 +741,15 @@
       "type": "org.apache.logging.log4j.core.filter.BurstFilter"
     },
     {
-      "type": "org.apache.logging.log4j.core.filter.CompositeFilter"
+      "type": "org.apache.logging.log4j.core.filter.CompositeFilter",
+      "methods": [
+        {
+          "name": "createFilters",
+          "parameterTypes": [
+            "org.apache.logging.log4j.core.Filter[]"
+          ]
+        }
+      ]
     },
     {
       "type": "org.apache.logging.log4j.core.filter.DenyAllFilter"
@@ -1003,7 +791,17 @@
       "type": "org.apache.logging.log4j.core.filter.ThreadContextMapFilter"
     },
     {
-      "type": "org.apache.logging.log4j.core.filter.ThresholdFilter"
+      "type": "org.apache.logging.log4j.core.filter.ThresholdFilter",
+      "methods": [
+        {
+          "name": "createFilter",
+          "parameterTypes": [
+            "org.apache.logging.log4j.Level",
+            "org.apache.logging.log4j.core.Filter$Result",
+            "org.apache.logging.log4j.core.Filter$Result"
+          ]
+        }
+      ]
     },
     {
       "type": "org.apache.logging.log4j.core.filter.TimeFilter"
@@ -1288,7 +1086,15 @@
       "type": "org.apache.logging.log4j.core.pattern.ExtendedThrowablePatternConverter"
     },
     {
-      "type": "org.apache.logging.log4j.core.pattern.FileDatePatternConverter"
+      "type": "org.apache.logging.log4j.core.pattern.FileDatePatternConverter",
+      "methods": [
+        {
+          "name": "newInstance",
+          "parameterTypes": [
+            "java.lang.String[]"
+          ]
+        }
+      ]
     },
     {
       "type": "org.apache.logging.log4j.core.pattern.FileLocationPatternConverter"
@@ -1449,112 +1255,7 @@
       "type": "org.apache.logging.slf4j.SLF4JServiceProvider"
     },
     {
-      "type": "org.eclipse.jgit.internal.JGitText",
-      "allPublicFields": true,
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$AutoCRLF",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$CheckStat",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$EOL",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$HideDotFiles",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$LogRefUpdates",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$SymLinks",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.lib.CoreConfig$TrustPackedRefsStat",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory"
-    },
-    {
-      "type": "org.eclipse.jgit.util.sha1.SHA1$Sha1Implementation",
-      "methods": [
-        {
-          "name": "values",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "org.osgi.framework.FrameworkUtil"
-    },
-    {
-      "type": "sun.security.provider.NativePRNG",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.security.SecureRandomParameters"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.SHA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
     },
     {
       "type": "sun.security.provider.SHA2$SHA256",
@@ -1566,34 +1267,7 @@
       ]
     },
     {
-      "type": "sun.security.provider.SHA3$SHA256",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.SHA3$SHA512",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "sun.security.provider.SHA5$SHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.SHA5$SHA512",
       "methods": [
         {
           "name": "<init>",
@@ -1744,13 +1418,6 @@
           ]
         }
       ]
-    },
-    {
-      "type": {
-        "proxy": [
-          "com.github.ajalt.mordant.terminal.terminalinterface.jna.MacosLibC"
-        ]
-      }
     }
   ],
   "resources": [
@@ -1770,13 +1437,7 @@
       "glob": "META-INF/services/java.net.spi.InetAddressResolverProvider"
     },
     {
-      "glob": "META-INF/services/java.net.spi.URLStreamHandlerProvider"
-    },
-    {
       "glob": "META-INF/services/java.time.zone.ZoneRulesProvider"
-    },
-    {
-      "glob": "META-INF/services/java.util.spi.ResourceBundleControlProvider"
     },
     {
       "glob": "META-INF/services/javax.xml.parsers.DocumentBuilderFactory"
@@ -1794,16 +1455,7 @@
       "glob": "META-INF/services/org.apache.logging.log4j.util.PropertySource"
     },
     {
-      "glob": "META-INF/services/org.eclipse.jgit.transport.SshSessionFactory"
-    },
-    {
-      "glob": "META-INF/services/org.eclipse.jgit.transport.Transport"
-    },
-    {
       "glob": "META-INF/services/org.slf4j.spi.SLF4JServiceProvider"
-    },
-    {
-      "glob": "com/sun/jna/darwin-aarch64/libjnidispatch.jnilib"
     },
     {
       "glob": "log4j2-test.jsn"
@@ -1887,25 +1539,6 @@
       "glob": "log4j218b4aac2.yml"
     },
     {
-      "glob": "org/eclipse/jgit/internal/JGitText.properties"
-    },
-    {
-      "glob": "org/eclipse/jgit/internal/JGitText_yue.properties"
-    },
-    {
-      "glob": "org/eclipse/jgit/internal/JGitText_yue_HK.properties"
-    },
-    {
-      "glob": "org/eclipse/jgit/internal/JGitText_yue_Hant.properties"
-    },
-    {
-      "glob": "org/eclipse/jgit/internal/JGitText_yue_Hant_HK.properties"
-    },
-    {
-      "module": "java.base",
-      "glob": "jdk/internal/icu/impl/data/icudt76b/nfc.nrm"
-    },
-    {
       "module": "java.base",
       "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
     },
@@ -1914,592 +1547,16 @@
       "glob": "jdk/xml/internal/jdkcatalog/JDKCatalog.xml"
     }
   ],
-  "bundles": [
-    {
-      "name": "org.eclipse.jgit.internal.JGitText",
-      "locales": [
-        "yue-Hant-HK"
-      ]
-    }
-  ],
+  "bundles": [],
   "jni": [
     {
-      "type": "com.sun.jna.Callback"
-    },
-    {
-      "type": "com.sun.jna.CallbackReference",
-      "methods": [
-        {
-          "name": "getCallback",
-          "parameterTypes": [
-            "java.lang.Class",
-            "com.sun.jna.Pointer",
-            "boolean"
-          ]
-        },
-        {
-          "name": "getFunctionPointer",
-          "parameterTypes": [
-            "com.sun.jna.Callback",
-            "boolean"
-          ]
-        },
-        {
-          "name": "getNativeString",
-          "parameterTypes": [
-            "java.lang.Object",
-            "boolean"
-          ]
-        },
-        {
-          "name": "initializeThread",
-          "parameterTypes": [
-            "com.sun.jna.Callback",
-            "com.sun.jna.CallbackReference$AttachOptions"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.CallbackReference$AttachOptions"
-    },
-    {
-      "type": "com.sun.jna.FromNativeConverter",
-      "methods": [
-        {
-          "name": "nativeType",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.IntegerType",
-      "fields": [
-        {
-          "name": "value"
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.JNIEnv"
-    },
-    {
-      "type": "com.sun.jna.Native",
-      "methods": [
-        {
-          "name": "dispose",
-          "parameterTypes": []
-        },
-        {
-          "name": "fromNative",
-          "parameterTypes": [
-            "com.sun.jna.FromNativeConverter",
-            "java.lang.Object",
-            "java.lang.reflect.Method"
-          ]
-        },
-        {
-          "name": "fromNative",
-          "parameterTypes": [
-            "java.lang.Class",
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "fromNative",
-          "parameterTypes": [
-            "java.lang.reflect.Method",
-            "java.lang.Object"
-          ]
-        },
-        {
-          "name": "nativeType",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
-        },
-        {
-          "name": "toNative",
-          "parameterTypes": [
-            "com.sun.jna.ToNativeConverter",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.Native$ffi_callback",
-      "methods": [
-        {
-          "name": "invoke",
-          "parameterTypes": [
-            "long",
-            "long",
-            "long"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.NativeMapped",
-      "methods": [
-        {
-          "name": "toNative",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.Pointer",
-      "fields": [
-        {
-          "name": "peer"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "long"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.PointerType",
-      "fields": [
-        {
-          "name": "pointer"
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.Structure",
-      "fields": [
-        {
-          "name": "memory"
-        },
-        {
-          "name": "typeInfo"
-        }
-      ],
-      "methods": [
-        {
-          "name": "autoRead",
-          "parameterTypes": []
-        },
-        {
-          "name": "autoWrite",
-          "parameterTypes": []
-        },
-        {
-          "name": "getTypeInfo",
-          "parameterTypes": []
-        },
-        {
-          "name": "newInstance",
-          "parameterTypes": [
-            "java.lang.Class",
-            "long"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.Structure$ByValue"
-    },
-    {
-      "type": "com.sun.jna.Structure$FFIType$FFITypes",
-      "fields": [
-        {
-          "name": "ffi_type_double"
-        },
-        {
-          "name": "ffi_type_float"
-        },
-        {
-          "name": "ffi_type_longdouble"
-        },
-        {
-          "name": "ffi_type_pointer"
-        },
-        {
-          "name": "ffi_type_sint16"
-        },
-        {
-          "name": "ffi_type_sint32"
-        },
-        {
-          "name": "ffi_type_sint64"
-        },
-        {
-          "name": "ffi_type_sint8"
-        },
-        {
-          "name": "ffi_type_uint16"
-        },
-        {
-          "name": "ffi_type_uint32"
-        },
-        {
-          "name": "ffi_type_uint64"
-        },
-        {
-          "name": "ffi_type_uint8"
-        },
-        {
-          "name": "ffi_type_void"
-        }
-      ]
-    },
-    {
-      "type": "com.sun.jna.WString",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
-    },
-    {
       "type": "java.lang.Boolean",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
       "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "boolean"
-          ]
-        },
         {
           "name": "getBoolean",
           "parameterTypes": [
             "java.lang.String"
           ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Byte",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "byte"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Character",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "char"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Class",
-      "methods": [
-        {
-          "name": "getComponentType",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Double",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "double"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Float",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "float"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Integer",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "int"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Long",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "long"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Object",
-      "methods": [
-        {
-          "name": "toString",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Short",
-      "fields": [
-        {
-          "name": "TYPE"
-        },
-        {
-          "name": "value"
-        }
-      ],
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "short"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.String",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "byte[]"
-          ]
-        },
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "byte[]",
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "getBytes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getBytes",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        },
-        {
-          "name": "toCharArray",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.lang.System",
-      "methods": [
-        {
-          "name": "getProperty",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "java.lang.Void",
-      "fields": [
-        {
-          "name": "TYPE"
-        }
-      ]
-    },
-    {
-      "type": "java.lang.reflect.Method",
-      "methods": [
-        {
-          "name": "getParameterTypes",
-          "parameterTypes": []
-        },
-        {
-          "name": "getReturnType",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.Buffer",
-      "methods": [
-        {
-          "name": "position",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.ByteBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.CharBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.DoubleBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.FloatBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.IntBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.LongBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "java.nio.ShortBuffer",
-      "methods": [
-        {
-          "name": "array",
-          "parameterTypes": []
-        },
-        {
-          "name": "arrayOffset",
-          "parameterTypes": []
         }
       ]
     },
