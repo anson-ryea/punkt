@@ -85,4 +85,21 @@ sealed interface GitError : PunktError {
         override val message: String
             get() = "SSH identity not found: $identityPath"
     }
+
+    data class CredentialsNotFound(
+        val uri: String,
+        override val cause: Throwable? = null
+    ) : GitError {
+        override val code: String = "GIT_CREDENTIALS_NOT_FOUND"
+        override val message: String
+            get() = "No stored credentials found for $uri"
+    }
+
+    data class GcmNotSet(
+        override val cause: Throwable? = null
+    ) : GitError {
+        override val code: String = "GIT_GCM_NOT_SET"
+        override val message: String
+            get() = "Git Credential Manager (GCM) is not installed or not configured"
+    }
 }

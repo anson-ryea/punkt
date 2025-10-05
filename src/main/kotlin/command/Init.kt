@@ -1,11 +1,10 @@
 package com.an5on.command
 
 import com.an5on.config.ActiveConfiguration
-import com.an5on.utils.GitUtils.buildCredentialsProvider
-import com.an5on.utils.GitUtils.parseRepoUrl
 import com.an5on.utils.GitUtils.remoteRepoPatterns
-import com.an5on.utils.GitUtils.sshSessionFactory
 import com.an5on.config.Configuration
+import com.an5on.git.GitOperations.cloneRepository
+import com.an5on.git.GitOperations.initialiseRepository
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.installMordantMarkdown
@@ -79,46 +78,24 @@ override fun help(context: Context) = """
         }
 
         if (repo == null) {
-            try {
-                val git = Git.init()
-                    .setDirectory(File(ActiveConfiguration.localDirAbsPathname))
-                    .call()
-                echo("Initialised empty Punkt local repository at ${git.repository.directory}")
-            } catch (e: Exception) {
-                logger.error(e) { "Failed to initialise empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}" }
-                echo("Failed to initialise empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
-            }
-        } else {
-            val repoUrl = parseRepoUrl(repo!!, ssh == true)
-
-            try {
-                val git = Git.cloneRepository().apply {
-                    setDirectory(File(ActiveConfiguration.localDirAbsPathname))
-                    setURI(repoUrl)
-
-                    if (branch != null) {
-                        setBranch(branch)
-                    }
-                    if (depth != null) {
-                        setDepth(depth!!)
-                    }
-
-                    if (ssh == true) {
-                        setTransportConfigCallback { transport ->
-                            if (transport is SshTransport) {
-                                transport.sshSessionFactory = sshSessionFactory
-                            }
-                        }
-                    } else {
-                        setCredentialsProvider(buildCredentialsProvider())
-                    }
+            initialiseRepository(File(ActiveConfiguration.localDirAbsPathname)).fold(
+                ifLeft = { e ->
+                    echo("Failed to initialise empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
+                },
+                ifRight = {
+                    echo("Initialised empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
                 }
-                    .call()
-                echo("Cloned Punkt repository from $repoUrl to ${git.repository.directory}")
-            } catch (e: Exception) {
-                logger.error(e) { "Failed to clone Punkt repository from $repoUrl to ${ActiveConfiguration.localDirAbsPathname}" }
-                echo("Failed to clone Punkt repository from $repoUrl to ${ActiveConfiguration.localDirAbsPathname}")
-            }
+            )
+        } else {
+            cloneRepository(repo, File(ActiveConfiguration.localDirAbsPathname), ssh ?: false, branch, depth)
+                .fold(
+                    ifLeft = { e ->
+                        echo("Failed to clone remote Punkt repository to ${ActiveConfiguration.localDirAbsPathname}")
+                    },
+                    ifRight = {
+                        echo("Cloned remote Punkt repository to ${ActiveConfiguration.localDirAbsPathname}")
+                    }
+                )
         }
     }
 
