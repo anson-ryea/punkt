@@ -1,6 +1,7 @@
 package com.an5on.command
 
 import com.an5on.operation.StateOperations.sync
+import com.an5on.operation.StateOperations.syncExistingLocal
 import com.an5on.operation.SyncOptions
 import com.an5on.states.tracked.TrackedEntriesStore
 import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
@@ -8,9 +9,11 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert
 import com.github.ajalt.clikt.parameters.arguments.multiple
+import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.arguments.unique
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.file
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -28,7 +31,7 @@ class Sync: CliktCommand() {
         canBeSymlink = true,
         mustExist = true,
         mustBeReadable = true
-    ).multiple().unique()
+    ).multiple().unique().optional()
 
     override fun run() {
         val options = SyncOptions(
@@ -39,8 +42,12 @@ class Sync: CliktCommand() {
 
         TrackedEntriesStore.connect()
 
-        targets.forEach {
-            sync(it, options, ::echo)
+        if (targets == null) {
+            syncExistingLocal(SyncOptions(true, Regex(".*"), Regex("$^")), ::echo)
+        } else {
+            targets!!.forEach {
+                sync(it, options, ::echo)
+            }
         }
 
         TrackedEntriesStore.disconnect()

@@ -17,6 +17,8 @@ object LocalState {
         else -> Regex("^\\.(?!/)|(?<=/)\\.")
     }
 
+    val dotReplacementStringRegex = Regex(ActiveConfiguration.dotReplacementString)
+
     fun copyFileFromActiveToLocal(activePath: Path) {
         val activeAbsPath = activePath.toAbsolutePath()
 
@@ -31,5 +33,13 @@ object LocalState {
 
     fun getLocalAbsPath(relPath: Path): Path = getLocalAbsPath(relPath.pathString)
 
-    fun getLocalFile(relPath: Path): File = File(getLocalAbsPath(relPath).pathString)
+    fun getLocalFile(relPath: Path): File = getLocalAbsPath(relPath).toFile()
+
+    fun getActiveRelPathname(localPathname: String) = localPathname.replace(dotReplacementStringRegex, ".")
+
+    fun getActiveAbsPath(localPathname: String) = Path(ActiveConfiguration.homeDirAbsPath.pathString + "/" + getActiveRelPathname(localPathname))
+
+    fun getActiveAbsPath(localPath: Path) = getActiveAbsPath(localPath.pathString)
+
+    fun getActiveFile(localPath: Path) = getActiveAbsPath(localPath).toFile()
 }
