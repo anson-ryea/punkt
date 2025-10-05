@@ -1,5 +1,7 @@
 package com.an5on.config
 
+import com.an5on.utils.OsType
+import com.an5on.utils.SystemUtils
 import kotlinx.serialization.Serializable
 import kotlin.io.path.Path
 
@@ -12,8 +14,8 @@ import kotlin.io.path.Path
  */
 @Serializable
 open class Configuration (
-    val localDirAbsPathname: String = getDefaultLocalDirAbsPathname(),
-    val trackedDbAbsPathname: String = getDefaultTrackedDbAbsPathname(),
+    val localDirAbsPathname: String = defaultLocalDirAbsPathname,
+    val trackedDbAbsPathname: String = defaultTrackedDbAbsPathname,
     val sshPathname: String = "${homeDirAbsPathname}/.ssh",
     val sshPrivateKeyPathname: String? = null,
     val dotReplacementString: String = "punkt_",
@@ -24,13 +26,21 @@ open class Configuration (
 
     companion object {
         val homeDirAbsPathname: String = System.getProperty("user.home")
-        val osName = System.getProperty("os.name").lowercase()
 
-        private fun getDefaultLocalDirAbsPathname() = "${homeDirAbsPathname}/.local/share/punkt"
-        private fun getDefaultTrackedDbAbsPathname() = when {
-            osName.contains("windows") -> "${homeDirAbsPathname}\\AppData\\Roaming\\Punkt\\tracked"
-            osName.contains("mac") -> "${homeDirAbsPathname}/Library/Application Support/punkt/tracked"
-            else -> "${homeDirAbsPathname}/.config/punkt/tracked"
+        val defaultLocalDirAbsPathname = "${homeDirAbsPathname}/.local/share/punkt"
+        val defaultTrackedDbAbsPathname = when (SystemUtils.osType) {
+            OsType.WINDOWS -> "${homeDirAbsPathname}\\AppData\\Local\\punkt\\tracked"
+            OsType.DARWIN -> "${homeDirAbsPathname}/Library/Application Support/punkt/tracked"
+            OsType.LINUX -> "${homeDirAbsPathname}/.config/punkt/tracked"
+        }
+
+        val defaultLogDirAbsPathname = when (SystemUtils.osType) {
+            OsType.WINDOWS ->
+                "${homeDirAbsPathname}\\AppData\\Local\\punkt\\logs"
+            OsType.DARWIN ->
+                "${homeDirAbsPathname}/Library/Logs/punkt"
+            OsType.LINUX ->
+                "${homeDirAbsPathname}/.config/punkt/logs"
         }
     }
 }

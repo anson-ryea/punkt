@@ -3,6 +3,7 @@ package com.an5on
 import com.an5on.command.Command
 import com.an5on.command.Init
 import com.an5on.command.Sync
+import com.an5on.config.Configuration
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
 
@@ -14,7 +15,11 @@ import com.github.ajalt.clikt.core.subcommands
  * @return [Unit]
  * @author Anson Ng
  */
-fun main(args: Array<String>) = Command().subcommands(
-    Init(),
-    Sync()
-).main(args)
+fun main(args: Array<String>) {
+    System.setProperty("log.dir", Configuration.defaultLogDirAbsPathname)
+
+    Command().subcommands(
+        Init(),
+        Sync()
+    ).main(args)
+}
