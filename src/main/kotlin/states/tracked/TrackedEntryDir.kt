@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TrackedEntryDir(
-    private val dirMode: UInt
-): TrackedEntry(TrackedType.DIR, dirMode)
+    val placeholder: Int = 0
+): TrackedEntry(TrackedType.DIR)
