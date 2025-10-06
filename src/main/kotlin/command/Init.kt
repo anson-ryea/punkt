@@ -1,10 +1,14 @@
 package com.an5on.command
 
 import com.an5on.config.ActiveConfiguration
-import com.an5on.utils.GitUtils.remoteRepoPatterns
 import com.an5on.config.Configuration
 import com.an5on.git.GitOperations.cloneRepository
 import com.an5on.git.GitOperations.initialiseRepository
+import com.an5on.states.local.LocalState
+import com.an5on.git.GitUtils.remoteRepoPatterns
+import com.an5on.utils.echoStage
+import com.an5on.utils.echoSuccess
+import com.an5on.utils.echoWarning
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.installMordantMarkdown
@@ -14,11 +18,8 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.transport.SshTransport
 import java.io.File
-
-private val logger = KotlinLogging.logger {}
+import kotlin.system.exitProcess
 
 /**
  * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
@@ -51,7 +52,7 @@ class Init : CliktCommand() {
         help = "Clone the remote Punkt repository shallowly with the specified depth"
     ).int()
 
-override fun help(context: Context) = """
+    override fun help(context: Context) = """
     Initialises a Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}.
             
     If a remote Punkt repository URL is provided, it clones the repository to ${ActiveConfiguration.localDirAbsPathname}.
@@ -72,36 +73,39 @@ override fun help(context: Context) = """
     """.trimIndent()
 
     override fun run() {
-        if (checkLocalExists()) {
-            echo("Punkt is already initialised at ${ActiveConfiguration.localDirAbsPathname}")
+        if (LocalState.checkLocalExists()) {
+            echoWarning("Punkt is already initialised at ${ActiveConfiguration.localDirAbsPathname}")
             return
         }
 
         if (repo == null) {
+            echoStage("Initialising empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
             initialiseRepository(File(ActiveConfiguration.localDirAbsPathname)).fold(
                 ifLeft = { e ->
-                    echo("Failed to initialise empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
+                    echo(e.message, err = true)
+                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}"}
+                    exitProcess(e.statusCode)
                 },
                 ifRight = {
-                    echo("Initialised empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
+                    echoSuccess()
                 }
             )
         } else {
-            cloneRepository(repo, File(ActiveConfiguration.localDirAbsPathname), ssh ?: false, branch, depth)
-                .fold(
-                    ifLeft = { e ->
-                        echo("Failed to clone remote Punkt repository to ${ActiveConfiguration.localDirAbsPathname}")
-                    },
-                    ifRight = {
-                        echo("Cloned remote Punkt repository to ${ActiveConfiguration.localDirAbsPathname}")
-                    }
-                )
+            echoStage("Cloning existing Punkt local repository from $repo to ${ActiveConfiguration.localDirAbsPathname}")
+            cloneRepository(repo!!, File(ActiveConfiguration.localDirAbsPathname), ssh ?: false, branch, depth).fold(
+                ifLeft = { e ->
+                    echo(e.message, err = true)
+                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}"}
+                    exitProcess(e.statusCode)
+                },
+                ifRight = {
+                    echoSuccess()
+                }
+            )
         }
     }
 
-    /** Checks if the local Punkt repository already exists.
-     *
-     * @return `true` if the local Punkt repository exists, `false` otherwise.
-     */
-    private fun checkLocalExists() = File(ActiveConfiguration.localDirAbsPathname).exists()
+    companion object {
+        private val logger = KotlinLogging.logger {}
+    }
 }
