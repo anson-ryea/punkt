@@ -1,5 +1,10 @@
-package com.an5on.command
+package com.an5on.git
 
+import arrow.core.Either
+import arrow.core.raise.either
+import arrow.core.raise.ensure
+import com.an5on.config.ActiveConfiguration
+import com.an5on.error.GitError
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -7,6 +12,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory
 import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig
 import org.eclipse.jgit.util.FS
+import java.io.File
 
 /**
  * Utility object for Git-related operations.
@@ -42,18 +48,22 @@ object GitUtils {
 
         override fun createDefaultJSch(fs: FS?): JSch? {
             val jsch = super.createDefaultJSch(fs)
-            jsch.addIdentity("~/.ssh/id_ed25519")
+            when {
+                ActiveConfiguration.sshPrivateKeyPathname != null -> jsch.addIdentity(ActiveConfiguration.sshPrivateKeyPathname)
+                File("${ActiveConfiguration.sshPathname}/id_rsa").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_rsa")
+                File("${ActiveConfiguration.sshPathname}/id_ed25519").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_ed25519")
+            }
             return jsch
         }
     }
 
     /**
-     * Builds a [CredentialsProvider] using retrieve stored credentials for HTTPS authentication.
+     * Builds a [org.eclipse.jgit.transport.CredentialsProvider] using retrieve stored credentials for HTTPS authentication.
      * Currently, supports:
      * - Git Credential Manager (GCM)
      */
-    fun buildCredentialsProvider(): CredentialsProvider? {
-        return buildCredentialsProviderFromGitCredentialManager()
+    fun buildCredentialsProvider(): Either<GitError, CredentialsProvider> = either {
+        buildCredentialsProviderFromGitCredentialManager().bind()
     }
 
     /**
@@ -82,27 +92,32 @@ object GitUtils {
     /** Attempts to build a [CredentialsProvider] by querying Git Credential Manager (GCM) for stored credentials.
      * If GCM is not installed or no credentials are found, returns null.
      *
-     * @return A [UsernamePasswordCredentialsProvider] with the retrieved username and password, or null if not found.
+     * @return A [org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider] with the retrieved username and password, or null if not found.
      */
-    private fun buildCredentialsProviderFromGitCredentialManager(): CredentialsProvider? {
-        // ask GCM for host=github.com over HTTPS
-        val proc = ProcessBuilder("git-credential-manager", "get")
-            .start().apply {
-                outputStream.use {
-                    it.write("protocol=https\nhost=github.com\n\n".toByteArray())
-                    it.flush()
+    private fun buildCredentialsProviderFromGitCredentialManager(): Either<GitError, CredentialsProvider> = either {
+        try {
+            // ask GCM for host=github.com over HTTPS
+            val process = ProcessBuilder("git-credential-manager", "get")
+                .start().apply {
+                    outputStream.use {
+                        it.write("protocol=https\nhost=github.com\n\n".toByteArray())
+                        it.flush()
+                    }
                 }
-            }
 
-        // output from GCM is in the format:
-        // username=audrey
-        // password=hello
-        val map = proc.inputStream.bufferedReader().lineSequence()
-            .mapNotNull { it.split('=', limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }
-            .toMap()
+            // output from GCM is in the format:
+            // username=audrey
+            // password=hello
+            val map = process.inputStream.bufferedReader().lineSequence()
+                .mapNotNull { it.split('=', limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }
+                .toMap()
 
-        val username = map["username"] ?: return null
-        val password = map["password"] ?: return null
-        return UsernamePasswordCredentialsProvider(username, password)
+            val username = map["username"]
+            val password = map["password"]
+            ensure(!(username == null || password == null)) { GitError.GcmNotSet() }
+            UsernamePasswordCredentialsProvider(username, password)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

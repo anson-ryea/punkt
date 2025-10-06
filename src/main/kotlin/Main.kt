@@ -2,8 +2,11 @@ package com.an5on
 
 import com.an5on.command.Command
 import com.an5on.command.Init
+import com.an5on.command.Sync
+import com.an5on.config.Configuration
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Serves as the entry point for Punkt.
@@ -13,7 +16,16 @@ import com.github.ajalt.clikt.core.subcommands
  * @return [Unit]
  * @author Anson Ng
  */
-fun main(args: Array<String>) = Command().subcommands(
-    Init(),
+fun main(args: Array<String>) {
+    System.setProperty("log.dir", Configuration.defaultLogDirAbsPathname)
 
-).main(args)
+    val logger = KotlinLogging.logger {}
+    Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        logger.error(e) { "Uncaught exception in thread ${t.name}: ${e.message}" }
+    }
+
+    Command().subcommands(
+        Init(),
+        Sync()
+    ).main(args)
+}

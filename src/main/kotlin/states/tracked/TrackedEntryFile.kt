@@ -1,9 +1,10 @@
 package com.an5on.states.tracked
 
 import kotlinx.serialization.Serializable
+import java.nio.file.attribute.FileTime
 
 @Serializable
 data class TrackedEntryFile(
-    private val fileMode: UInt,
+    val activeLastModified: Long,
     val contentHash: String,
-): TrackedEntry(TrackedType.FILE, fileMode)
+): TrackedEntry(TrackedType.FILE)
