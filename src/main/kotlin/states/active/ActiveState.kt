@@ -9,7 +9,7 @@ import com.an5on.config.ActiveConfiguration.localDirAbsPath
 import com.an5on.error.FileError
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.file.PathUtils
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -55,14 +55,12 @@ object ActiveState {
             FileError.PathNotFound(this@contentEqualsActive)
         }
 
-        val localFile = this@contentEqualsActive.toFile()
-
-        val activeFile = this@contentEqualsActive.toActivePath().bind().toFile()
-        ensure(activeFile.exists()) {
+        val activePath = this@contentEqualsActive.toActivePath().bind()
+        ensure(activePath.exists()) {
             LocalError.LocalPathNotFound(this@contentEqualsActive)
         }
 
-        FileUtils.contentEquals(activeFile, localFile)
+        PathUtils.fileContentEquals(activePath, this@contentEqualsActive)
     }
 
     fun copyFromLocalToActive(localPath: Path): Either<PunktError, Unit> = either {

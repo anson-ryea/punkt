@@ -11,7 +11,7 @@ import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.utils.OsType
 import com.an5on.utils.SystemUtils
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.file.PathUtils
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
@@ -62,14 +62,13 @@ object LocalState {
         ensure(this@contentEqualsLocal.exists()) {
             FileError.PathNotFound(this@contentEqualsLocal)
         }
-        val activeFile = this@contentEqualsLocal.toFile()
 
-        val localFile = this@contentEqualsLocal.toLocalPath().bind().toFile()
-        ensure(localFile.exists()) {
+        val localPath = this@contentEqualsLocal.toLocalPath().bind()
+        ensure(localPath.exists()) {
             LocalError.LocalPathNotFound(this@contentEqualsLocal)
         }
 
-        FileUtils.contentEquals(localFile, activeFile)
+        PathUtils.fileContentEquals(this@contentEqualsLocal, localPath)
     }
 
     fun copyFileFromActiveToLocal(activePath: Path): Either<PunktError, Unit> = either {
