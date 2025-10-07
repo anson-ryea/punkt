@@ -3,6 +3,7 @@ package com.an5on
 import com.an5on.command.Activate
 import com.an5on.command.Command
 import com.an5on.command.Init
+import com.an5on.command.List
 import com.an5on.command.Sync
 import com.an5on.config.Configuration
 import com.github.ajalt.clikt.core.main
@@ -28,6 +29,7 @@ fun main(args: Array<String>) {
     Command().subcommands(
         Init(),
         Sync(),
-        Activate()
+        Activate(),
+        List()
     ).main(args)
 }
