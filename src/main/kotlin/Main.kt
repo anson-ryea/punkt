@@ -1,5 +1,6 @@
 package com.an5on
 
+import com.an5on.command.Activate
 import com.an5on.command.Command
 import com.an5on.command.Init
 import com.an5on.command.Sync
@@ -26,6 +27,7 @@ fun main(args: Array<String>) {
 
     Command().subcommands(
         Init(),
-        Sync()
+        Sync(),
+        Activate()
     ).main(args)
 }
