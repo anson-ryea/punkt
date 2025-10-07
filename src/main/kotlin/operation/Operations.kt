@@ -6,6 +6,7 @@ import arrow.core.raise.ensure
 import com.an5on.config.ActiveConfiguration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.states.active.ActiveState
 import com.an5on.states.active.ActiveState.contentEqualsActive
 import com.an5on.states.active.ActiveState.existsInActive
 import com.an5on.states.active.ActiveState.toActivePath
@@ -39,8 +40,9 @@ object Operations {
         var accumulatedActivePaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
             if (!activePath.isDirectory()) {
                 if (!activePath.pathString.matches(options.exclude)
-                        && activePath.pathString.matches(options.include)) {
-                        acc.add(activePath)
+                    && activePath.pathString.matches(options.include)
+                ) {
+                    acc.add(activePath)
                 }
             } else if (options.recursive) {
                 acc.addAll(
@@ -74,7 +76,7 @@ object Operations {
                     .toMutableSet()
         }
 
-        val localTransactions = accumulatedActivePaths.fold(mutableSetOf<LocalTransaction>()) { acc, activePath ->
+        LocalState.pendingTransactions.addAll(accumulatedActivePaths.fold(mutableSetOf<LocalTransaction>()) { acc, activePath ->
             if (activePath.existsInLocal().bind()) {
                 if (!activePath.isDirectory() && !activePath.contentEqualsLocal().bind()) {
                     acc.add(LocalTransactionCopyToLocal(activePath))
@@ -93,11 +95,9 @@ object Operations {
                 acc.add(LocalTransactionCopyToLocal(activePath))
             }
             acc
-        }
+        })
 
-        localTransactions.forEach {
-            it.run().bind()
-        }
+        LocalState.transact().bind()
     }
 
     fun syncExistingLocal(options: SyncOptions, echo: Echos): Either<PunktError, Unit> = either {
@@ -152,7 +152,7 @@ object Operations {
             acc
         }
 
-        val activeTransactions = accumulatedLocalPaths.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
+        ActiveState.pendingTransactions.addAll(accumulatedLocalPaths.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
             if (localPath.existsInActive().bind()) {
                 if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
                     acc.add(ActiveTransactionCopyToActive(localPath))
@@ -164,11 +164,9 @@ object Operations {
             }
 
             acc
-        }
+        })
 
-        activeTransactions.forEach {
-            it.run().bind()
-        }
+        ActiveState.transact().bind()
     }
 
     fun activateExistingLocal(options: ActivateOptions, echo: Echos): Either<PunktError, Unit> = either {
@@ -182,22 +180,21 @@ object Operations {
             .filter { it != ActiveConfiguration.localDirAbsPath }
 
 
-        val activeTransactions = localPathsInLocal.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
-            if (localPath.existsInActive().bind()) {
-                if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
+        ActiveState.pendingTransactions.addAll(
+            localPathsInLocal.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
+                if (localPath.existsInActive().bind()) {
+                    if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
+                        acc.add(ActiveTransactionCopyToActive(localPath))
+                    }
+                } else if (localPath.isDirectory()) {
+                    acc.add(ActiveTransactionMakeDirectories(localPath))
+                } else {
                     acc.add(ActiveTransactionCopyToActive(localPath))
                 }
-            } else if (localPath.isDirectory()) {
-                acc.add(ActiveTransactionMakeDirectories(localPath))
-            } else {
-                acc.add(ActiveTransactionCopyToActive(localPath))
-            }
 
-            acc
-        }
+                acc
+            })
 
-        activeTransactions.forEach {
-            it.run().bind()
-        }
+        ActiveState.transact().bind()
     }
 }

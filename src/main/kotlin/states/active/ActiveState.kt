@@ -21,6 +21,14 @@ import kotlin.io.path.relativeTo
 object ActiveState {
     val dotReplacementStringRegex = Regex(ActiveConfiguration.dotReplacementString)
 
+    val pendingTransactions = mutableSetOf<ActiveTransaction>()
+
+    fun transact(): Either<PunktError, Unit> = either {
+        pendingTransactions.forEach{
+            it.run().bind()
+        }
+    }
+
     fun Path.toActivePath(): Either<LocalError, Path> = either {
         if (!this@toActivePath.isAbsolute) {
             homeDirAbsPath.resolve(

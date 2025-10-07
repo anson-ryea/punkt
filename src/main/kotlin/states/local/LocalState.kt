@@ -29,6 +29,14 @@ object LocalState {
      */
     fun exists() = localDirAbsPath.exists()
 
+    val pendingTransactions = mutableSetOf<LocalTransaction>()
+
+    fun transact(): Either<PunktError, Unit> = either {
+        pendingTransactions.forEach {
+            it.run().bind()
+        }
+    }
+
     fun Path.toLocalPath(): Either<LocalError, Path> = either {
         if (!this@toLocalPath.isAbsolute) {
             localDirAbsPath.resolve(
