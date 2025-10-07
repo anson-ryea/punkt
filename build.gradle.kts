@@ -19,6 +19,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
     implementation(platform("io.arrow-kt:arrow-stack:2.1.0"))
     implementation("io.arrow-kt:arrow-core")
+    implementation("commons-io:commons-io:2.20.0")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.25.2"))
     implementation("org.apache.logging.log4j:log4j-api")
