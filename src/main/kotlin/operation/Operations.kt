@@ -6,6 +6,12 @@ import arrow.core.raise.ensure
 import com.an5on.config.ActiveConfiguration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.states.active.ActiveState.contentEqualsActive
+import com.an5on.states.active.ActiveState.existsInActive
+import com.an5on.states.active.ActiveState.toActivePath
+import com.an5on.states.active.ActiveTransaction
+import com.an5on.states.active.ActiveTransactionCopyToActive
+import com.an5on.states.active.ActiveTransactionMakeDirectories
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalState.contentEqualsLocal
 import com.an5on.states.local.LocalState.existsInLocal
@@ -105,8 +111,91 @@ object Operations {
         sync(activePathsInLocal, options, echo).bind()
     }
 
-        for (activeFile in activeFilesInLocal) {
-            sync(activeFile, options, echo).bind()
+    fun activate(activePaths: Set<Path>, options: ActivateOptions, echo: Echos): Either<PunktError, Unit> = either {
+
+        ensure(LocalState.exists()) {
+            LocalError.LocalNotFound()
+        }
+
+        val accumulatedLocalPaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
+            if (!activePath.isDirectory()
+                && !activePath.pathString.matches(options.exclude)
+                && activePath.pathString.matches(options.include)
+                && activePath.existsInLocal().bind()
+            ) {
+                acc.add(activePath.toLocalPath().bind())
+            } else if (options.recursive) {
+                acc.addAll(
+                    activePath
+                        .walk()
+                        .filter {
+                            !it.pathString.matches(options.exclude)
+                                    && it.pathString.matches(options.include)
+                                    && it.existsInLocal().bind()
+                        }
+                        .map { it.toLocalPath().bind() }
+                )
+            } else {
+                acc.addAll(
+                    activePath
+                        .listDirectoryEntries()
+                        .filter {
+                            !it.pathString.matches(options.exclude)
+                                    && it.pathString.matches(options.include)
+                                    && it.existsInLocal().bind()
+                        }
+                        .map { it.toLocalPath().bind() }
+                )
+            }
+            acc
+        }
+
+        val activeTransactions = accumulatedLocalPaths.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
+            if (localPath.existsInActive().bind() ){
+                if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
+                    acc.add(ActiveTransactionCopyToActive(localPath))
+                }
+            } else if (localPath.isDirectory()) {
+                acc.add(ActiveTransactionMakeDirectories(localPath))
+            } else {
+                acc.add(ActiveTransactionCopyToActive(localPath))
+            }
+
+            acc
+        }
+
+        activeTransactions.forEach {
+            it.run().bind()
+        }
+    }
+
+    fun activateExistingLocal(options: ActivateOptions, echo: Echos): Either<PunktError, Unit> = either {
+
+        ensure(LocalState.exists()) {
+            LocalError.LocalNotFound()
+        }
+
+        val localPathsInLocal = ActiveConfiguration.localDirAbsPath
+            .walk(PathWalkOption.BREADTH_FIRST)
+            .filter { it != ActiveConfiguration.localDirAbsPath }
+
+
+        val activeTransactions = localPathsInLocal.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
+            if (localPath.existsInActive().bind() ){
+                if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
+                    acc.add(ActiveTransactionCopyToActive(localPath))
+                }
+            } else if (localPath.isDirectory()) {
+                acc.add(ActiveTransactionMakeDirectories(localPath))
+            } else {
+                acc.add(ActiveTransactionCopyToActive(localPath))
+            }
+
+            acc
+        }
+
+        activeTransactions.forEach {
+            it.run().bind()
         }
     }
 }
