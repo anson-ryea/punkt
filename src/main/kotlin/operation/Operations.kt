@@ -37,11 +37,11 @@ object Operations {
         }
 
         var accumulatedActivePaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
-            if (!activePath.isDirectory()
-                && !activePath.pathString.matches(options.exclude)
-                && activePath.pathString.matches(options.include)
-            ) {
-                acc.add(activePath)
+            if (!activePath.isDirectory()) {
+                if (!activePath.pathString.matches(options.exclude)
+                        && activePath.pathString.matches(options.include)) {
+                        acc.add(activePath)
+                }
             } else if (options.recursive) {
                 acc.addAll(
                     activePath
@@ -118,40 +118,42 @@ object Operations {
         }
 
         val accumulatedLocalPaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
-            if (!activePath.isDirectory()
-                && !activePath.pathString.matches(options.exclude)
-                && activePath.pathString.matches(options.include)
-                && activePath.existsInLocal().bind()
-            ) {
-                acc.add(activePath.toLocalPath().bind())
-            } else if (options.recursive) {
-                acc.addAll(
-                    activePath
-                        .walk()
-                        .filter {
-                            !it.pathString.matches(options.exclude)
-                                    && it.pathString.matches(options.include)
-                                    && it.existsInLocal().bind()
-                        }
-                        .map { it.toLocalPath().bind() }
-                )
-            } else {
-                acc.addAll(
-                    activePath
-                        .listDirectoryEntries()
-                        .filter {
-                            !it.pathString.matches(options.exclude)
-                                    && it.pathString.matches(options.include)
-                                    && it.existsInLocal().bind()
-                        }
-                        .map { it.toLocalPath().bind() }
-                )
+            val localPath = activePath.toLocalPath().bind()
+
+            if (localPath.exists()) {
+                if (!localPath.isDirectory()) {
+                    if (!activePath.pathString.matches(options.exclude)
+                        && activePath.pathString.matches(options.include)
+                    ) {
+                        acc.add(localPath)
+                    }
+                } else if (options.recursive) {
+                    acc.addAll(
+                        localPath
+                            .walk()
+                            .filter {
+                                val walkingActivePath = it.toActivePath().bind()
+                                !walkingActivePath.pathString.matches(options.exclude)
+                                        && walkingActivePath.pathString.matches(options.include)
+                            }
+                    )
+                } else {
+                    acc.addAll(
+                        localPath
+                            .listDirectoryEntries()
+                            .filter {
+                                val walkingActivePath = it.toActivePath().bind()
+                                !walkingActivePath.pathString.matches(options.exclude)
+                                        && walkingActivePath.pathString.matches(options.include)
+                            }
+                    )
+                }
             }
             acc
         }
 
         val activeTransactions = accumulatedLocalPaths.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
-            if (localPath.existsInActive().bind() ){
+            if (localPath.existsInActive().bind()) {
                 if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
                     acc.add(ActiveTransactionCopyToActive(localPath))
                 }
@@ -181,7 +183,7 @@ object Operations {
 
 
         val activeTransactions = localPathsInLocal.fold(mutableSetOf<ActiveTransaction>()) { acc, localPath ->
-            if (localPath.existsInActive().bind() ){
+            if (localPath.existsInActive().bind()) {
                 if (!localPath.isDirectory() && !localPath.contentEqualsActive().bind()) {
                     acc.add(ActiveTransactionCopyToActive(localPath))
                 }
