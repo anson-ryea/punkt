@@ -4,8 +4,8 @@ import com.an5on.config.ActiveConfiguration
 import com.an5on.config.Configuration
 import com.an5on.git.GitOperations.cloneRepository
 import com.an5on.git.GitOperations.initialiseRepository
-import com.an5on.states.local.LocalState
 import com.an5on.git.GitUtils.remoteRepoPatterns
+import com.an5on.states.local.LocalState
 import com.an5on.utils.echoStage
 import com.an5on.utils.echoSuccess
 import com.an5on.utils.echoWarning
@@ -73,7 +73,7 @@ class Init : CliktCommand() {
     """.trimIndent()
 
     override fun run() {
-        if (LocalState.checkLocalExists()) {
+        if (LocalState.exists()) {
             echoWarning("Punkt is already initialised at ${ActiveConfiguration.localDirAbsPathname}")
             return
         }
@@ -83,7 +83,7 @@ class Init : CliktCommand() {
             initialiseRepository(File(ActiveConfiguration.localDirAbsPathname)).fold(
                 ifLeft = { e ->
                     echo(e.message, err = true)
-                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}"}
+                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
                     exitProcess(e.statusCode)
                 },
                 ifRight = {
@@ -95,7 +95,7 @@ class Init : CliktCommand() {
             cloneRepository(repo!!, File(ActiveConfiguration.localDirAbsPathname), ssh ?: false, branch, depth).fold(
                 ifLeft = { e ->
                     echo(e.message, err = true)
-                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}"}
+                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
                     exitProcess(e.statusCode)
                 },
                 ifRight = {
