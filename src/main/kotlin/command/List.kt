@@ -39,7 +39,6 @@ class List: CliktCommand() {
         canBeSymlink = true
     ).multiple().unique().optional()
 
-
     override fun run() {
         val options = ListOptions(
             include?.toRegex() ?: Regex(".*"), // Matches everything if include is null
