@@ -7,11 +7,11 @@ import com.an5on.states.local.LocalState.makeDirs
 import java.nio.file.Path
 
 class LocalTransactionMakeDirectories(
-    val relPath: Path,
-): LocalTransaction {
-    override val type: LocalTransactionType = LocalTransactionType.MKDIRS
+    override val activePath: Path,
+): LocalTransaction() {
+    override val type = LocalTransactionType.MKDIRS
 
     override fun run(): Either<PunktError, Unit> = either {
-        makeDirs(relPath).bind()
+        makeDirs(activePath).bind()
     }
 }
