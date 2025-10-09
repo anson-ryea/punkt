@@ -97,4 +97,16 @@ object LocalState {
             Files.createDirectories(localPath.parent)
         }
     }
+
+    fun delete(localPath: Path): Either<PunktError, Unit> = either {
+        ensure(localPath.exists()) {
+            LocalError.LocalPathNotFound(localPath)
+        }
+
+        if (localPath.isDirectory()) {
+            localPath.toFile().deleteRecursively()
+        } else {
+            Files.delete(localPath)
+        }
+    }
 }
