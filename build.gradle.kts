@@ -35,6 +35,8 @@ dependencies {
     }
     implementation("com.h2database:h2:2.4.240")
     implementation("commons-codec:commons-codec:1.19.0")
+    implementation("io.github.java-diff-utils:java-diff-utils:4.16")
+    implementation("io.github.java-diff-utils:java-diff-utils-jgit:4.16")
     testImplementation(kotlin("test"))
 }
 
