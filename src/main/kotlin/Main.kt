@@ -6,6 +6,7 @@ import com.an5on.command.Diff
 import com.an5on.command.Init
 import com.an5on.command.List
 import com.an5on.command.Sync
+import com.an5on.command.Unsync
 import com.an5on.config.Configuration
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
@@ -30,6 +31,7 @@ fun main(args: Array<String>) {
     Command().subcommands(
         Init(),
         Sync(),
+        Unsync(),
         Activate(),
         List(),
         Diff()
