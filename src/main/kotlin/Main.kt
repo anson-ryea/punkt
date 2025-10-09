@@ -2,6 +2,7 @@ package com.an5on
 
 import com.an5on.command.Activate
 import com.an5on.command.Command
+import com.an5on.command.Diff
 import com.an5on.command.Init
 import com.an5on.command.List
 import com.an5on.command.Sync
@@ -30,6 +31,7 @@ fun main(args: Array<String>) {
         Init(),
         Sync(),
         Activate(),
-        List()
+        List(),
+        Diff()
     ).main(args)
 }
