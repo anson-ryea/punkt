@@ -1,4 +1,4 @@
-package com.an5on.utils
+package com.an5on.command
 
 class Echos (
     val echo: (Any?, Boolean, Boolean) -> Unit,

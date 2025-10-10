@@ -6,10 +6,10 @@ import arrow.core.raise.ensure
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.states.local.LocalState
-import com.an5on.states.local.LocalState.existsInLocal
-import com.an5on.states.local.LocalState.toLocalPath
 import com.an5on.states.local.LocalTransactionDelete
-import com.an5on.utils.Echos
+import com.an5on.states.local.LocalUtils.existsInLocal
+import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.command.Echos
 import java.nio.file.Path
 
 object UnsyncOperation {
@@ -24,21 +24,16 @@ object UnsyncOperation {
             }
         }
 
-        val localPaths = activePaths.map { it.toLocalPath().bind() }.toSet()
+        val localPaths = activePaths.map { it.toLocal().bind() }.toSet()
 
-        unsyncLocal(localPaths, echos).bind()
+        commit(localPaths, echos).bind()
     }
 
-    fun unsyncLocal(localPaths: Set<Path>, echos: Echos): Either<PunktError, Unit> = either {
-
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
+    fun commit(localPaths: Set<Path>, echos: Echos): Either<PunktError, Unit> = either {
         LocalState.pendingTransactions.addAll(
             localPaths.map { LocalTransactionDelete(it) }
         )
 
-        LocalState.transact().bind()
+        LocalState.commit().bind()
     }
 }

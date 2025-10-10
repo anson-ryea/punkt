@@ -1,4 +1,4 @@
-package com.an5on.utils
+package com.an5on.command
 
 import com.github.ajalt.clikt.core.CliktCommand
 

@@ -1,6 +1,6 @@
 package com.an5on.error
 
-import com.an5on.states.active.ActiveState.toActivePath
+import com.an5on.states.active.ActiveUtils.toActive
 import java.nio.file.Path
 
 sealed interface LocalError : PunktError {
@@ -20,6 +20,6 @@ sealed interface LocalError : PunktError {
     ) : LocalError {
         override val code: String = "LOCAL_PATH_NOT_FOUND"
         override val message: String
-            get() = "The local repository does not hold a copy of: ${path.toActivePath()}"
+            get() = "The local repository does not hold a copy of: ${path.toActive()}"
     }
 }

@@ -6,9 +6,6 @@ import com.an5on.git.GitOperations.cloneRepository
 import com.an5on.git.GitOperations.initialiseRepository
 import com.an5on.git.GitUtils.remoteRepoPatterns
 import com.an5on.states.local.LocalState
-import com.an5on.utils.echoStage
-import com.an5on.utils.echoSuccess
-import com.an5on.utils.echoWarning
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.installMordantMarkdown

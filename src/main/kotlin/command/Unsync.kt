@@ -1,11 +1,7 @@
 package com.an5on.command
 
 import com.an5on.operation.UnsyncOperation.unsync
-import com.an5on.utils.Echos
-import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
-import com.an5on.utils.echoStage
-import com.an5on.utils.echoSuccess
-import com.an5on.utils.echoWarning
+import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert

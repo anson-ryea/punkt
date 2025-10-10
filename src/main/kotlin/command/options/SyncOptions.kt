@@ -1,6 +1,6 @@
-package com.an5on.operation
+package com.an5on.command.options
 
-data class ActivateOptions(
+data class SyncOptions (
     val recursive: Boolean,
     val include: Regex,
     val exclude: Regex
