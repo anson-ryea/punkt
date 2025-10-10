@@ -1,13 +1,8 @@
 package com.an5on.command
 
+import com.an5on.command.options.DiffOptions
 import com.an5on.operation.DiffOperation.diff
-import com.an5on.operation.DiffOperation.diffExistingLocal
-import com.an5on.operation.DiffOptions
-import com.an5on.utils.Echos
 import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
-import com.an5on.utils.echoStage
-import com.an5on.utils.echoSuccess
-import com.an5on.utils.echoWarning
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.options.flag
@@ -39,30 +34,16 @@ class Diff : CliktCommand() {
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
 
-        if (paths == null) {
-            diffExistingLocal(options, echos).fold(
-                ifLeft = { e ->
-                    echo(e.message, err = true)
-                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
-                    exitProcess(e.statusCode)
-                },
-                ifRight = {
-                    echoSuccess()
-                }
-            )
-
-        } else {
-            diff(paths!!, options, echos).fold(
-                ifLeft = { e ->
-                    echo(e.message, err = true)
-                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
-                    exitProcess(e.statusCode)
-                },
-                ifRight = {
-                    echoSuccess()
-                }
-            )
-        }
+        diff(paths, options, echos).fold(
+            ifLeft = { e ->
+                echo(e.message, err = true)
+                logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
+                exitProcess(e.statusCode)
+            },
+            ifRight = {
+                echoSuccess()
+            }
+        )
     }
 
     companion object {

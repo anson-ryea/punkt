@@ -3,91 +3,84 @@ package com.an5on.operation
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
+import com.an5on.command.options.DiffOptions
 import com.an5on.config.ActiveConfiguration.localDirAbsPath
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.operation.OperationUtil.expandPathToFiles
-import com.an5on.states.active.ActiveState.toActivePath
+import com.an5on.operation.OperationUtils.expand
+import com.an5on.operation.OperationUtils.expandToLocal
+import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalState
-import com.an5on.states.local.LocalState.existsInLocal
-import com.an5on.states.local.LocalState.toLocalPath
-import com.an5on.utils.Echos
-import com.an5on.utils.FileUtils.onActive
+import com.an5on.command.Echos
+import com.an5on.file.filter.RegexBasedOnActiveFileFilter
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import com.github.difflib.algorithm.jgit.HistogramDiff
-import org.apache.commons.io.filefilter.RegexFileFilter
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.collections.forEach
 import kotlin.io.path.pathString
 
 object DiffOperation {
-    fun diff(activePaths: Set<Path>, options: DiffOptions, echos: Echos): Either<PunktError, Unit> = either {
-
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
+    fun diff(paths: Set<Path>?, options: DiffOptions, echos: Echos): Either<PunktError, Unit> =
+        if (paths == null || paths.isEmpty()) {
+            diffExistingLocal(options, echos)
+        } else {
+            diffPaths(paths, options, echos)
         }
 
-        activePaths.forEach {
-            ensure(it.existsInLocal().bind()) {
-                LocalError.LocalPathNotFound(it)
+    private fun diffPaths(activePaths: Set<Path>, options: DiffOptions, echos: Echos): Either<PunktError, Unit> =
+        either {
+
+            ensure(LocalState.exists()) {
+                LocalError.LocalNotFound()
             }
+
+            val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
+                .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
+
+            val expandedLocalPaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
+                acc.addAll(
+                    activePath.expandToLocal(true, includeExcludeFilter, true).bind()
+                )
+                acc
+            }
+
+            echos.echo(generateUnifiedDiffStringFromFiles(expandedLocalPaths).bind(), true, false)
         }
 
-        val localPaths = activePaths.map { it.toLocalPath().bind() }.toSet()
+    private fun diffExistingLocal(options: DiffOptions, echos: Echos): Either<PunktError, Unit> = either {
+        val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
+            .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
 
-        diffLocal(localPaths, options, echos).bind()
+        val existingLocalPaths = localDirAbsPath.expand(true, includeExcludeFilter, true).bind()
+
+        echos.echo(generateUnifiedDiffStringFromFiles(existingLocalPaths).bind(), true, false)
     }
 
-    fun diffExistingLocal(options: DiffOptions, echos: Echos): Either<PunktError, Unit> = either {
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
+    private fun generateUnifiedDiffStringFromFiles(localPaths: Collection<Path>): Either<PunktError, String> = either {
+        localPaths.mapNotNull { localPath ->
+            val activePath = localPath.toActive().bind()
 
-        diffLocal(setOf(localDirAbsPath), options, echos).bind()
-    }
+            val localFileAllLines = Files.readAllLines(localPath)
+            val activeFileAllLines = Files.readAllLines(activePath)
 
-    fun diffLocal(localPaths: Set<Path>, options: DiffOptions, echos: Echos): Either<PunktError, Unit> = either {
-
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
-        val includeExcludeFilter = RegexFileFilter(options.include.pattern)
-            .and(RegexFileFilter(options.exclude.pattern).negate())
-            .onActive().bind()
-
-        val accumulatedLocalFiles = localPaths.fold(mutableSetOf<File>()) { acc, localPath ->
-            acc.addAll(
-                (expandPathToFiles(
-                    localPath,
-                    options.recursive,
-                    includeExcludeFilter
-                )).bind().filter { it.isFile }.toSet()
-            )
-            acc
-        }
-        
-        echos.echo(generateUnifiedDiffStringFromFiles(accumulatedLocalFiles).bind(), true, false)
-    }
-
-    fun generateUnifiedDiffStringFromFiles(localFiles: Collection<File>): Either<PunktError, String> = either {
-        localFiles.fold("") { acc, localFile ->
             val patch = DiffUtils.diff(
-                Files.readAllLines(localFile.toPath()),
-                Files.readAllLines(localFile.toPath().toActivePath().bind()),
+                localFileAllLines,
+                activeFileAllLines,
                 HistogramDiff()
             )
 
-            acc + UnifiedDiffUtils.generateUnifiedDiff(
-                localFile.toPath().toActivePath().bind().pathString,
-                localFile.path,
-                Files.readAllLines(localFile.toPath()),
-                patch,
-                3
-            ).joinToString("\n") + "\n"
-        }
+            if (patch.deltas.isEmpty()) {
+                null
+            } else {
+                UnifiedDiffUtils.generateUnifiedDiff(
+                    localPath.pathString,
+                    activePath.pathString,
+                    localFileAllLines,
+                    patch,
+                    3
+                ).joinToString("\n")
+            }
+        }.joinToString("\n")
     }
 }
