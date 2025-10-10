@@ -1,4 +1,4 @@
-package com.an5on.operation
+package com.an5on.command.options
 
 data class ActivateOptions(
     val recursive: Boolean,
