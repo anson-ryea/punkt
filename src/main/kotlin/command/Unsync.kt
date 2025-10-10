@@ -1,7 +1,7 @@
 package com.an5on.command
 
 import com.an5on.operation.UnsyncOperation.unsync
-import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
+import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert

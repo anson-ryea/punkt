@@ -2,7 +2,7 @@ package com.an5on.command
 
 import com.an5on.command.options.ActivateOptions
 import com.an5on.operation.ActivateOperation.activate
-import com.an5on.utils.FileUtils.replaceTildeWithAbsPathname
+import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.options.flag
