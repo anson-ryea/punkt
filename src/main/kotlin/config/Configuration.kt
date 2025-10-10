@@ -1,7 +1,7 @@
 package com.an5on.config
 
-import com.an5on.utils.OsType
-import com.an5on.utils.SystemUtils
+import com.an5on.system.OsType
+import com.an5on.system.SystemUtils
 import kotlinx.serialization.Serializable
 import kotlin.io.path.Path
 

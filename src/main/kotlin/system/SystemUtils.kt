@@ -1,4 +1,4 @@
-package com.an5on.utils
+package com.an5on.system
 
 object SystemUtils {
     val osType = when {
