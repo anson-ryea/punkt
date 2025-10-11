@@ -1,13 +1,9 @@
 package com.an5on.states.local
 
-import arrow.core.Either
-import arrow.core.raise.either
-import arrow.core.raise.ensure
 import com.an5on.config.ActiveConfiguration.homeDirAbsPath
 import com.an5on.config.ActiveConfiguration.localDirAbsPath
 import com.an5on.error.FileError
 import com.an5on.error.LocalError
-import com.an5on.error.PunktError
 import com.an5on.states.local.LocalUtils.toLocal
 import org.apache.commons.io.FileUtils
 import java.nio.file.Files
@@ -25,14 +21,14 @@ object LocalState {
 
     val pendingTransactions = mutableSetOf<LocalTransaction>()
 
-    fun commit(): Either<PunktError, Unit> = either {
+    fun commit() {
         pendingTransactions.forEach {
-            it.run().bind()
+            it.run()
         }
     }
 
-    fun copyFileFromActiveToLocal(activePath: Path): Either<PunktError, Unit> = either {
-        ensure(activePath.exists()) {
+    fun copyFileFromActiveToLocal(activePath: Path) {
+        assert(activePath.exists()) {
             FileError.PathNotFound(activePath)
         }
 
@@ -43,13 +39,13 @@ object LocalState {
         }
 
         val activeFile = activeAbsPath.toFile()
-        val localFile = activeFile.toLocal().bind()
+        val localFile = activeFile.toLocal()
 
         FileUtils.copyFile(activeFile, localFile, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    fun makeDirs(activePath: Path): Either<PunktError, Unit> = either {
-        val localPath = activePath.toLocal().bind()
+    fun makeDirs(activePath: Path) {
+        val localPath = activePath.toLocal()
 
         if (activePath.isDirectory() && !localPath.exists()) {
             Files.createDirectories(localPath)
@@ -58,8 +54,8 @@ object LocalState {
         }
     }
 
-    fun delete(localPath: Path): Either<PunktError, Unit> = either {
-        ensure(localPath.exists()) {
+    fun delete(localPath: Path) {
+        assert(localPath.exists()) {
             LocalError.LocalPathNotFound(localPath)
         }
 

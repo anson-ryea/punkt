@@ -1,11 +1,14 @@
 package com.an5on.command
 
+import arrow.core.raise.fold
 import com.an5on.command.options.SyncOptions
+import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.an5on.operation.SyncOperation.sync
 import com.an5on.states.tracked.TrackedEntriesStore
-import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.*
+import com.github.ajalt.clikt.parameters.options.convert
+import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.path
@@ -14,8 +17,10 @@ import kotlin.system.exitProcess
 
 class Sync : CliktCommand() {
     val recursive by option("-r", "--recursive", help = "Sync directories recursively").flag(default = true)
-    val include by option("-i", "--include", help = "Include files matching the regex pattern")
-    val exclude by option("-x", "--exclude", help = "Exclude files matching the regex pattern")
+    val include by option("-i", "--include", help = "Include files matching the regex pattern").convert { Regex(it) }
+        .default(Regex(".*")) // Matches everything if include is null
+    val exclude by option("-x", "--exclude", help = "Exclude files matching the regex pattern").convert { Regex(it) }
+        .default(Regex("$^")) // Matches nothing if exclude is null
     val targets by argument().convert {
         replaceTildeWithAbsPathname(it)
     }.path(
@@ -24,25 +29,25 @@ class Sync : CliktCommand() {
         canBeSymlink = true,
         mustExist = true,
         mustBeReadable = true
-    ).multiple().unique().optional()
+    ).convert { it.toRealPath().normalize() }.multiple().unique().optional()
 
     override fun run() {
         val options = SyncOptions(
             recursive,
-            include?.toRegex() ?: Regex(".*"), // Matches everything if include is null
-            exclude?.toRegex() ?: Regex("$^") // Matches nothing if exclude is null
+            include,
+            exclude
         )
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
         TrackedEntriesStore.connect()
 
-        sync(targets, options, echos).fold(
-            ifLeft = { e ->
+        fold(
+            { sync(targets, options, echos) },
+            { e ->
                 echo(e.message, err = true)
-                logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
                 exitProcess(e.statusCode)
             },
-            ifRight = {
+            {
                 echoSuccess()
             }
         )

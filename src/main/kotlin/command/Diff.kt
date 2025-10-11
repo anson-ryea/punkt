@@ -1,8 +1,9 @@
 package com.an5on.command
 
+import arrow.core.raise.fold
 import com.an5on.command.options.DiffOptions
-import com.an5on.operation.DiffOperation.diff
 import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
+import com.an5on.operation.DiffOperation.diff
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.options.flag
@@ -34,13 +35,13 @@ class Diff : CliktCommand() {
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
 
-        diff(paths, options, echos).fold(
-            ifLeft = { e ->
+        fold(
+            { diff(paths, options, echos) },
+            { e ->
                 echo(e.message, err = true)
-                logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
                 exitProcess(e.statusCode)
             },
-            ifRight = {
+            {
                 echoSuccess()
             }
         )

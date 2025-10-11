@@ -6,15 +6,13 @@ import java.io.File
 
 class RegexBasedOnLocalFileFilter(
     val regex: Regex
-): IOFileFilter {
+) : IOFileFilter {
     override fun accept(file: File?): Boolean {
         if (file == null) {
             return false
         }
 
-        return file.toLocal().fold({ false }, {
-            regex.matches(it.path)
-        })
+        return file.toLocal().path.matches(regex)
     }
 
     override fun accept(dir: File?, name: String?): Boolean {

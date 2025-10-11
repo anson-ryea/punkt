@@ -1,15 +1,17 @@
 package com.an5on.command
 
+import arrow.core.raise.fold
 import com.an5on.command.options.ListOptions
+import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.an5on.operation.ListOperation.list
 import com.an5on.operation.PathStyles
-import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.path
+import kotlin.system.exitProcess
 
 class List : CliktCommand() {
     val include by option("-i", "--include", help = "Include paths matching the regex pattern")
@@ -38,6 +40,15 @@ class List : CliktCommand() {
         )
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
-        list(paths, options, echos)
+        fold(
+            { list(paths, options, echos) },
+            { e ->
+                echo(e.message, err = true)
+                exitProcess(e.statusCode)
+            },
+            {
+                echoSuccess()
+            }
+        )
     }
 }

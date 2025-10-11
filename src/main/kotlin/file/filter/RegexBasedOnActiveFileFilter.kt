@@ -12,9 +12,7 @@ class RegexBasedOnActiveFileFilter(
             return false
         }
 
-        return file.toActive().fold({ false }, {
-            regex.matches(it.path)
-        })
+        return file.toActive().path.matches(regex)
     }
 
     override fun accept(dir: File?, name: String?): Boolean {
