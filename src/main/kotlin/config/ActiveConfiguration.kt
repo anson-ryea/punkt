@@ -1,3 +1,3 @@
 package com.an5on.config
 
-object ActiveConfiguration: Configuration()
+object ActiveConfiguration : Configuration()

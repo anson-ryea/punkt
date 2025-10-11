@@ -2,7 +2,7 @@ package com.an5on.error
 
 import java.nio.file.Path
 
-interface TrackedError: PunktError {
+interface TrackedError : PunktError {
     override val code: String
 
     data class ConnectFailed(

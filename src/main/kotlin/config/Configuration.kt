@@ -13,7 +13,7 @@ import kotlin.io.path.Path
  * @author Anson Ng
  */
 @Serializable
-open class Configuration (
+open class Configuration(
     val localDirAbsPathname: String = defaultLocalDirAbsPathname,
     val trackedDbAbsPathname: String = defaultTrackedDbAbsPathname,
     val sshPathname: String = "${homeDirAbsPathname}/.ssh",
@@ -37,8 +37,10 @@ open class Configuration (
         val defaultLogDirAbsPathname = when (SystemUtils.osType) {
             OsType.WINDOWS ->
                 "${homeDirAbsPathname}\\AppData\\Local\\punkt\\logs"
+
             OsType.DARWIN ->
                 "${homeDirAbsPathname}/Library/Logs/punkt"
+
             OsType.LINUX ->
                 "${homeDirAbsPathname}/.config/punkt/logs"
         }

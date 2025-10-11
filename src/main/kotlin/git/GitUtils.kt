@@ -5,6 +5,8 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.an5on.config.ActiveConfiguration
 import com.an5on.error.GitError
+import com.an5on.git.GitUtils.remoteRepoPatterns
+import com.an5on.git.GitUtils.sshSessionFactory
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -33,15 +35,39 @@ object GitUtils {
     class RepoPattern(val pattern: Regex, val httpsUrlTemplate: String, val sshUrlTemplate: String)
 
     val remoteRepoPatterns = listOf(
-        RepoPattern(Regex("([-0-9A-Za-z]+)"), $$"https://github.com/%1$s/dotfiles.git", $$"git@github.com:%1$s/dotfiles.git"),
-        RepoPattern(Regex("([-0-9A-Za-z]+)/([-.0-9A-Z_a-z]+?)(\\.git)?"), $$"https://github.com/%1$s/%2$s.git", $$"git@github.com:%1$s/%2$s.git"),
-        RepoPattern(Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)"), $$"https://%1$s/%2$s/dotfiles.git", $$"git@%1$s:%2$s/dotfiles.git"),
-        RepoPattern(Regex("([-0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-.0-9A-Za-z]+)"), $$"https://%1$s/%2$s/%3$s.git", $$"git@%1$s:%2$s/%3$s.git"),
-        RepoPattern(Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"), $$"https://%1$s/%2$s/%3$s.git", $$"git@%1$s:%2$s/%3$s.git"),
-        RepoPattern(Regex("(https?://)([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"), $$"%1$s%2$s/%3$s/%4$s.git", $$"git@%2$s:%3$s/%4$s.git")
+        RepoPattern(
+            Regex("([-0-9A-Za-z]+)"),
+            $$"https://github.com/%1$s/dotfiles.git",
+            $$"git@github.com:%1$s/dotfiles.git"
+        ),
+        RepoPattern(
+            Regex("([-0-9A-Za-z]+)/([-.0-9A-Z_a-z]+?)(\\.git)?"),
+            $$"https://github.com/%1$s/%2$s.git",
+            $$"git@github.com:%1$s/%2$s.git"
+        ),
+        RepoPattern(
+            Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)"),
+            $$"https://%1$s/%2$s/dotfiles.git",
+            $$"git@%1$s:%2$s/dotfiles.git"
+        ),
+        RepoPattern(
+            Regex("([-0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-.0-9A-Za-z]+)"),
+            $$"https://%1$s/%2$s/%3$s.git",
+            $$"git@%1$s:%2$s/%3$s.git"
+        ),
+        RepoPattern(
+            Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"),
+            $$"https://%1$s/%2$s/%3$s.git",
+            $$"git@%1$s:%2$s/%3$s.git"
+        ),
+        RepoPattern(
+            Regex("(https?://)([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"),
+            $$"%1$s%2$s/%3$s/%4$s.git",
+            $$"git@%2$s:%3$s/%4$s.git"
+        )
     )
 
-    val sshSessionFactory = object: JschConfigSessionFactory() {
+    val sshSessionFactory = object : JschConfigSessionFactory() {
         override fun configure(hc: OpenSshConfig.Host?, session: Session?) {
             session?.setConfig("StrictHostKeyChecking", "ask")
         }
