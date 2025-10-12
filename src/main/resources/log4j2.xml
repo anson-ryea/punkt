@@ -2,14 +2,14 @@
 <Configuration status="WARN">
     <Appenders>
         <RollingFile name="AppLog" fileName="${sys:log.dir}/punkt.log"
-                     filePattern="${sys:user.home}/Library/Logs/punkt/punkt-%d{yyyy-MM-dd}.log.gz">
+                     filePattern="${sys:log.dir}/punkt-%d{yyyy-MM-dd}.log.gz">
             <PatternLayout pattern="[%d{dd-MM-yyyy HH:mm:ss}] [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1"/>
             </Policies>
         </RollingFile>
         <RollingFile name="ErrorLog" fileName="${sys:log.dir}/punkt-error.log"
-                     filePattern="${sys:user.home}/Library/Logs/punkt/punkt-error-%d{yyyy-MM-dd}.log.gz">
+                     filePattern="${sys:log.dir}/punkt-error-%d{yyyy-MM-dd}.log.gz">
             <PatternLayout pattern="[%d{dd-MM-yyyy HH:mm:ss}] [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1"/>
@@ -18,10 +18,17 @@
                 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </RollingFile>
+        <Console name="ConsoleLogger" target="SYSTEM_ERR">
+            <PatternLayout pattern="%msg%n"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Console>
     </Appenders>
     <Loggers>
         <Root level="info">
             <AppenderRef ref="AppLog"/>
+            <AppenderRef ref="ConsoleLogger"/>
             <AppenderRef ref="ErrorLog"/>
         </Root>
     </Loggers>
