@@ -16,7 +16,22 @@ import org.apache.commons.io.filefilter.RegexFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
+/**
+ * Handles the sync operation to synchronize files from the active state to the local state.
+ *
+ * This object provides operations to sync paths, either by syncing existing local files or specific paths.
+ *
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 object SyncOperation {
+    /**
+     * Syncs the specified active paths or all existing local files if no paths are provided.
+     *
+     * @param activePaths the set of active paths to sync, or null to sync all existing local files
+     * @param options the sync options
+     * @param echos the echo functions for output
+     */
     fun Raise<PunktError>.sync(activePaths: Set<Path>?, options: SyncOptions, echos: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -29,6 +44,13 @@ object SyncOperation {
         }
     }
 
+    /**
+     * Syncs the specified set of active paths.
+     *
+     * @param activePaths the set of active paths to sync
+     * @param options the sync options
+     * @param echos the echo functions for output
+     */
     private fun Raise<PunktError>.syncPaths(activePaths: Set<Path>, options: SyncOptions, echos: Echos) {
 
         val includeExcludeFilter = RegexFileFilter(options.include.pattern)

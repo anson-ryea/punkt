@@ -17,7 +17,22 @@ import com.an5on.states.local.LocalUtils.existsInLocal
 import java.nio.file.Path
 import kotlin.io.path.relativeTo
 
+/**
+ * Handles the list operation for displaying files in the local state.
+ *
+ * This object provides operations to list paths, either by listing existing local files or specific paths.
+ *
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 object ListOperation {
+    /**
+     * Lists the specified active paths or all existing local files if no paths are provided.
+     *
+     * @param activePaths the set of active paths to list, or null to list all existing local files
+     * @param options the list options
+     * @param echo the echo functions for output
+     */
     fun Raise<PunktError>.list(activePaths: Set<Path>?, options: ListOptions, echo: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -30,6 +45,13 @@ object ListOperation {
         }
     }
 
+    /**
+     * Lists the specified set of active paths.
+     *
+     * @param activePaths the set of active paths to list
+     * @param options the list options
+     * @param echo the echo functions for output
+     */
     private fun Raise<PunktError>.listPaths(activePaths: Set<Path>, options: ListOptions, echo: Echos) {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
             .and(RegexBasedOnActiveFileFilter(options.exclude).negate())

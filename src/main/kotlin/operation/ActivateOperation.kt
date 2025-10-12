@@ -20,7 +20,22 @@ import org.apache.commons.io.filefilter.TrueFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
+/**
+ * Handles the activation of files from the local state to the active state.
+ *
+ * This object provides operations to activate paths, either by activating existing local files or specific paths.
+ *
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 object ActivateOperation {
+    /**
+     * Activates the specified active paths or all existing local files if no paths are provided.
+     *
+     * @param activePaths the set of active paths to activate, or null to activate all existing local files
+     * @param options the activation options
+     * @param echos the echo functions for output
+     */
     fun Raise<PunktError>.activate(activePaths: Set<Path>?, options: ActivateOptions, echos: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -33,7 +48,13 @@ object ActivateOperation {
         }
     }
 
-
+    /**
+     * Activates the specified set of active paths.
+     *
+     * @param activePaths the set of active paths to activate
+     * @param options the activation options
+     * @param echos the echo functions for output
+     */
     private fun Raise<PunktError>.activatePaths(activePaths: Set<Path>, options: ActivateOptions, echos: Echos) {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
             .and(RegexBasedOnActiveFileFilter(options.exclude).negate())

@@ -11,7 +11,6 @@ import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.ProgramResult
-import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.options.flag
@@ -28,13 +27,10 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * @property branch The branch of the remote Punkt repository to clone. If not provided, the default branch is cloned.
  * @property depth The depth for a shallow clone of the remote Punkt repository. If not provided, a full clone is performed.
  * @see remoteRepoPatterns
- * @author Anson Ng
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
  */
 class Init : CliktCommand() {
-    init {
-        installMordantMarkdown()
-    }
-
     val repo: String? by argument(
         help = "Clone from the specified remote Punkt repository"
     ).optional()
@@ -50,6 +46,12 @@ class Init : CliktCommand() {
         help = "Clone the remote Punkt repository shallowly with the specified depth"
     ).int()
 
+    /**
+     * Provides the help message for the init command.
+     *
+     * @param context the context of the command
+     * @return the help message string
+     */
     override fun help(context: Context) = """
     Initialises a Punkt local repository at ${localDirAbsPathname}.
             
@@ -70,6 +72,12 @@ class Init : CliktCommand() {
         punkt init --ssh --branch main --depth 1 audrey/dotfiles
     """.trimIndent()
 
+    /**
+     * Executes the init command.
+     *
+     * Checks if Punkt is already initialized. If not, either initializes an empty local repository
+     * or clones from the specified remote repository based on the provided arguments.
+     */
     override fun run() {
         if (LocalState.exists()) {
             logger.error { "Punkt is already initialised at $localDirAbsPathname" }
@@ -103,6 +111,9 @@ class Init : CliktCommand() {
         }
     }
 
+    /**
+     * Companion object for the Init command.
+     */
     companion object {
         private val logger = KotlinLogging.logger {}
     }
