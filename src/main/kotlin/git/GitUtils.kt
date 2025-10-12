@@ -3,7 +3,7 @@ package com.an5on.git
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.an5on.config.ActiveConfiguration
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.error.GitError
 import com.an5on.git.GitUtils.remoteRepoPatterns
 import com.an5on.git.GitUtils.sshSessionFactory
@@ -74,11 +74,12 @@ object GitUtils {
 
         override fun createDefaultJSch(fs: FS?): JSch? {
             val jsch = super.createDefaultJSch(fs)
-            when {
-                ActiveConfiguration.sshPrivateKeyPathname != null -> jsch.addIdentity(ActiveConfiguration.sshPrivateKeyPathname)
-                File("${ActiveConfiguration.sshPathname}/id_rsa").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_rsa")
-                File("${ActiveConfiguration.sshPathname}/id_ed25519").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_ed25519")
-            }
+            TODO()
+//            when {
+//                ActiveConfiguration.sshPrivateKeyPathname != null -> jsch.addIdentity(ActiveConfiguration.sshPrivateKeyPathname)
+//                File("${ActiveConfiguration.sshPathname}/id_rsa").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_rsa")
+//                File("${ActiveConfiguration.sshPathname}/id_ed25519").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_ed25519")
+//            }
             return jsch
         }
     }

@@ -4,8 +4,7 @@ import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.ListOptions
-import com.an5on.config.ActiveConfiguration.homeDirAbsPath
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
@@ -71,7 +70,7 @@ object ListOperation {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
             .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
 
-        val existingLocalPaths = localDirAbsPath.expand(true, includeExcludeFilter)
+        val existingLocalPaths = config.general.localStatePath.expand(true, includeExcludeFilter)
 
         printFiles(existingLocalPaths, options.pathStyle, echos)
     }
@@ -89,7 +88,7 @@ object ListOperation {
             PathStyles.RELATIVE -> {
                 echos.echo(
                     paths
-                        .map { it.toActive().relativeTo(homeDirAbsPath) }
+                        .map { it.toActive().relativeTo(config.general.activeStatePath) }
                         .sorted()
                         .joinToString("\n"), true, false)
             }
@@ -105,7 +104,7 @@ object ListOperation {
             PathStyles.LOCAL_RELATIVE -> {
                 echos.echo(
                     paths
-                        .map { it.relativeTo(localDirAbsPath) }
+                        .map { it.relativeTo(config.general.localStatePath) }
                         .sorted()
                         .joinToString("\n"), true, false)
             }

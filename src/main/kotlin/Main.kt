@@ -2,10 +2,11 @@ package com.an5on
 
 import com.an5on.command.*
 import com.an5on.command.List
-import com.an5on.config.Configuration
+import com.an5on.system.SystemUtils.logPath
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.io.path.pathString
 
 /**
  * Serves as the entry point for Punkt.
@@ -16,7 +17,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * @author Anson Ng
  */
 fun main(args: Array<String>) {
-    System.setProperty("log.dir", Configuration.defaultLogDirAbsPathname)
+    System.setProperty("log.dir", logPath.pathString)
 
     val logger = KotlinLogging.logger {}
 

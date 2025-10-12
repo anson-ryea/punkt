@@ -1,9 +1,7 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
-import com.an5on.config.ActiveConfiguration.localDirAbsPathname
-import com.an5on.config.Configuration
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.git.GitOperations.cloneRepository
 import com.an5on.git.GitOperations.initialiseRepository
 import com.an5on.git.GitUtils.remoteRepoPatterns
@@ -21,7 +19,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 /**
  * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
  *
- * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository is initialised at [Configuration.localDirAbsPathname].
+ * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository is initialised at [Configuration.config.general.localPath].
  * Currently, [repo] supports the formats specified in [remoteRepoPatterns].
  * @property ssh A flag indicating whether to use SSH for cloning the remote Punkt repository.
  * @property branch The branch of the remote Punkt repository to clone. If not provided, the default branch is cloned.
@@ -47,10 +45,10 @@ class Init : CliktCommand() {
     ).int()
 
     override fun help(context: Context) = """
-    Initialises a Punkt local repository at ${localDirAbsPathname}.
+    Initialises a Punkt local repository at ${config.general.localStatePath}.
             
-    If a remote Punkt repository URL is provided, it clones the repository to ${localDirAbsPathname}.
-    Otherwise, it initialises an empty Punkt local repository at ${localDirAbsPathname}.
+    If a remote Punkt repository URL is provided, it clones the repository to ${config.general.localStatePath}.
+    Otherwise, it initialises an empty Punkt local repository at ${config.general.localStatePath}.
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
@@ -74,14 +72,14 @@ class Init : CliktCommand() {
      */
     override fun run() {
         if (LocalState.exists()) {
-            logger.error { "Punkt is already initialised at $localDirAbsPathname" }
+            logger.error { "Punkt is already initialised at ${config.general.localStatePath}" }
             throw ProgramResult(1)
         }
 
         if (repo == null) {
             fold(
                 {
-                    initialiseRepository(localDirAbsPath)
+                    initialiseRepository(config.general.localStatePath)
                 },
                 { e ->
                     logger.error { e.message }
@@ -93,7 +91,7 @@ class Init : CliktCommand() {
         } else {
             fold(
                 {
-                    cloneRepository(localDirAbsPath, repo!!, ssh ?: false, branch, depth)
+                    cloneRepository(config.general.localStatePath, repo!!, ssh ?: false, branch, depth)
                 },
                 { e ->
                     logger.error { e.message }
