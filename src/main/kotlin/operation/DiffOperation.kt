@@ -22,9 +22,27 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 
+/**
+ * Handles the diff operation between active and local states.
+ *
+ * This object provides operations to compute and display differences between files in the active and local states.
+ *
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 object DiffOperation {
+    /**
+     * The number of context lines to include in unified diffs.
+     */
     const val PATCH_CONTEXT_SIZE = 3
 
+    /**
+     * Computes and displays diffs for the specified active paths or all existing local files if no paths are provided.
+     *
+     * @param paths the set of active paths to diff, or null to diff all existing local files
+     * @param options the diff options
+     * @param echos the echo functions for output
+     */
     fun Raise<PunktError>.diff(paths: Set<Path>?, options: DiffOptions, echos: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -37,7 +55,13 @@ object DiffOperation {
         }
     }
 
-
+    /**
+     * Computes and displays diffs for the specified set of active paths.
+     *
+     * @param activePaths the set of active paths to diff
+     * @param options the diff options
+     * @param echos the echo functions for output
+     */
     private fun Raise<PunktError>.diffPaths(activePaths: Set<Path>, options: DiffOptions, echos: Echos) {
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)

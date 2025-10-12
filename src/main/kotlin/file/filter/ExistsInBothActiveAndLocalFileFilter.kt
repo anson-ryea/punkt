@@ -1,27 +1,23 @@
 package com.an5on.file.filter
 
-import com.an5on.states.active.ActiveUtils.contentEqualsActive
-import com.an5on.states.active.ActiveUtils.toActive
-import com.an5on.states.local.LocalUtils.contentEqualsLocal
+import com.an5on.states.active.ActiveUtils.existsInActive
+import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.states.local.LocalUtils.isLocal
-import com.an5on.states.local.LocalUtils.toLocal
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 
 /**
- * [IOFileFilter] that accepts files where the file content of both the active and local states are equal.
+ * [IOFileFilter] that accepts files that exist in both the active and local states.
  *
  * This filter determines acceptance based on whether the file is in the local state or active state:
- * - For local files: Accepts directories if the corresponding active directory exists,
- *   and accepts files if their content equals the active content.
- * - For active files: Accepts directories if the corresponding local directory exists,
- *   and accepts files if their content equals the local content.
+ * - For local files: Accepts if the corresponding file exists in the active state.
+ * - For active files: Accepts if the corresponding file exists in the local state.
  *
- *   @see IOFileFilter
- *   @author Anson Ng <hej@an5on.com>
- *   @since 0.1.0
+ * @see IOFileFilter
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
  */
-object ActiveEqualsLocalFileFilter : IOFileFilter {
+object ExistsInBothActiveAndLocalFileFilter : IOFileFilter {
     /**
      * Tests whether the specified file should be accepted.
      *
@@ -34,15 +30,9 @@ object ActiveEqualsLocalFileFilter : IOFileFilter {
         }
 
         return if (file.isLocal()) {
-            if (file.isDirectory) {
-                file.toActive().exists()
-            }
-            file.contentEqualsActive()
+            file.existsInActive()
         } else {
-            if (file.isDirectory) {
-                file.toLocal().exists()
-            }
-            file.contentEqualsLocal()
+            file.existsInLocal()
         }
     }
 

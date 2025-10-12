@@ -12,6 +12,13 @@ import com.github.ajalt.clikt.parameters.arguments.unique
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.oshai.kotlinlogging.KotlinLogging
 
+/**
+ * Unsynchronize files by removing them from the local state.
+ *
+ * @property targets the list of target paths to unsync
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 class Unsync : CliktCommand() {
     val targets by argument().convert {
         replaceTildeWithHomeDirPathname(it)

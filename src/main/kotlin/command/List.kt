@@ -15,6 +15,15 @@ import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.oshai.kotlinlogging.KotlinLogging
 
+/**
+ * List files in the local state.
+ *
+ * @property commonOptionGroup the common options for include and exclude
+ * @property pathStyle the style for displaying paths
+ * @property paths the list of paths to list, or null to list all existing local files
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 class List : CliktCommand() {
     private val commonOptionGroup by CommonOptionGroup()
     private val pathStyle by option(

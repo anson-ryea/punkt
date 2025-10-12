@@ -11,7 +11,21 @@ import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.states.local.LocalUtils.toLocal
 import java.nio.file.Path
 
+/**
+ * Handles the unsync operation to remove files from the local state.
+ *
+ * This object provides operations to unsync paths by deleting them from the local state.
+ *
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 object UnsyncOperation {
+    /**
+     * Unsynchronizes the specified active paths by removing them from the local state.
+     *
+     * @param activePaths the set of active paths to unsync
+     * @param echos the echo functions for output
+     */
     fun Raise<PunktError>.unsync(activePaths: Set<Path>, echos: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -28,7 +42,7 @@ object UnsyncOperation {
         commit(localPaths, echos)
     }
 
-    fun commit(localPaths: Set<Path>, echos: Echos) {
+    private fun commit(localPaths: Set<Path>, echos: Echos) {
         LocalState.pendingTransactions.addAll(
             localPaths.map { LocalTransactionDelete(it) }
         )

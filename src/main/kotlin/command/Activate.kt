@@ -11,6 +11,14 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.oshai.kotlinlogging.KotlinLogging
 
+/**
+ * Activate files from the local state to the active state.
+ *
+ * @property commonOptionGroup the common options for recursive, include, and exclude
+ * @property targets the list of target paths to activate, or null to activate all existing local files
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 class Activate : CliktCommand() {
     private val commonOptionGroup by CommonOptionGroup()
     private val targets by argument().convert {

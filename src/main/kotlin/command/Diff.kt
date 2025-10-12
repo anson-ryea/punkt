@@ -11,6 +11,14 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.oshai.kotlinlogging.KotlinLogging
 
+/**
+ * Display differences between active and local states.
+ *
+ * @property commonOptionGroup the common options for recursive, include, and exclude
+ * @property paths the list of paths to diff, or null to diff all existing local files
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 class Diff : CliktCommand() {
     private val commonOptionGroup by CommonOptionGroup()
     private val paths by argument().convert {
