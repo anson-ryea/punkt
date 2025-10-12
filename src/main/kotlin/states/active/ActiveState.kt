@@ -7,15 +7,34 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 
+/**
+ * Manages the files in active state in the Punkt system.
+ *
+ * This object handles transactions and operations related to the active state, such as copying files and creating directories.
+ *
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 object ActiveState {
+    /**
+     * A set of pending transactions to be executed.
+     */
     val pendingTransactions = mutableSetOf<ActiveTransaction>()
 
+    /**
+     * Executes all pending transactions.
+     */
     fun transact() {
         pendingTransactions.forEach {
             it.run()
         }
     }
 
+    /**
+     * Copies a file from the local path to the corresponding active path.
+     *
+     * @param localPath the absolute path of the local file to copy
+     */
     fun copyFromLocalToActive(localPath: Path) {
         assert(localPath.isAbsolute && localPath.exists())
 
@@ -25,6 +44,11 @@ object ActiveState {
         FileUtils.copyFile(localFile, activeFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
     }
 
+    /**
+     * Creates the necessary directories for the active path corresponding to the local path.
+     *
+     * @param localPath the local path for which to create active directories
+     */
     fun makeDirs(localPath: Path) {
         val activePath = localPath.toActive()
 
