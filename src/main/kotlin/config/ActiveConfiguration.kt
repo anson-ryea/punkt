@@ -6,7 +6,16 @@ import com.sksamuel.hoplite.ExperimentalHoplite
 import com.sksamuel.hoplite.addResourceSource
 import kotlin.io.path.pathString
 
+/**
+ * Provides access to the active configuration loaded from the configuration file.
+ *
+ * @author Anson Ng &lt;hej@an5on.com&gt;
+ * @since 0.1.0
+ */
 object ActiveConfiguration {
+    /**
+     * The loaded configuration instance.
+     */
     @OptIn(ExperimentalHoplite::class)
     val config = ConfigLoaderBuilder
         .default()
