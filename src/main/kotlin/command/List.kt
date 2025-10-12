@@ -1,20 +1,23 @@
 package com.an5on.command
 
+import arrow.core.raise.fold
 import com.an5on.command.options.ListOptions
+import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.ListOperation.list
 import com.an5on.operation.PathStyles
-import com.an5on.file.FileUtils.replaceTildeWithAbsPathname
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.*
+import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.path
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class List : CliktCommand() {
-    val include by option("-i", "--include", help = "Include paths matching the regex pattern")
-    val exclude by option("-x", "--exclude", help = "Exclude paths matching the regex pattern")
-    val pathStyle by option(
+    private val commonOptionGroup by CommonOptionGroup()
+    private val pathStyle by option(
         "-p", "--path-style",
         help = "Set the path style for displaying the list of managed dotfiles. Options are 'absolute' or 'relative' to the home directory."
     ).choice(
@@ -23,7 +26,7 @@ class List : CliktCommand() {
             .toTypedArray(),
     ).default("absolute")
     val paths by argument().convert {
-        replaceTildeWithAbsPathname(it)
+        replaceTildeWithHomeDirPathname(it)
     }.path(
         canBeFile = true,
         canBeDir = true,
@@ -32,12 +35,23 @@ class List : CliktCommand() {
 
     override fun run() {
         val options = ListOptions(
-            include?.toRegex() ?: Regex(".*"), // Matches everything if include is null
-            exclude?.toRegex() ?: Regex("$^"), // Matches nothing if exclude is null
+            commonOptionGroup.include,
+            commonOptionGroup.exclude,
             PathStyles.valueOf(pathStyle.uppercase().replace("-", "_")),
         )
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
-        list(paths, options, echos)
+        fold(
+            { list(paths, options, echos) },
+            { e ->
+                logger.error { e.message }
+                throw ProgramResult(e.statusCode)
+            },
+            {
+                echoSuccess()
+            }
+        )
     }
+
+    private val logger = KotlinLogging.logger {}
 }

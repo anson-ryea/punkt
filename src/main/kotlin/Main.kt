@@ -1,12 +1,7 @@
 package com.an5on
 
-import com.an5on.command.Activate
-import com.an5on.command.Command
-import com.an5on.command.Diff
-import com.an5on.command.Init
+import com.an5on.command.*
 import com.an5on.command.List
-import com.an5on.command.Sync
-import com.an5on.command.Unsync
 import com.an5on.config.Configuration
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
@@ -24,8 +19,9 @@ fun main(args: Array<String>) {
     System.setProperty("log.dir", Configuration.defaultLogDirAbsPathname)
 
     val logger = KotlinLogging.logger {}
+
     Thread.setDefaultUncaughtExceptionHandler { t, e ->
-        logger.error(e) { "Uncaught exception in thread ${t.name}: ${e.message}" }
+        logger.error { "Uncaught exception in thread ${t.name}: ${e.message}" }
     }
 
     Command().subcommands(

@@ -6,13 +6,8 @@ import java.io.File
 import kotlin.io.path.pathString
 
 object FileUtils {
-    fun replaceTildeWithAbsPathname(pathname: String): String {
-        return if (pathname.startsWith("~")) {
-            pathname.replaceFirst("~", ActiveConfiguration.homeDirAbsPath.pathString)
-        } else {
-            pathname
-        }
-    }
+    fun replaceTildeWithHomeDirPathname(pathname: String): String =
+        pathname.replaceFirst("~", ActiveConfiguration.homeDirAbsPath.pathString)
 
     fun getBlake3HashHexString(file: File) = Blake3.hash(file.readBytes()).toHexString()
 }

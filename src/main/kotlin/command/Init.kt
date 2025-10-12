@@ -1,6 +1,8 @@
 package com.an5on.command
 
-import com.an5on.config.ActiveConfiguration
+import arrow.core.raise.fold
+import com.an5on.config.ActiveConfiguration.localDirAbsPath
+import com.an5on.config.ActiveConfiguration.localDirAbsPathname
 import com.an5on.config.Configuration
 import com.an5on.git.GitOperations.cloneRepository
 import com.an5on.git.GitOperations.initialiseRepository
@@ -8,6 +10,7 @@ import com.an5on.git.GitUtils.remoteRepoPatterns
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
@@ -15,8 +18,6 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.io.File
-import kotlin.system.exitProcess
 
 /**
  * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
@@ -50,10 +51,10 @@ class Init : CliktCommand() {
     ).int()
 
     override fun help(context: Context) = """
-    Initialises a Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}.
+    Initialises a Punkt local repository at ${localDirAbsPathname}.
             
-    If a remote Punkt repository URL is provided, it clones the repository to ${ActiveConfiguration.localDirAbsPathname}.
-    Otherwise, it initialises an empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}.
+    If a remote Punkt repository URL is provided, it clones the repository to ${localDirAbsPathname}.
+    Otherwise, it initialises an empty Punkt local repository at ${localDirAbsPathname}.
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
@@ -71,31 +72,31 @@ class Init : CliktCommand() {
 
     override fun run() {
         if (LocalState.exists()) {
-            echoWarning("Punkt is already initialised at ${ActiveConfiguration.localDirAbsPathname}")
-            return
+            logger.error { "Punkt is already initialised at $localDirAbsPathname" }
+            throw ProgramResult(1)
         }
 
         if (repo == null) {
-            echoStage("Initialising empty Punkt local repository at ${ActiveConfiguration.localDirAbsPathname}")
-            initialiseRepository(File(ActiveConfiguration.localDirAbsPathname)).fold(
-                ifLeft = { e ->
-                    echo(e.message, err = true)
-                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
-                    exitProcess(e.statusCode)
+            fold(
+                {
+                    initialiseRepository(localDirAbsPath)
                 },
-                ifRight = {
+                { e ->
+                    logger.error { e.message }
+                    throw ProgramResult(1)
+                }, {
                     echoSuccess()
                 }
             )
         } else {
-            echoStage("Cloning existing Punkt local repository from $repo to ${ActiveConfiguration.localDirAbsPathname}")
-            cloneRepository(repo!!, File(ActiveConfiguration.localDirAbsPathname), ssh ?: false, branch, depth).fold(
-                ifLeft = { e ->
-                    echo(e.message, err = true)
-                    logger.error { "${e.message}\n${e.cause?.stackTraceToString()}" }
-                    exitProcess(e.statusCode)
+            fold(
+                {
+                    cloneRepository(localDirAbsPath, repo!!, ssh ?: false, branch, depth)
                 },
-                ifRight = {
+                { e ->
+                    logger.error { e.message }
+                    throw ProgramResult(1)
+                }, {
                     echoSuccess()
                 }
             )

@@ -1,8 +1,8 @@
 package com.an5on.command
 
-class Echos (
-    val echo: (Any?, Boolean, Boolean) -> Unit,
-    val echoStage: (Any?) -> Unit,
-    val echoSuccess: (Any?) -> Unit,
-    val echoWarning: (Any?) -> Unit,
+data class Echos(
+    val echo: (message: Any?, trailingNewLine: Boolean, err: Boolean) -> Unit,
+    val echoStage: (message: Any?) -> Unit,
+    val echoSuccess: (message: Any?) -> Unit,
+    val echoWarning: (message: Any?) -> Unit,
 )

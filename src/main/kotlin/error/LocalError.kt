@@ -11,7 +11,7 @@ sealed interface LocalError : PunktError {
     ) : GitError {
         override val code: String = "LOCAL_NOT_FOUND"
         override val message: String
-            get() = "No local repository found. Run 'punkt init' to initialize a local repository."
+            get() = "punkt local repository not found: Have you initialised it with \"punkt init\" yet?"
     }
 
     data class LocalPathNotFound(
@@ -20,6 +20,6 @@ sealed interface LocalError : PunktError {
     ) : LocalError {
         override val code: String = "LOCAL_PATH_NOT_FOUND"
         override val message: String
-            get() = "The local repository does not hold a copy of: ${path.toActive()}"
+            get() = "${path.toActive()}: Have you synced it with \"punkt sync ${path.toActive()}\" yet?"
     }
 }
