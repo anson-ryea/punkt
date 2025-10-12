@@ -1,9 +1,6 @@
 package com.an5on.states.local
 
-import com.an5on.config.ActiveConfiguration.homeDirAbsPath
 import com.an5on.config.ActiveConfiguration.localDirAbsPath
-import com.an5on.error.FileError
-import com.an5on.error.LocalError
 import com.an5on.states.local.LocalUtils.toLocal
 import org.apache.commons.io.FileUtils
 import java.nio.file.Files
@@ -28,17 +25,9 @@ object LocalState {
     }
 
     fun copyFileFromActiveToLocal(activePath: Path) {
-        assert(activePath.exists()) {
-            FileError.PathNotFound(activePath)
-        }
+        assert(activePath.isAbsolute && activePath.exists())
 
-        val activeAbsPath = if (activePath.isAbsolute) {
-            activePath
-        } else {
-            homeDirAbsPath.resolve(activePath).normalize()
-        }
-
-        val activeFile = activeAbsPath.toFile()
+        val activeFile = activePath.toFile()
         val localFile = activeFile.toLocal()
 
         FileUtils.copyFile(activeFile, localFile, StandardCopyOption.REPLACE_EXISTING)
@@ -55,9 +44,7 @@ object LocalState {
     }
 
     fun delete(localPath: Path) {
-        assert(localPath.exists()) {
-            LocalError.LocalPathNotFound(localPath)
-        }
+        assert(localPath.exists())
 
         if (localPath.isDirectory()) {
             localPath.toFile().deleteRecursively()

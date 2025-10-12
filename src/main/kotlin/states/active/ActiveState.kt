@@ -1,8 +1,7 @@
 package com.an5on.states.active
 
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
-import com.an5on.error.LocalError
 import com.an5on.states.active.ActiveUtils.toActive
+import org.apache.commons.io.FileUtils
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -18,20 +17,12 @@ object ActiveState {
     }
 
     fun copyFromLocalToActive(localPath: Path) {
-        assert(localPath.exists()) {
-            LocalError.LocalPathNotFound(localPath)
-        }
+        assert(localPath.isAbsolute && localPath.exists())
 
-        val localAbsPath = if (localPath.isAbsolute) {
-            localPath
-        } else {
-            localDirAbsPath.resolve(localPath).normalize()
-        }
+        val localFile = localPath.toFile()
+        val activeFile = localFile.toActive()
 
-        val activePath = localAbsPath.toActive()
-        makeDirs(localAbsPath)
-
-        Files.copy(localAbsPath, activePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        FileUtils.copyFile(localFile, activeFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
     }
 
     fun makeDirs(localPath: Path) {

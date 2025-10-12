@@ -19,8 +19,10 @@ object LocalUtils {
         else -> Regex("^\\.(?!/)|(?<=/)\\.")
     }
 
-    fun Path.toLocal(): Path =
-        if (!this.isAbsolute) {
+    fun Path.toLocal(): Path {
+        assert(!isAbsolute || !isLocal())
+
+        return if (!this.isAbsolute) {
             localDirAbsPath.resolve(
                 this.pathString.replace(dotFileRegex, dotReplacementString)
             ).normalize()
@@ -34,6 +36,7 @@ object LocalUtils {
                 this.pathString.replace(dotFileRegex, dotReplacementString)
             ).normalize()
         }
+    }
 
     fun File.toLocal(): File = this.toPath().toLocal().toFile()
 
@@ -46,14 +49,11 @@ object LocalUtils {
     fun File.existsInLocal() = this.toPath().existsInLocal()
 
     fun Path.fileContentEqualsLocal(): Boolean {
-        assert(this.exists()) {
-
-        }
+        assert(this.exists())
 
         val localPath = this.toLocal()
-        assert(localPath.exists()) {
 
-        }
+        assert(localPath.exists())
 
         return PathUtils.fileContentEquals(this, localPath)
     }
