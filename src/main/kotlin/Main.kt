@@ -19,8 +19,9 @@ fun main(args: Array<String>) {
     System.setProperty("log.dir", Configuration.defaultLogDirAbsPathname)
 
     val logger = KotlinLogging.logger {}
+
     Thread.setDefaultUncaughtExceptionHandler { t, e ->
-        logger.error(e) { "Uncaught exception in thread ${t.name}: ${e.message}" }
+        logger.error { "Uncaught exception in thread ${t.name}: ${e.message}" }
     }
 
     Command().subcommands(
