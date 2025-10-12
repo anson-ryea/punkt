@@ -15,7 +15,7 @@ object SystemUtils {
         OsType.WINDOWS -> System.getenv("APPDATA")?.let { Path(it) } ?: homePath.resolve("\\AppData\\Roaming")
         OsType.DARWIN -> homePath.resolve("Library/Application Support")
         OsType.LINUX -> System.getenv("XDG_CONFIG_HOME")?.let { Path(it) } ?: homePath.resolve("/.config")
-    }.resolve("punkt")
+    }.resolve("punkt/punkt.json")
 
     val logPath: Path = when (osType) {
         OsType.WINDOWS -> System.getenv("LOCALAPPDATA")?.let { Path(it) } ?: homePath.resolve("\\AppData\\Local\\punkt\\logs")
