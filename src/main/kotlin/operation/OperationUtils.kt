@@ -1,6 +1,6 @@
 package com.an5on.operation
 
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.toLocal
 import org.apache.commons.io.FileUtils
@@ -97,6 +97,6 @@ object OperationUtils {
     /**
      * A set of active paths corresponding to all existing local paths.
      */
-    val existingLocalPathsToActivePaths = localDirAbsPath.expandToActive(true, TrueFileFilter.INSTANCE)
+    val existingLocalPathsToActivePaths = config.general.localStatePath.expandToActive(true, TrueFileFilter.INSTANCE)
 
 }

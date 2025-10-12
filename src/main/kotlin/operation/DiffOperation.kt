@@ -4,7 +4,7 @@ import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.DiffOptions
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
@@ -84,7 +84,7 @@ object DiffOperation {
             .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
             .and(ExistsInBothActiveAndLocalFileFilter)
 
-        val existingLocalPaths = localDirAbsPath.expand(true, includeExcludeFilter, true)
+        val existingLocalPaths = config.general.localStatePath.expand(true, includeExcludeFilter, true)
 
         echos.echo(generateUnifiedDiffStringFromFiles(existingLocalPaths), true, false)
     }

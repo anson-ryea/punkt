@@ -2,7 +2,7 @@ package com.an5on.states.tracked
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.an5on.config.ActiveConfiguration
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.error.PunktError
 import com.an5on.error.TrackedError
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -11,6 +11,7 @@ import org.h2.mvstore.MVMap
 import org.h2.mvstore.MVStore
 import java.nio.file.Path
 import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 @OptIn(ExperimentalSerializationApi::class)
 object TrackedEntriesStore {
@@ -19,11 +20,11 @@ object TrackedEntriesStore {
 
     private fun openStore(): Either<PunktError, Unit> = either {
         try {
-            if (!ActiveConfiguration.trackedDbAbsPath.exists()) {
-                ActiveConfiguration.trackedDbAbsPath.parent.toFile().mkdirs()
+            if (!config.general.trackerPath.exists()) {
+                config.general.trackerPath.parent.toFile().mkdirs()
             }
 
-            val store = MVStore.open(ActiveConfiguration.trackedDbAbsPathname)
+            val store = MVStore.open(config.general.trackerPath.pathString)
             trackedStore = store
         } catch (e: Exception) {
             throw e
@@ -32,7 +33,7 @@ object TrackedEntriesStore {
 
     private fun openMap(): Either<PunktError, Unit> = either {
         try {
-            val store = trackedStore ?: raise(TrackedError.ConnectFailed(ActiveConfiguration.trackedDbAbsPath))
+            val store = trackedStore ?: raise(TrackedError.ConnectFailed(config.general.trackerPath))
             val map = store.openMap<String, ByteArray>("trackedEntriesMap")
             trackedEntriesMap = map
         } catch (e: Exception) {

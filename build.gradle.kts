@@ -37,6 +37,7 @@ dependencies {
     implementation("commons-codec:commons-codec:1.19.0")
     implementation("io.github.java-diff-utils:java-diff-utils:4.16")
     implementation("io.github.java-diff-utils:java-diff-utils-jgit:4.16")
+    implementation("com.sksamuel.hoplite:hoplite-core:3.0.0.RC1")
     testImplementation(kotlin("test"))
 }
 

@@ -1,6 +1,6 @@
 package com.an5on.states.local
 
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
+import com.an5on.config.ActiveConfiguration.config
 import com.an5on.states.local.LocalUtils.toLocal
 import org.apache.commons.io.FileUtils
 import java.nio.file.Files
@@ -22,7 +22,7 @@ object LocalState {
      *
      * @return `true` if the local Punkt repository exists, `false` otherwise.
      */
-    fun exists() = localDirAbsPath.exists()
+    fun exists() = config.general.localStatePath.exists()
 
     /**
      * A set of pending transactions to be committed.

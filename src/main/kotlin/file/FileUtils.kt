@@ -1,6 +1,7 @@
 package com.an5on.file
 
-import com.an5on.config.ActiveConfiguration
+
+import com.an5on.system.SystemUtils.homePath
 import org.apache.commons.codec.digest.Blake3
 import java.io.File
 import kotlin.io.path.pathString
@@ -23,7 +24,7 @@ object FileUtils {
      * @return the pathname with ~ replaced by the absolute home directory path
      */
     fun replaceTildeWithHomeDirPathname(pathname: String): String =
-        pathname.replaceFirst("~", ActiveConfiguration.homeDirAbsPath.pathString)
+        pathname.replaceFirst("~", homePath.pathString)
 
     /**
      * Computes the Blake3 hash of the given file and returns it as a hexadecimal string.
