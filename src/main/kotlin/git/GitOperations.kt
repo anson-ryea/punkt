@@ -1,42 +1,43 @@
 package com.an5on.git
 
-import arrow.core.Either
-import arrow.core.raise.either
+import arrow.core.raise.Raise
+import arrow.core.raise.catch
 import com.an5on.error.GitError
 import com.an5on.git.GitUtils.buildCredentialsProvider
 import com.an5on.git.GitUtils.parseRepoUrl
 import com.an5on.git.GitUtils.sshSessionFactory
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.api.errors.GitAPIException
 import org.eclipse.jgit.api.errors.InvalidRemoteException
 import org.eclipse.jgit.transport.SshTransport
-import java.io.File
+import java.nio.file.Path
 
 object GitOperations {
 
-    fun initialiseRepository(directory: File): Either<GitError, Unit> = either {
-        try {
-            Git.init().setDirectory(directory).call()
-        } catch (e: Exception) {
-            when (e) {
-                is GitAPIException -> GitError.InitFailed(directory.path, e)
-                else -> throw e
+    fun Raise<GitError>.initialiseRepository(path: Path) {
+        catch (
+            {
+                Git.init().setDirectory(path.toFile()).call()
+            },
+            { e ->
+                when (e) {
+                    else -> throw e
+                }
             }
-        }
+        )
     }
 
-    fun cloneRepository(
+    fun Raise<GitError>.cloneRepository(
+        path: Path,
         repo: String,
-        directory: File,
         ssh: Boolean = false,
         branch: String? = null,
         depth: Int? = null
-    ): Either<GitError, Unit> = either {
+    ) {
         val repoUrl = parseRepoUrl(repo, ssh)
 
-        try {
+        catch( {
             Git.cloneRepository().apply {
-                setDirectory(directory)
+                setDirectory(path.toFile())
                 setURI(repoUrl)
 
                 branch?.let { setBranch(it) }
@@ -53,8 +54,11 @@ object GitOperations {
                 }
             }
                 .call()
-        } catch (e: InvalidRemoteException) {
-            raise(GitError.InvalidRemote(repo, e))
-        }
+        }, { e ->
+            when (e) {
+                is InvalidRemoteException -> GitError.InvalidRemote(repoUrl, e)
+                else -> throw e
+            }
+        })
     }
 }
