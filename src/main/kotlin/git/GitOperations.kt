@@ -14,7 +14,7 @@ import java.nio.file.Path
 object GitOperations {
 
     fun Raise<GitError>.initialiseRepository(path: Path) {
-        catch (
+        catch(
             {
                 Git.init().setDirectory(path.toFile()).call()
             },
@@ -35,7 +35,7 @@ object GitOperations {
     ) {
         val repoUrl = parseRepoUrl(repo, ssh)
 
-        catch( {
+        catch({
             Git.cloneRepository().apply {
                 setDirectory(path.toFile())
                 setURI(repoUrl)

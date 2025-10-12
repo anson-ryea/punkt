@@ -1,7 +1,6 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.config.ActiveConfiguration
 import com.an5on.config.ActiveConfiguration.localDirAbsPath
 import com.an5on.config.ActiveConfiguration.localDirAbsPathname
 import com.an5on.config.Configuration
@@ -73,7 +72,7 @@ class Init : CliktCommand() {
 
     override fun run() {
         if (LocalState.exists()) {
-            logger.error {"Punkt is already initialised at $localDirAbsPathname"}
+            logger.error { "Punkt is already initialised at $localDirAbsPathname" }
             throw ProgramResult(1)
         }
 
@@ -85,7 +84,7 @@ class Init : CliktCommand() {
                 { e ->
                     logger.error { e.message }
                     throw ProgramResult(1)
-                },{
+                }, {
                     echoSuccess()
                 }
             )
@@ -97,7 +96,7 @@ class Init : CliktCommand() {
                 { e ->
                     logger.error { e.message }
                     throw ProgramResult(1)
-                },{
+                }, {
                     echoSuccess()
                 }
             )
