@@ -17,13 +17,13 @@ object UnsyncOperation {
             LocalError.LocalNotFound()
         }
 
-        activePaths.forEach {
-            ensure(it.existsInLocal()) {
-                LocalError.LocalPathNotFound(it)
+        val localPaths = activePaths.map { activePath ->
+            ensure(activePath.existsInLocal()) {
+                LocalError.LocalPathNotFound(activePath)
             }
-        }
 
-        val localPaths = activePaths.map { it.toLocal() }.toSet()
+            activePath.toLocal()
+        }.toSet()
 
         commit(localPaths, echos)
     }

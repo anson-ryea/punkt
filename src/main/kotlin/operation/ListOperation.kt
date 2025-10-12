@@ -13,13 +13,17 @@ import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalState
-import org.apache.commons.io.filefilter.TrueFileFilter
+import com.an5on.states.local.LocalUtils.existsInLocal
 import java.nio.file.Path
 import kotlin.io.path.relativeTo
 
 object ListOperation {
     fun Raise<PunktError>.list(activePaths: Set<Path>?, options: ListOptions, echo: Echos) {
-        if (activePaths == null || activePaths.isEmpty()) {
+        ensure(LocalState.exists()) {
+            LocalError.LocalNotFound()
+        }
+
+        if (activePaths.isNullOrEmpty()) {
             listExistingLocal(options, echo)
         } else {
             listPaths(activePaths, options, echo)
@@ -27,25 +31,25 @@ object ListOperation {
     }
 
     private fun Raise<PunktError>.listPaths(activePaths: Set<Path>, options: ListOptions, echo: Echos) {
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
             .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
 
-        val expandedLocalPaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
-            acc.addAll(
-                activePath.expandToLocal(true, includeExcludeFilter)
-            )
-            acc
-        }
+        val expandedLocalPaths = activePaths.flatMap { activePath ->
+            ensure(activePath.existsInLocal()) {
+                LocalError.LocalPathNotFound(activePath)
+            }
+
+            activePath.expandToLocal(true, includeExcludeFilter)
+        }.toSet()
 
         printFiles(expandedLocalPaths, options.pathStyle, echo)
     }
 
     private fun listExistingLocal(options: ListOptions, echos: Echos) {
-        val existingLocalPaths = localDirAbsPath.expand(true, TrueFileFilter.INSTANCE)
+        val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
+            .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
+
+        val existingLocalPaths = localDirAbsPath.expand(true, includeExcludeFilter)
 
         printFiles(existingLocalPaths, options.pathStyle, echos)
     }

@@ -4,8 +4,6 @@ import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.SyncOptions
-import com.an5on.config.ActiveConfiguration
-import com.an5on.config.ActiveConfiguration.localDirAbsPath
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
@@ -19,40 +17,32 @@ import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
 object SyncOperation {
-    fun Raise<PunktError>.sync(activePaths: Set<Path>?, options: SyncOptions, echo: Echos) {
+    fun Raise<PunktError>.sync(activePaths: Set<Path>?, options: SyncOptions, echos: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
 
-        if (activePaths == null || activePaths.isEmpty()) {
-            syncExistingLocal(options, echo)
+        if (activePaths.isNullOrEmpty()) {
+            syncExistingLocal(options, echos)
         } else {
-            syncPaths(activePaths, options, echo)
+            syncPaths(activePaths, options, echos)
         }
     }
 
-    private fun Raise<PunktError>.syncPaths(activePaths: Set<Path>, options: SyncOptions, echo: Echos) {
-
-        if (activePaths.any { it.startsWith(localDirAbsPath) }) {
-            echo.echoWarning(
-                "Directories and files in the local Punkt directory (${ActiveConfiguration.localDirAbsPathname}) will not be synced."
-            )
-        }
+    private fun Raise<PunktError>.syncPaths(activePaths: Set<Path>, options: SyncOptions, echos: Echos) {
 
         val includeExcludeFilter = RegexFileFilter(options.include.pattern)
             .and(RegexFileFilter(options.exclude.pattern).negate())
             .and(ActiveEqualsLocalFileFilter.negate())
 
-        val expandedActivePaths = activePaths.fold(mutableSetOf<Path>()) { acc, activePath ->
-            acc.addAll(
-                activePath.expand(options.recursive, includeExcludeFilter)
-            )
-            acc
-        }
+        val expandedActivePaths = activePaths.flatMap { activePath ->
+            echos.echoStage("Syncing: $activePath")
+
+            activePath.expand(options.recursive, includeExcludeFilter)
+        }.toSet()
 
         LocalState.pendingTransactions.addAll(
             expandedActivePaths.map { activePath ->
-                println("Syncing: $activePath")
                 if (activePath.isDirectory()) {
                     LocalTransactionMakeDirectories(activePath)
                 } else {
@@ -64,7 +54,7 @@ object SyncOperation {
         LocalState.commit()
     }
 
-    private fun Raise<PunktError>.syncExistingLocal(options: SyncOptions, echo: Echos) {
-        syncPaths(existingLocalPathsToActivePaths, options, echo)
+    private fun Raise<PunktError>.syncExistingLocal(options: SyncOptions, echos: Echos) {
+        syncPaths(existingLocalPathsToActivePaths, options, echos)
     }
 }
