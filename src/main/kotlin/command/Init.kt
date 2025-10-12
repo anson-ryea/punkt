@@ -46,12 +46,6 @@ class Init : CliktCommand() {
         help = "Clone the remote Punkt repository shallowly with the specified depth"
     ).int()
 
-    /**
-     * Provides the help message for the init command.
-     *
-     * @param context the context of the command
-     * @return the help message string
-     */
     override fun help(context: Context) = """
     Initialises a Punkt local repository at ${localDirAbsPathname}.
             
@@ -111,10 +105,5 @@ class Init : CliktCommand() {
         }
     }
 
-    /**
-     * Companion object for the Init command.
-     */
-    companion object {
-        private val logger = KotlinLogging.logger {}
-    }
+    private val logger = KotlinLogging.logger {}
 }
