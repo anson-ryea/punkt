@@ -2,6 +2,7 @@ package com.an5on.command
 
 import arrow.core.raise.fold
 import com.an5on.command.options.ActivateOptions
+import com.an5on.command.options.CommonOptionGroup
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.ActivateOperation.activate
 import com.github.ajalt.clikt.core.CliktCommand
