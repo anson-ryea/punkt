@@ -3,9 +3,7 @@ package com.an5on.config
 import com.an5on.system.SystemUtils
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.ExperimentalHoplite
-import com.sksamuel.hoplite.addResourceSource
-import kotlin.io.path.pathString
-
+import com.sksamuel.hoplite.addPathSource
 /**
  * Provides access to the active configuration loaded from the configuration file.
  *
@@ -20,7 +18,7 @@ object ActiveConfiguration {
     val config = ConfigLoaderBuilder
         .default()
         .withExplicitSealedTypes()
-        .addResourceSource(SystemUtils.configPath.pathString, optional = true)
+        .addPathSource(SystemUtils.configPath, optional = true)
         .build()
         .loadConfigOrThrow<Configuration>()
 }

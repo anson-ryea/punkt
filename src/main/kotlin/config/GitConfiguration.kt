@@ -1,5 +1,8 @@
 package com.an5on.config
 
+import com.an5on.git.bundled.BundledGitCredentialsProviderType
+import com.an5on.system.SystemUtils
+import com.an5on.type.BooleanWithAuto
 
 /**
  * Represents the Git-related configuration settings for the Punkt application.
@@ -11,7 +14,15 @@ package com.an5on.config
  * @since 0.1.0
  */
 data class GitConfiguration(
-    val addOnLocalChange: Boolean,
-    val commitOnLocalChange: Boolean,
-    val pushOnLocalChange: Boolean,
+    val builtInCredentialsPreference: Set<BundledGitCredentialsProviderType> = setOf(
+        BundledGitCredentialsProviderType.GCM,
+        BundledGitCredentialsProviderType.GH_CLI,
+        BundledGitCredentialsProviderType.ENV,
+    ),
+    val useBundledGit: BooleanWithAuto = BooleanWithAuto.AUTO,
+    val bundledGitName: String = SystemUtils.username,
+    val bundledGitEmail: String = "",
+    val addOnLocalChange: Boolean = true,
+    val commitOnLocalChange: Boolean = true,
+    val pushOnLocalChange: Boolean = true,
 )
