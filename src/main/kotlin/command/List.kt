@@ -1,6 +1,7 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
+import com.an5on.command.options.CommonOptionGroup
 import com.an5on.command.options.ListOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.ListOperation.list
@@ -9,6 +10,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
+import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
@@ -29,11 +31,14 @@ class List : CliktCommand() {
     private val pathStyle by option(
         "-p", "--path-style",
         help = "Set the path style for displaying the list of managed dotfiles. Options are 'absolute' or 'relative' to the home directory."
-    ).choice(
+    )
+        .choice(
         *PathStyles.entries
             .map { it.name.lowercase().replace("_", "-") }
             .toTypedArray(),
-    ).default("absolute")
+    )
+        .convert { PathStyles.valueOf(it.uppercase().replace("-", "_")) }
+        .default(PathStyles.ABSOLUTE)
     val paths by argument().convert {
         replaceTildeWithHomeDirPathname(it)
     }.path(
@@ -46,7 +51,7 @@ class List : CliktCommand() {
         val options = ListOptions(
             commonOptionGroup.include,
             commonOptionGroup.exclude,
-            PathStyles.valueOf(pathStyle.uppercase().replace("-", "_")),
+            pathStyle,
         )
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
