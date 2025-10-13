@@ -22,4 +22,10 @@ object SystemUtils {
         OsType.DARWIN -> homePath.resolve("Library/Logs/punkt")
         OsType.LINUX -> System.getenv("XDG_STATE_HOME")?.let { Path(it) }?.resolve("punkt/logs") ?: homePath.resolve("/.local/state/punkt/logs")
     }
+
+    val username: String = System.getProperty("user.name")
+    val shell: String = System.getenv("SHELL") ?: when (osType) {
+        OsType.WINDOWS -> "powershell.exe"
+        else -> "/bin/bash"
+    }
 }
