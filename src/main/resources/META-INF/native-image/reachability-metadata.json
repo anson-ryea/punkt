@@ -1,6 +1,9 @@
 {
   "reflection": [
     {
+      "type": "[Lcom.pty4j.unix.PollfdStructureByReference;"
+    },
+    {
       "type": "[Lorg.apache.logging.log4j.core.Appender;"
     },
     {
@@ -24,7 +27,8 @@
         {
           "name": "<init>",
           "parameterTypes": [
-            "com.an5on.config.GeneralConfiguration"
+            "com.an5on.config.GeneralConfiguration",
+            "com.an5on.config.GitConfiguration"
           ]
         }
       ]
@@ -45,6 +49,31 @@
           ]
         }
       ]
+    },
+    {
+      "type": "com.an5on.config.GitConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.util.Set",
+            "com.an5on.type.BooleanWithAuto",
+            "java.lang.String",
+            "java.lang.String",
+            "boolean",
+            "boolean",
+            "boolean",
+            "int",
+            "kotlin.jvm.internal.DefaultConstructorMarker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.an5on.git.bundled.BundledGitCredentialsProviderType"
+    },
+    {
+      "type": "com.an5on.type.BooleanWithAuto"
     },
     {
       "type": "com.fasterxml.jackson.core.JsonParser"
@@ -75,6 +104,34 @@
     },
     {
       "type": "com.github.ajalt.mordant.terminal.terminalinterface.nativeimage.TerminalInterfaceProviderNativeImage"
+    },
+    {
+      "type": "com.pty4j.unix.PollfdStructure",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.pty4j.unix.PollfdStructureByReference",
+      "allDeclaredFields": true,
+      "fields": [
+        {
+          "name": "OPTIONS"
+        },
+        {
+          "name": "STRING_ENCODING"
+        },
+        {
+          "name": "STRUCTURE_ALIGNMENT"
+        },
+        {
+          "name": "TYPE_MAPPER"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "com.sksamuel.hoplite.decoder.Base64Decoder"
@@ -245,6 +302,27 @@
       "type": "com.sksamuel.hoplite.parsers.PropsParser"
     },
     {
+      "type": "com.sun.jna.CallbackProxy"
+    },
+    {
+      "type": "com.sun.jna.platform.unix.LibCAPI$size_t",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.platform.unix.LibCAPI$ssize_t",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl",
       "methods": [
         {
@@ -269,6 +347,15 @@
       "type": "java.lang.ClassValue"
     },
     {
+      "type": "java.lang.Comparable"
+    },
+    {
+      "type": "java.lang.Enum"
+    },
+    {
+      "type": "java.lang.Iterable"
+    },
+    {
       "type": "java.lang.Object",
       "allDeclaredFields": true
     },
@@ -276,16 +363,34 @@
       "type": "java.lang.String"
     },
     {
+      "type": "java.lang.Throwable"
+    },
+    {
+      "type": "java.lang.invoke.MethodHandle"
+    },
+    {
+      "type": "java.lang.invoke.MethodHandles"
+    },
+    {
+      "type": "java.lang.invoke.MethodHandles$Lookup"
+    },
+    {
+      "type": "java.lang.invoke.MethodType"
+    },
+    {
+      "type": "java.lang.reflect.Method",
+      "methods": [
+        {
+          "name": "isDefault",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.Buffer"
+    },
+    {
       "type": "java.nio.file.Path"
-    },
-    {
-      "type": "java.security.MessageDigestSpi"
-    },
-    {
-      "type": "java.security.interfaces.RSAPrivateKey"
-    },
-    {
-      "type": "java.security.interfaces.RSAPublicKey"
     },
     {
       "type": "java.sql.Date"
@@ -294,7 +399,13 @@
       "type": "java.sql.Time"
     },
     {
+      "type": "java.util.Collection"
+    },
+    {
       "type": "java.util.LinkedHashMap"
+    },
+    {
+      "type": "java.util.Set"
     },
     {
       "type": "java.util.SortedSet"
@@ -304,6 +415,15 @@
     },
     {
       "type": "kotlin.Any"
+    },
+    {
+      "type": "kotlin.Boolean"
+    },
+    {
+      "type": "kotlin.Comparable"
+    },
+    {
+      "type": "kotlin.Enum"
     },
     {
       "type": "kotlin.Metadata",
@@ -352,6 +472,12 @@
     },
     {
       "type": "kotlin.String"
+    },
+    {
+      "type": "kotlin.collections.Collection"
+    },
+    {
+      "type": "kotlin.collections.Iterable"
     },
     {
       "type": "kotlin.collections.List"
@@ -1636,7 +1762,18 @@
       "type": "org.osgi.framework.FrameworkUtil"
     },
     {
-      "type": "sun.security.provider.SHA2$SHA256",
+      "type": "sun.security.provider.NativePRNG",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.security.SecureRandomParameters"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.SHA",
       "methods": [
         {
           "name": "<init>",
@@ -1645,157 +1782,25 @@
       ]
     },
     {
-      "type": "sun.security.provider.SHA5$SHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
+      "type": {
+        "proxy": [
+          "com.pty4j.unix.CLibraryNative"
+        ]
+      }
     },
     {
-      "type": "sun.security.provider.X509Factory",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
+      "type": {
+        "proxy": [
+          "com.pty4j.unix.NativePtyExecutor$Pty4J"
+        ]
+      }
     },
     {
-      "type": "sun.security.rsa.RSAKeyFactory$Legacy",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSASignature$SHA256withRSA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSASignature$SHA384withRSA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.AuthorityInfoAccessExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.AuthorityKeyIdentifierExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.BasicConstraintsExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.CRLDistributionPointsExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.CertificatePoliciesExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.ExtendedKeyUsageExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.KeyUsageExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.SubjectAlternativeNameExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.SubjectKeyIdentifierExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
+      "type": {
+        "proxy": [
+          "com.pty4j.unix.macosx.OSFacadeImpl$MacOSX_C_lib"
+        ]
+      }
     }
   ],
   "resources": [
@@ -1813,6 +1818,9 @@
     },
     {
       "glob": "META-INF/services/com.sksamuel.hoplite.parsers.Parser"
+    },
+    {
+      "glob": "META-INF/services/java.lang.System$LoggerFinder"
     },
     {
       "glob": "META-INF/services/java.net.spi.InetAddressResolverProvider"
@@ -1845,7 +1853,7 @@
       "glob": "META-INF/services/org.slf4j.spi.SLF4JServiceProvider"
     },
     {
-      "glob": "Users/anson/Library/Application Support/punkt/punkt.json"
+      "glob": "com/sun/jna/darwin-aarch64/libjnidispatch.jnilib"
     },
     {
       "glob": "log4j2-test.jsn"
@@ -1929,8 +1937,10 @@
       "glob": "log4j218b4aac2.yml"
     },
     {
-      "module": "java.base",
-      "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
+      "glob": "resources/com/pty4j/native/darwin/libpty.dylib"
+    },
+    {
+      "glob": "resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper"
     },
     {
       "module": "java.xml",
@@ -1940,13 +1950,582 @@
   "bundles": [],
   "jni": [
     {
-      "type": "java.lang.Boolean",
+      "type": "com.sun.jna.Callback"
+    },
+    {
+      "type": "com.sun.jna.CallbackReference",
       "methods": [
+        {
+          "name": "getCallback",
+          "parameterTypes": [
+            "java.lang.Class",
+            "com.sun.jna.Pointer",
+            "boolean"
+          ]
+        },
+        {
+          "name": "getFunctionPointer",
+          "parameterTypes": [
+            "com.sun.jna.Callback",
+            "boolean"
+          ]
+        },
+        {
+          "name": "getNativeString",
+          "parameterTypes": [
+            "java.lang.Object",
+            "boolean"
+          ]
+        },
+        {
+          "name": "initializeThread",
+          "parameterTypes": [
+            "com.sun.jna.Callback",
+            "com.sun.jna.CallbackReference$AttachOptions"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.CallbackReference$AttachOptions"
+    },
+    {
+      "type": "com.sun.jna.FromNativeConverter",
+      "methods": [
+        {
+          "name": "nativeType",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.IntegerType",
+      "fields": [
+        {
+          "name": "value"
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.JNIEnv"
+    },
+    {
+      "type": "com.sun.jna.Native",
+      "methods": [
+        {
+          "name": "dispose",
+          "parameterTypes": []
+        },
+        {
+          "name": "fromNative",
+          "parameterTypes": [
+            "com.sun.jna.FromNativeConverter",
+            "java.lang.Object",
+            "java.lang.reflect.Method"
+          ]
+        },
+        {
+          "name": "fromNative",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "fromNative",
+          "parameterTypes": [
+            "java.lang.reflect.Method",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "nativeType",
+          "parameterTypes": [
+            "java.lang.Class"
+          ]
+        },
+        {
+          "name": "toNative",
+          "parameterTypes": [
+            "com.sun.jna.ToNativeConverter",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.Native$ffi_callback",
+      "methods": [
+        {
+          "name": "invoke",
+          "parameterTypes": [
+            "long",
+            "long",
+            "long"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.NativeMapped",
+      "methods": [
+        {
+          "name": "toNative",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.Pointer",
+      "fields": [
+        {
+          "name": "peer"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "long"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.PointerType",
+      "fields": [
+        {
+          "name": "pointer"
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.Structure",
+      "fields": [
+        {
+          "name": "memory"
+        },
+        {
+          "name": "typeInfo"
+        }
+      ],
+      "methods": [
+        {
+          "name": "autoRead",
+          "parameterTypes": []
+        },
+        {
+          "name": "autoWrite",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTypeInfo",
+          "parameterTypes": []
+        },
+        {
+          "name": "newInstance",
+          "parameterTypes": [
+            "java.lang.Class",
+            "long"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.Structure$ByValue"
+    },
+    {
+      "type": "com.sun.jna.Structure$FFIType$FFITypes",
+      "fields": [
+        {
+          "name": "ffi_type_double"
+        },
+        {
+          "name": "ffi_type_float"
+        },
+        {
+          "name": "ffi_type_longdouble"
+        },
+        {
+          "name": "ffi_type_pointer"
+        },
+        {
+          "name": "ffi_type_sint16"
+        },
+        {
+          "name": "ffi_type_sint32"
+        },
+        {
+          "name": "ffi_type_sint64"
+        },
+        {
+          "name": "ffi_type_sint8"
+        },
+        {
+          "name": "ffi_type_uint16"
+        },
+        {
+          "name": "ffi_type_uint32"
+        },
+        {
+          "name": "ffi_type_uint64"
+        },
+        {
+          "name": "ffi_type_uint8"
+        },
+        {
+          "name": "ffi_type_void"
+        }
+      ]
+    },
+    {
+      "type": "com.sun.jna.WString",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Boolean",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
         {
           "name": "getBoolean",
           "parameterTypes": [
             "java.lang.String"
           ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Byte",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "byte"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Character",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "char"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Class",
+      "methods": [
+        {
+          "name": "getComponentType",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Double",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "double"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Float",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "float"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Integer",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "int"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Long",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "long"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Object",
+      "methods": [
+        {
+          "name": "toString",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Short",
+      "fields": [
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "value"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "short"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.String",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "byte[]"
+          ]
+        },
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "byte[]",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "getBytes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBytes",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "toCharArray",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.System",
+      "methods": [
+        {
+          "name": "getProperty",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Void",
+      "fields": [
+        {
+          "name": "TYPE"
+        }
+      ]
+    },
+    {
+      "type": "java.lang.reflect.Method",
+      "methods": [
+        {
+          "name": "getParameterTypes",
+          "parameterTypes": []
+        },
+        {
+          "name": "getReturnType",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.Buffer",
+      "methods": [
+        {
+          "name": "position",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.ByteBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.CharBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.DoubleBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.FloatBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.IntBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.LongBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.nio.ShortBuffer",
+      "methods": [
+        {
+          "name": "array",
+          "parameterTypes": []
+        },
+        {
+          "name": "arrayOffset",
+          "parameterTypes": []
         }
       ]
     },

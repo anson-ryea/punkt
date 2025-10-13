@@ -39,6 +39,7 @@ dependencies {
     implementation("io.github.java-diff-utils:java-diff-utils-jgit:4.16")
     implementation("com.sksamuel.hoplite:hoplite-core:3.0.0.RC1")
     implementation("com.sksamuel.hoplite:hoplite-json:3.0.0.RC1")
+    implementation("org.jetbrains.pty4j:pty4j:0.13.11")
     testImplementation(kotlin("test"))
 }
 
@@ -63,18 +64,15 @@ graalvmNative {
             fallback.set(true)
             buildArgs.addAll(
                 "--no-fallback",
-                "--enable-all-security-services",
-                "--report-unsupported-elements-at-runtime",
                 "--enable-url-protocols=https",
-                "-J--add-exports=java.management/sun.management=ALL-UNNAMED",
-                "-H:ResourceConfigurationFiles=${projectDir}/META-INF/native-image/kotlin-resource.json"
+                "--enable-native-access=ALL-UNNAMED"
             )
         }
     }
 
     agent {
         defaultMode = "standard"
-        enabled.set(false)
+        enabled.set(true)
     }
 }
 
