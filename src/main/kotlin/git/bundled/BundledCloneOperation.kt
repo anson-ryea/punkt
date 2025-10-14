@@ -1,40 +1,23 @@
-package com.an5on.git
+package com.an5on.git.bundled
 
 import arrow.core.raise.Raise
 import arrow.core.raise.catch
 import com.an5on.error.GitError
-import com.an5on.git.GitUtils.buildCredentialsProvider
-import com.an5on.git.GitUtils.parseRepoUrl
-import com.an5on.git.GitUtils.sshSessionFactory
+import com.an5on.git.bundled.BundledGitCredentialsProvider.buildCredentialsProvider
+import com.an5on.git.bundled.BundledGitCredentialsProvider.sshSessionFactory
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.InvalidRemoteException
 import org.eclipse.jgit.transport.SshTransport
 import java.nio.file.Path
 
-object GitOperations {
-
-    fun Raise<GitError>.initialiseRepository(path: Path) {
-        catch(
-            {
-                Git.init().setDirectory(path.toFile()).call()
-            },
-            { e ->
-                when (e) {
-                    else -> throw e
-                }
-            }
-        )
-    }
-
-    fun Raise<GitError>.cloneRepository(
+object BundledCloneOperation {
+    fun Raise<GitError>.bundledClone(
         path: Path,
-        repo: String,
+        repoUrl: String,
         ssh: Boolean = false,
         branch: String? = null,
         depth: Int? = null
     ) {
-        val repoUrl = parseRepoUrl(repo, ssh)
-
         catch({
             Git.cloneRepository().apply {
                 setDirectory(path.toFile())
@@ -50,7 +33,7 @@ object GitOperations {
                         }
                     }
                 } else {
-                    setCredentialsProvider(buildCredentialsProvider().bind())
+                    setCredentialsProvider(buildCredentialsProvider())
                 }
             }
                 .call()

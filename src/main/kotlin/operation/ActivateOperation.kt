@@ -4,7 +4,7 @@ import arrow.core.raise.Raise
 import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.ActivateOptions
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
@@ -74,7 +74,7 @@ object ActivateOperation {
     }
 
     private fun activateExistingLocal(options: ActivateOptions, echos: Echos) {
-        val existingLocalPaths = config.general.localStatePath.expand(options.recursive, TrueFileFilter.INSTANCE)
+        val existingLocalPaths = configuration.general.localStatePath.expand(options.recursive, TrueFileFilter.INSTANCE)
 
         commit(existingLocalPaths, echos)
     }

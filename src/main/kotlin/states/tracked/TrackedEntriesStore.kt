@@ -2,7 +2,7 @@ package com.an5on.states.tracked
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
 import com.an5on.error.TrackedError
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -20,11 +20,11 @@ object TrackedEntriesStore {
 
     private fun openStore(): Either<PunktError, Unit> = either {
         try {
-            if (!config.general.trackerPath.exists()) {
-                config.general.trackerPath.parent.toFile().mkdirs()
+            if (!configuration.general.trackerPath.exists()) {
+                configuration.general.trackerPath.parent.toFile().mkdirs()
             }
 
-            val store = MVStore.open(config.general.trackerPath.pathString)
+            val store = MVStore.open(configuration.general.trackerPath.pathString)
             trackedStore = store
         } catch (e: Exception) {
             throw e
@@ -33,7 +33,7 @@ object TrackedEntriesStore {
 
     private fun openMap(): Either<PunktError, Unit> = either {
         try {
-            val store = trackedStore ?: raise(TrackedError.ConnectFailed(config.general.trackerPath))
+            val store = trackedStore ?: raise(TrackedError.ConnectFailed(configuration.general.trackerPath))
             val map = store.openMap<String, ByteArray>("trackedEntriesMap")
             trackedEntriesMap = map
         } catch (e: Exception) {

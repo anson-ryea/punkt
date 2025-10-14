@@ -24,7 +24,8 @@
         {
           "name": "<init>",
           "parameterTypes": [
-            "com.an5on.config.GeneralConfiguration"
+            "com.an5on.config.GeneralConfiguration",
+            "com.an5on.config.GitConfiguration"
           ]
         }
       ]
@@ -45,6 +46,32 @@
           ]
         }
       ]
+    },
+    {
+      "type": "com.an5on.config.GitConfiguration",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.util.Set",
+            "com.an5on.type.BooleanWithAuto",
+            "java.lang.String",
+            "java.lang.String",
+            "boolean",
+            "boolean",
+            "boolean",
+            "int",
+            "kotlin.jvm.internal.DefaultConstructorMarker"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.an5on.git.bundled.BundledGitCredentialsProviderType"
+    },
+    {
+      "type": "com.an5on.type.BooleanWithAuto"
     },
     {
       "type": "com.fasterxml.jackson.core.JsonParser"
@@ -269,6 +296,15 @@
       "type": "java.lang.ClassValue"
     },
     {
+      "type": "java.lang.Comparable"
+    },
+    {
+      "type": "java.lang.Enum"
+    },
+    {
+      "type": "java.lang.Iterable"
+    },
+    {
       "type": "java.lang.Object",
       "allDeclaredFields": true
     },
@@ -279,22 +315,19 @@
       "type": "java.nio.file.Path"
     },
     {
-      "type": "java.security.MessageDigestSpi"
-    },
-    {
-      "type": "java.security.interfaces.RSAPrivateKey"
-    },
-    {
-      "type": "java.security.interfaces.RSAPublicKey"
-    },
-    {
       "type": "java.sql.Date"
     },
     {
       "type": "java.sql.Time"
     },
     {
+      "type": "java.util.Collection"
+    },
+    {
       "type": "java.util.LinkedHashMap"
+    },
+    {
+      "type": "java.util.Set"
     },
     {
       "type": "java.util.SortedSet"
@@ -304,6 +337,15 @@
     },
     {
       "type": "kotlin.Any"
+    },
+    {
+      "type": "kotlin.Boolean"
+    },
+    {
+      "type": "kotlin.Comparable"
+    },
+    {
+      "type": "kotlin.Enum"
     },
     {
       "type": "kotlin.Metadata",
@@ -352,6 +394,12 @@
     },
     {
       "type": "kotlin.String"
+    },
+    {
+      "type": "kotlin.collections.Collection"
+    },
+    {
+      "type": "kotlin.collections.Iterable"
     },
     {
       "type": "kotlin.collections.List"
@@ -1634,168 +1682,6 @@
     },
     {
       "type": "org.osgi.framework.FrameworkUtil"
-    },
-    {
-      "type": "sun.security.provider.SHA2$SHA256",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.SHA5$SHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.X509Factory",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSAKeyFactory$Legacy",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSASignature$SHA256withRSA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSASignature$SHA384withRSA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.AuthorityInfoAccessExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.AuthorityKeyIdentifierExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.BasicConstraintsExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.CRLDistributionPointsExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.CertificatePoliciesExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.ExtendedKeyUsageExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.KeyUsageExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.SubjectAlternativeNameExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.SubjectKeyIdentifierExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
     }
   ],
   "resources": [
@@ -1813,6 +1699,9 @@
     },
     {
       "glob": "META-INF/services/com.sksamuel.hoplite.parsers.Parser"
+    },
+    {
+      "glob": "META-INF/services/java.lang.System$LoggerFinder"
     },
     {
       "glob": "META-INF/services/java.net.spi.InetAddressResolverProvider"
@@ -1843,9 +1732,6 @@
     },
     {
       "glob": "META-INF/services/org.slf4j.spi.SLF4JServiceProvider"
-    },
-    {
-      "glob": "Users/anson/Library/Application Support/punkt/punkt.json"
     },
     {
       "glob": "log4j2-test.jsn"
@@ -1927,10 +1813,6 @@
     },
     {
       "glob": "log4j218b4aac2.yml"
-    },
-    {
-      "module": "java.base",
-      "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
     },
     {
       "module": "java.xml",

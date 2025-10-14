@@ -1,6 +1,6 @@
 package com.an5on.states.local
 
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils
 import org.apache.commons.io.file.PathUtils
@@ -39,17 +39,17 @@ object LocalUtils {
         assert(!isAbsolute || !isLocal())
 
         return if (!this.isAbsolute) {
-            config.general.localStatePath.resolve(
-                this.pathString.replace(dotPrefixRegex, config.general.dotReplacementPrefix)
+            configuration.general.localStatePath.resolve(
+                this.pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
             ).normalize()
-        } else if (this.startsWith(config.general.activeStatePath)) {
-            config.general.localStatePath.resolve(
-                this.relativeTo(config.general.activeStatePath).pathString
-                    .replace(dotPrefixRegex, config.general.dotReplacementPrefix)
+        } else if (this.startsWith(configuration.general.activeStatePath)) {
+            configuration.general.localStatePath.resolve(
+                this.relativeTo(configuration.general.activeStatePath).pathString
+                    .replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
             ).normalize()
         } else {
             Path(
-                this.pathString.replace(dotPrefixRegex, config.general.dotReplacementPrefix)
+                this.pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
             ).normalize()
         }
     }
@@ -66,7 +66,7 @@ object LocalUtils {
      *
      * @return true if the path is local, false otherwise
      */
-    fun Path.isLocal() = this.startsWith(config.general.localStatePath)
+    fun Path.isLocal() = this.startsWith(configuration.general.localStatePath)
 
     /**
      * Checks if this file is within the local directory.

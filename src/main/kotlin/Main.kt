@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
     val logger = KotlinLogging.logger {}
 
     Thread.setDefaultUncaughtExceptionHandler { t, e ->
-        logger.error { "Uncaught exception in thread ${t.name}: ${e.message}" }
+        logger.error { "Uncaught exception in thread ${t.name}: ${e.message}: ${e.stackTraceToString()}" }
     }
 
     Command().subcommands(
@@ -31,6 +31,8 @@ fun main(args: Array<String>) {
         Unsync(),
         Activate(),
         List(),
-        Diff()
+        Diff(),
+        Git(),
+        Shell()
     ).main(args)
 }

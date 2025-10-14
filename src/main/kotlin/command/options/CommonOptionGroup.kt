@@ -1,4 +1,4 @@
-package com.an5on.command
+package com.an5on.command.options
 
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.clikt.parameters.options.convert
@@ -12,11 +12,11 @@ import com.github.ajalt.clikt.parameters.options.option
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-class CommonOptionGroup : OptionGroup("Common Options:") {
+class CommonOptionGroup : OptionGroup("Common Options") {
     /**
      * Whether to process directories recursively.
      */
-    val recursive by option("-r", "--recursive", help = "Operate on directories recursively").flag(default = true)
+    val recursive by option("-r", "--recursive", help = "Operate on directories recursively").flag("--no-recursive", default = true)
 
     /**
      * Regex pattern for including file paths.
