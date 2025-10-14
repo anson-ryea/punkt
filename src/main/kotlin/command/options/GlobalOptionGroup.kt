@@ -19,5 +19,5 @@ class GlobalOptionGroup : OptionGroup("Global Options") {
                 it.uppercase().replace("-", "_")
             )
         }
-        .default(BooleanWithAutoAndDefault.AUTO)
+        .default(BooleanWithAutoAndDefault.DEFAULT)
 }
