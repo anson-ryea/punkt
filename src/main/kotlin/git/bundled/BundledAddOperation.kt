@@ -15,7 +15,7 @@ object BundledAddOperation {
                 val localRepo = Git.open(repoPath.toFile())
 
                 localRepo.add()
-                    .addFilepattern(relativeTargetPath.pathString)
+                    .addFilepattern(".${relativeTargetPath.pathString}")
                     .call()
             },
             { e ->
