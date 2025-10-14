@@ -1,6 +1,6 @@
 package com.an5on.command
 
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.system.SystemUtils
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
@@ -13,7 +13,7 @@ class Shell: CliktCommand() {
         val env = System.getenv().toMutableMap()
 
         val builder = PtyProcessBuilder(cmd)
-            .setDirectory(config.general.localStatePath.pathString)
+            .setDirectory(configuration.general.localStatePath.pathString)
             .setEnvironment(env)
             .setConsole(true)
 

@@ -12,7 +12,7 @@ import com.github.ajalt.clikt.parameters.options.option
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-class CommonOptionGroup : OptionGroup("Common Options:") {
+class CommonOptionGroup : OptionGroup("Common Options") {
     /**
      * Whether to process directories recursively.
      */

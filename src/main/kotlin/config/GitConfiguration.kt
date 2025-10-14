@@ -14,6 +14,7 @@ import com.an5on.type.BooleanWithAuto
  * @since 0.1.0
  */
 data class GitConfiguration(
+    val systemGitCommand: String = "git",
     val builtInCredentialsPreference: Set<BundledGitCredentialsProviderType> = setOf(
         BundledGitCredentialsProviderType.GCM,
         BundledGitCredentialsProviderType.GH_CLI,

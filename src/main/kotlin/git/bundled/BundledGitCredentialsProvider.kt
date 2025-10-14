@@ -24,7 +24,7 @@ object BundledGitCredentialsProvider {
      * - Git Credential Manager (GCM)
      */
     fun Raise<GitError>.buildCredentialsProvider(): CredentialsProvider {
-        for (method in ActiveConfiguration.config.git.builtInCredentialsPreference) {
+        for (method in ActiveConfiguration.configuration.git.builtInCredentialsPreference) {
             val provider = when (method) {
                 BundledGitCredentialsProviderType.GCM -> {
                     buildCredentialsProviderFromGitCredentialManager().getOrNull()
@@ -44,7 +44,7 @@ object BundledGitCredentialsProvider {
             }
         }
 
-        raise(GitError.BundledCredentialsNotFound(ActiveConfiguration.config.git.builtInCredentialsPreference))
+        raise(GitError.BundledCredentialsNotFound(ActiveConfiguration.configuration.git.builtInCredentialsPreference))
     }
 
     /** Attempts to build a [CredentialsProvider] by querying Git Credential Manager (GCM) for stored credentials.

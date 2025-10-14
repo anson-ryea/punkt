@@ -3,10 +3,10 @@ package com.an5on.command
 import arrow.core.raise.fold
 import com.an5on.command.options.GlobalOptionGroup
 import com.an5on.command.options.InitOptionGroup
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.git.CloneOperation.clone
 import com.an5on.git.InitOperation.init
-import com.an5on.git.GitRepoPattern.commonPatterns
+import com.an5on.git.RepoPattern.commonPatterns
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
@@ -35,10 +35,10 @@ class Init : CliktCommand() {
     ).optional()
 
     override fun help(context: Context) = """
-    Initialises a Punkt local repository at ${config.general.localStatePath}.
+    Initialises a Punkt local repository at ${configuration.general.localStatePath}.
             
-    If a remote Punkt repository URL is provided, it clones the repository to ${config.general.localStatePath}.
-    Otherwise, it initialises an empty Punkt local repository at ${config.general.localStatePath}.
+    If a remote Punkt repository URL is provided, it clones the repository to ${configuration.general.localStatePath}.
+    Otherwise, it initialises an empty Punkt local repository at ${configuration.general.localStatePath}.
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
@@ -62,7 +62,7 @@ class Init : CliktCommand() {
      */
     override fun run() {
         if (LocalState.exists()) {
-            logger.error { "Punkt is already initialised at ${config.general.localStatePath}" }
+            logger.error { "Punkt is already initialised at ${configuration.general.localStatePath}" }
             throw ProgramResult(1)
         }
 

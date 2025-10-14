@@ -1,6 +1,6 @@
 package com.an5on.git
 
-object GitRepoPattern {
+object RepoPattern {
     /**
      * Data class representing a repository URL pattern and its corresponding HTTPS and SSH URL templates.
      *

@@ -1,7 +1,6 @@
 package com.an5on.git
 
-import com.an5on.config.ActiveConfiguration.config
-import com.an5on.git.system.SystemGitUtils
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.type.BooleanWithAuto
 import com.an5on.type.BooleanWithAutoAndDefault
 import org.eclipse.jgit.lib.PersonIdent
@@ -10,15 +9,25 @@ object GitUtils {
     fun determineSystemOrBundledGit(useBundledGitOption: BooleanWithAutoAndDefault) = when (useBundledGitOption) {
         BooleanWithAutoAndDefault.TRUE -> true
         BooleanWithAutoAndDefault.FALSE -> false
-        BooleanWithAutoAndDefault.AUTO -> !SystemGitUtils.isGitInstalled
+        BooleanWithAutoAndDefault.AUTO -> !isGitInstalled
         BooleanWithAutoAndDefault.DEFAULT -> {
-            when (config.git.useBundledGit) {
+            when (configuration.git.useBundledGit) {
                 BooleanWithAuto.TRUE -> true
                 BooleanWithAuto.FALSE -> false
-                BooleanWithAuto.AUTO -> !SystemGitUtils.isGitInstalled
+                BooleanWithAuto.AUTO -> !isGitInstalled
             }
         }
     }
 
-    val bundledIdentity = PersonIdent(config.git.bundledGitName, config.git.bundledGitEmail)
+    val bundledIdentity = PersonIdent(configuration.git.bundledGitName, configuration.git.bundledGitEmail)
+
+    val isGitInstalled: Boolean
+        get() = try {
+            val process = ProcessBuilder("git", "--version")
+                .redirectErrorStream(true)
+                .start()
+            process.waitFor() == 0
+        } catch (e: Exception) {
+            false
+        }
 }

@@ -1,7 +1,7 @@
 package com.an5on.error
 
 import com.an5on.git.bundled.BundledGitCredentialsProviderType
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -60,7 +60,7 @@ sealed interface GitError : PunktError {
     }
 
     data class InitFailed(
-        val path: Path = config.general.localStatePath,
+        val path: Path = configuration.general.localStatePath,
         override val cause: Throwable? = null
     ) : GitError {
         override val code: String = "GIT_INIT_FAILED"
@@ -70,7 +70,7 @@ sealed interface GitError : PunktError {
 
     data class CloneFailed(
         val url: String,
-        val path: Path = config.general.localStatePath,
+        val path: Path = configuration.general.localStatePath,
         override val cause: Throwable? = null
     ) : GitError {
         override val code: String = "GIT_CLONE_FAILED"

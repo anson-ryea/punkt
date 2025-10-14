@@ -1,6 +1,6 @@
 package com.an5on.states.active
 
-import com.an5on.config.ActiveConfiguration.config
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.states.local.LocalUtils.isLocal
 import org.apache.commons.io.file.PathUtils
 import java.io.File
@@ -19,7 +19,7 @@ import kotlin.io.path.relativeTo
  * @since 0.1.0
  */
 object ActiveUtils {
-    private val dotReplacementPrefixRegex = Regex(config.general.dotReplacementPrefix)
+    private val dotReplacementPrefixRegex = Regex(configuration.general.dotReplacementPrefix)
 
     /**
      * Converts this path to its corresponding active path.
@@ -32,12 +32,12 @@ object ActiveUtils {
         assert(!this.isAbsolute || this.isLocal())
 
         return if (!this.isAbsolute) {
-            config.general.activeStatePath.resolve(
+            configuration.general.activeStatePath.resolve(
                 this.pathString.replace(dotReplacementPrefixRegex, ".")
             ).normalize()
-        } else if (this.startsWith(config.general.localStatePath)) {
-            config.general.activeStatePath.resolve(
-                this.relativeTo(config.general.localStatePath).pathString
+        } else if (this.startsWith(configuration.general.localStatePath)) {
+            configuration.general.activeStatePath.resolve(
+                this.relativeTo(configuration.general.localStatePath).pathString
                     .replace(dotReplacementPrefixRegex, ".")
             )
         } else {

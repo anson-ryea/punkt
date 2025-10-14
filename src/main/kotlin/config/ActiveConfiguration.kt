@@ -15,7 +15,7 @@ object ActiveConfiguration {
      * The loaded configuration instance.
      */
     @OptIn(ExperimentalHoplite::class)
-    val config = ConfigLoaderBuilder
+    val configuration = ConfigLoaderBuilder
         .default()
         .withExplicitSealedTypes()
         .addPathSource(SystemUtils.configPath, optional = true)

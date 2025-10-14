@@ -7,7 +7,7 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 
-class GlobalOptionGroup : OptionGroup() {
+class GlobalOptionGroup : OptionGroup("Global Options") {
     val useBundledGit by option()
         .choice(
             *BooleanWithAutoAndDefault.entries
