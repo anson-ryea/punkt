@@ -8,7 +8,7 @@ import com.an5on.git.system.SystemPushExecutor.systemPush
 import com.an5on.type.BooleanWithAuto
 
 object PushOperation {
-    fun Raise<GitError>.push(force: Boolean = false, useBundledGitOption: BooleanWithAuto) {
+    fun Raise<GitError>.push(force: Boolean = false, useBundledGitOption: BooleanWithAuto?) {
         val localPath = configuration.general.localStatePath
         val useBundledGit = GitUtils.determineSystemOrBundledGit(useBundledGitOption)
 
