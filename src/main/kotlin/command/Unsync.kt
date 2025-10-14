@@ -1,6 +1,7 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
+import com.an5on.command.options.GlobalOptionGroup
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.UnsyncOperation.unsync
 import com.github.ajalt.clikt.core.CliktCommand
@@ -9,6 +10,7 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert
 import com.github.ajalt.clikt.parameters.arguments.multiple
 import com.github.ajalt.clikt.parameters.arguments.unique
+import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -20,6 +22,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * @since 0.1.0
  */
 class Unsync : CliktCommand() {
+    val globalOptions by GlobalOptionGroup()
     val targets by argument().convert {
         replaceTildeWithHomeDirPathname(it)
     }.path(
@@ -34,7 +37,7 @@ class Unsync : CliktCommand() {
         val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
 
         fold(
-            { unsync(targets, echos) },
+            { unsync(targets, globalOptions, echos) },
             { e ->
                 logger.error { e.message }
                 throw ProgramResult(e.statusCode)
