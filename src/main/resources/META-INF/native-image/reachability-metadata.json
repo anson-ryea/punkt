@@ -41,6 +41,7 @@
             "java.nio.file.Path",
             "java.nio.file.Path",
             "java.lang.String",
+            "com.an5on.type.VerbosityType",
             "int",
             "kotlin.jvm.internal.DefaultConstructorMarker"
           ]
@@ -72,6 +73,9 @@
     },
     {
       "type": "com.an5on.type.BooleanWithAuto"
+    },
+    {
+      "type": "com.an5on.type.VerbosityType"
     },
     {
       "type": "com.fasterxml.jackson.core.JsonParser"
@@ -296,15 +300,6 @@
       "type": "java.lang.ClassValue"
     },
     {
-      "type": "java.lang.Comparable"
-    },
-    {
-      "type": "java.lang.Enum"
-    },
-    {
-      "type": "java.lang.Iterable"
-    },
-    {
       "type": "java.lang.Object",
       "allDeclaredFields": true
     },
@@ -319,9 +314,6 @@
     },
     {
       "type": "java.sql.Time"
-    },
-    {
-      "type": "java.util.Collection"
     },
     {
       "type": "java.util.LinkedHashMap"
@@ -340,12 +332,6 @@
     },
     {
       "type": "kotlin.Boolean"
-    },
-    {
-      "type": "kotlin.Comparable"
-    },
-    {
-      "type": "kotlin.Enum"
     },
     {
       "type": "kotlin.Metadata",
@@ -394,12 +380,6 @@
     },
     {
       "type": "kotlin.String"
-    },
-    {
-      "type": "kotlin.collections.Collection"
-    },
-    {
-      "type": "kotlin.collections.Iterable"
     },
     {
       "type": "kotlin.collections.List"
