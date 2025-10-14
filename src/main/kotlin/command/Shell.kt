@@ -10,9 +10,12 @@ import kotlin.io.path.pathString
 class Shell: CliktCommand() {
     override fun run() {
         val cmd = arrayOf(SystemUtils.shell)
+        val env = System.getenv().toMutableMap()
+
         val builder = PtyProcessBuilder(cmd)
             .setDirectory(config.general.localStatePath.pathString)
-            .setEnvironment(System.getenv())
+            .setEnvironment(env)
+            .setConsole(true)
 
         val process = builder.start()
 
@@ -28,6 +31,6 @@ class Shell: CliktCommand() {
         }
 
         val exitCode = process.waitFor()
-        ProgramResult(exitCode)
+        throw ProgramResult(exitCode)
     }
 }
