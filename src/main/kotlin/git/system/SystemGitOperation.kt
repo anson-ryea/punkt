@@ -8,8 +8,8 @@ import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.states.local.LocalState
 
-object GitOperation {
-    fun Raise<PunktError>.git(args: List<String>) {
+object SystemGitOperation {
+    fun Raise<PunktError>.git(args: List<String>): Int {
         ensure(SystemGitUtils.isGitInstalled) {
             GitError.SystemGitNotFound()
         }
@@ -23,9 +23,6 @@ object GitOperation {
             .inheritIO()
             .start()
 
-        val exitCode = process.waitFor()
-        ensure(exitCode == 0) {
-            GitError.SystemGitNotFound()
-        }
+        return process.waitFor()
     }
 }
