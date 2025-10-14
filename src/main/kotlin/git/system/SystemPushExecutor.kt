@@ -12,7 +12,7 @@ object SystemPushExecutor: SystemGitExecutor() {
             GitError.SystemGitNotFound()
         }
 
-        val args = mutableListOf("git", "push").apply{
+        val args = mutableListOf("push").apply{
             force.takeIf { it }?.let { add("--force") }
             add("--atomic")
         }

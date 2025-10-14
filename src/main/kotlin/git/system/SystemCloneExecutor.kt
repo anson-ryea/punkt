@@ -18,7 +18,7 @@ object SystemCloneExecutor: SystemGitExecutor() {
             GitError.SystemGitNotFound()
         }
 
-        val args = mutableListOf("git", "clone").apply{
+        val args = mutableListOf("clone").apply{
             branch?.let { add("--branch=$it") }
             depth?.let { add("--depth=$it") }
             add(repoUrl)

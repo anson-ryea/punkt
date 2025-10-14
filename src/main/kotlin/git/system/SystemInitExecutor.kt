@@ -13,7 +13,7 @@ object SystemInitExecutor: SystemGitExecutor() {
             GitError.SystemGitNotFound()
         }
 
-        val args = listOf("git", "init", path.pathString)
+        val args = listOf("init", path.pathString)
 
         return execute(args, path)
     }

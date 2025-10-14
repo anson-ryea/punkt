@@ -10,6 +10,7 @@ import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.git.AddOperation.add
 import com.an5on.git.CommitOperation.commit
+import com.an5on.git.PushOperation.push
 import com.an5on.operation.OperationUtils.existingLocalPathsToActivePaths
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
@@ -59,7 +60,7 @@ object SyncOperation {
         }
 
         if (configuration.git.pushOnLocalChange) {
-//            TODO()
+            push(false, globalOptions.useBundledGit)
         }
     }
 
