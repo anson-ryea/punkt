@@ -26,9 +26,9 @@ data class GeneralConfiguration(
     val activeStatePath: Path = SystemUtils.homePath,
     val trackerPath: Path = SystemUtils.homePath.resolve(
         when (SystemUtils.osType) {
-            OsType.WINDOWS -> "AppData\\Local\\punkt\\tracked"
-            OsType.DARWIN -> "Library/Application Support/punkt/tracked"
-            OsType.LINUX -> ".config/punkt/tracked"
+            OsType.WINDOWS -> "AppData\\Local\\punkt\\db\\tracked"
+            OsType.DARWIN -> "Library/Application Support/punkt/db/tracked"
+            OsType.LINUX -> ".config/punkt/db/tracked"
         }
     ),
     val sshPath: Path = SystemUtils.homePath.resolve(".ssh"),
