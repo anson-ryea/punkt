@@ -62,6 +62,7 @@ class Init : CliktCommand() {
      */
     override fun run() {
         if (LocalState.exists()) {
+            echoError("Punkt is already initialised at ${configuration.general.localStatePath}")
             logger.error { "Punkt is already initialised at ${configuration.general.localStatePath}" }
             throw ProgramResult(1)
         }
@@ -75,8 +76,9 @@ class Init : CliktCommand() {
                 }
             },
             { e ->
+                echoError(e.message)
                 logger.error { e.message }
-                throw ProgramResult(1)
+                throw ProgramResult(e.statusCode)
             }, {
                 echoSuccess(verbosityOption = globalOptions.verbosity)
             })

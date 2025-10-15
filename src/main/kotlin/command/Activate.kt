@@ -36,6 +36,7 @@ class Activate : CliktCommand() {
         fold(
             { activate(targets, globalOptions, commonOptions, echos) },
             { e ->
+                echoError(e.message)
                 logger.error { e.message }
                 throw ProgramResult(e.statusCode)
             },

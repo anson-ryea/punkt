@@ -37,6 +37,7 @@ class Unsync : CliktCommand() {
         fold(
             { unsync(targets, globalOptions, echos) },
             { e ->
+                echoError(e.message)
                 logger.error { e.message }
                 throw ProgramResult(e.statusCode)
             },

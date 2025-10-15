@@ -36,6 +36,7 @@ class List : CliktCommand() {
         fold(
             { list(paths, globalOptions, commonOptions, echos) },
             { e ->
+                echoError(e.message)
                 logger.error { e.message }
                 throw ProgramResult(e.statusCode)
             },

@@ -40,7 +40,8 @@ class Sync : CliktCommand() {
         fold(
             { sync(targets, globalOptions, commonOptions, echos) },
             { e ->
-                logger.error { "Error: " + e.message }
+                echoError(e.message)
+                logger.error { e.message }
                 throw ProgramResult(e.statusCode)
             },
             {

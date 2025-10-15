@@ -37,6 +37,7 @@ class Diff : CliktCommand() {
         fold(
             { diff(paths, globalOptions, commonOptions, echos) },
             { e ->
+                echoError(e.message)
                 logger.error { e.message }
                 throw ProgramResult(e.statusCode)
             },
