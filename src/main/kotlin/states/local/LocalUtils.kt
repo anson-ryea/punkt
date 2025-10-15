@@ -36,20 +36,21 @@ object LocalUtils {
      * @return the local path equivalent
      */
     fun Path.toLocal(): Path {
-        assert(!isAbsolute || !isLocal())
+        return when {
+            isLocal() -> this
+            !isAbsolute -> configuration.general.localStatePath.resolve(
+                pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
+            ).normalize()
 
-        return if (!this.isAbsolute) {
-            configuration.general.localStatePath.resolve(
-                this.pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
+            startsWith(configuration.general.activeStatePath) -> configuration.general.localStatePath.resolve(
+                relativeTo(configuration.general.activeStatePath).pathString.replace(
+                    dotPrefixRegex,
+                    configuration.general.dotReplacementPrefix
+                )
             ).normalize()
-        } else if (this.startsWith(configuration.general.activeStatePath)) {
-            configuration.general.localStatePath.resolve(
-                this.relativeTo(configuration.general.activeStatePath).pathString
-                    .replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
-            ).normalize()
-        } else {
-            Path(
-                this.pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
+
+            else -> Path(
+                pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
             ).normalize()
         }
     }

@@ -29,21 +29,26 @@ object ActiveUtils {
      * @return the active path equivalent
      */
     fun Path.toActive(): Path {
-        assert(!this.isAbsolute || this.isLocal())
+        return when {
+            !isLocal() -> this
+            !isAbsolute -> {
+                configuration.general.activeStatePath.resolve(
+                    pathString.replace(dotReplacementPrefixRegex, ".")
+                ).normalize()
+            }
 
-        return if (!this.isAbsolute) {
-            configuration.general.activeStatePath.resolve(
-                this.pathString.replace(dotReplacementPrefixRegex, ".")
-            ).normalize()
-        } else if (this.startsWith(configuration.general.localStatePath)) {
-            configuration.general.activeStatePath.resolve(
-                this.relativeTo(configuration.general.localStatePath).pathString
-                    .replace(dotReplacementPrefixRegex, ".")
-            )
-        } else {
-            Path(
-                this.pathString.replace(dotReplacementPrefixRegex, ".")
-            ).normalize()
+            startsWith(configuration.general.localStatePath) -> {
+                configuration.general.activeStatePath.resolve(
+                    relativeTo(configuration.general.localStatePath).pathString
+                        .replace(dotReplacementPrefixRegex, ".")
+                )
+            }
+
+            else -> {
+                Path(
+                    pathString.replace(dotReplacementPrefixRegex, ".")
+                ).normalize()
+            }
         }
     }
 
