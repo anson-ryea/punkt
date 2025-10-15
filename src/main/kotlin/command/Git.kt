@@ -13,7 +13,7 @@ class Git : CliktCommand() {
     override fun run() {
         fold(
             { systemGit(arguments) },
-            {},
+            { handleError(it) },
             {
                 throw ProgramResult(it)
             }

@@ -7,11 +7,10 @@ import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.SyncOperation.sync
 import com.an5on.states.tracked.TrackedEntriesStore
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Synchronize files from the active state to the local state.
@@ -38,12 +37,8 @@ class Sync : CliktCommand() {
         TrackedEntriesStore.connect()
 
         fold(
-            { sync(targets, globalOptions, commonOptions, echos) },
-            { e ->
-                echoError(e.message)
-                logger.error { e.message }
-                throw ProgramResult(e.statusCode)
-            },
+            { sync(targets, globalOptions, commonOptions, echos, terminal) },
+            { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)
             }
@@ -51,6 +46,4 @@ class Sync : CliktCommand() {
 
         TrackedEntriesStore.disconnect()
     }
-
-    private val logger = KotlinLogging.logger {}
 }

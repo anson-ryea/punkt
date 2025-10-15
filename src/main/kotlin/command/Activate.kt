@@ -7,11 +7,9 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.ActivateOperation.activate
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Activate files from the local state to the active state.
@@ -35,16 +33,10 @@ class Activate : CliktCommand() {
     override fun run() {
         fold(
             { activate(targets, globalOptions, commonOptions, echos) },
-            { e ->
-                echoError(e.message)
-                logger.error { e.message }
-                throw ProgramResult(e.statusCode)
-            },
+            { handleError(it) },
             {
                 echoSuccess(verbosityOption = determineVerbosity(globalOptions.verbosity))
             }
         )
     }
-
-    private val logger = KotlinLogging.logger {}
 }

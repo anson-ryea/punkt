@@ -6,11 +6,9 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.DiffOperation.diff
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Display differences between active and local states.
@@ -36,16 +34,10 @@ class Diff : CliktCommand() {
     override fun run() {
         fold(
             { diff(paths, globalOptions, commonOptions, echos) },
-            { e ->
-                echoError(e.message)
-                logger.error { e.message }
-                throw ProgramResult(e.statusCode)
-            },
+            { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)
             }
         )
     }
-
-    private val logger = KotlinLogging.logger {}
 }
