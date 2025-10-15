@@ -27,8 +27,8 @@
     </Appenders>
     <Loggers>
         <Root level="info">
+<!--            <AppenderRef ref="ConsoleLogger"/>-->
             <AppenderRef ref="AppLog"/>
-            <AppenderRef ref="ConsoleLogger"/>
             <AppenderRef ref="ErrorLog"/>
         </Root>
     </Loggers>
