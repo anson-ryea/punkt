@@ -1,5 +1,6 @@
 package com.an5on.config
 
+import com.an5on.operation.PathStyle
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils
 import com.an5on.type.VerbosityType
@@ -35,4 +36,5 @@ data class GeneralConfiguration(
     val sshPath: Path = SystemUtils.homePath.resolve(".ssh"),
     val dotReplacementPrefix: String = "punkt_",
     val verbosity: VerbosityType = VerbosityType.NORMAL,
+    val pathStyle: PathStyle = PathStyle.ABSOLUTE,
 )

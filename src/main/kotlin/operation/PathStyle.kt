@@ -6,7 +6,7 @@ package com.an5on.operation
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-enum class PathStyles {
+enum class PathStyle {
     /**
      * Display paths as absolute paths in the active state.
      */
