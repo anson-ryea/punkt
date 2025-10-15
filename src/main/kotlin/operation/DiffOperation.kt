@@ -2,8 +2,10 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.Echos
-import com.an5on.command.options.DiffOptions
+import com.an5on.command.options.CommonOptions
+import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
@@ -14,6 +16,7 @@ import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
+import com.an5on.type.VerbosityType
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import com.github.difflib.algorithm.jgit.HistogramDiff
@@ -43,15 +46,20 @@ object DiffOperation {
      * @param options the diff options
      * @param echos the echo functions for output
      */
-    fun Raise<PunktError>.diff(paths: Set<Path>?, options: DiffOptions, echos: Echos) {
+    fun Raise<PunktError>.diff(
+        paths: Set<Path>?,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos
+    ) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
 
         if (paths == null || paths.isEmpty()) {
-            diffExistingLocal(options, echos)
+            diffExistingLocal(globalOptions, commonOptions, echos)
         } else {
-            diffPaths(paths, options, echos)
+            diffPaths(paths, globalOptions, commonOptions, echos)
         }
     }
 
@@ -62,10 +70,16 @@ object DiffOperation {
      * @param options the diff options
      * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.diffPaths(activePaths: Set<Path>, options: DiffOptions, echos: Echos) {
+    private fun Raise<PunktError>.diffPaths(
+        activePaths: Set<Path>,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos
+    ) {
+        val verbosity = determineVerbosity(globalOptions.verbosity)
 
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
-            .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
+        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+            .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(ExistsInBothActiveAndLocalFileFilter)
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
@@ -76,17 +90,31 @@ object DiffOperation {
             activePath.expandToLocal(true, includeExcludeFilter, true)
         }
 
-        echos.echo(generateUnifiedDiffStringFromFiles(expandedLocalPaths), true, false)
+        echos.echoWithVerbosity(
+            generateUnifiedDiffStringFromFiles(expandedLocalPaths),
+            true,
+            false,
+            verbosity,
+            VerbosityType.QUIET
+        )
     }
 
-    private fun diffExistingLocal(options: DiffOptions, echos: Echos) {
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
-            .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
+    private fun diffExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
+        val verbosity = determineVerbosity(globalOptions.verbosity)
+
+        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+            .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(ExistsInBothActiveAndLocalFileFilter)
 
         val existingLocalPaths = configuration.general.localStatePath.expand(true, includeExcludeFilter, true)
 
-        echos.echo(generateUnifiedDiffStringFromFiles(existingLocalPaths), true, false)
+        echos.echoWithVerbosity(
+            generateUnifiedDiffStringFromFiles(existingLocalPaths),
+            true,
+            false,
+            verbosity,
+            VerbosityType.QUIET
+        )
     }
 
     private fun generateUnifiedDiffStringFromFiles(localPaths: Collection<Path>): String {

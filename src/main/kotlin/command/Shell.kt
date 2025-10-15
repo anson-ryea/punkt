@@ -7,7 +7,7 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.pty4j.PtyProcessBuilder
 import kotlin.io.path.pathString
 
-class Shell: CliktCommand() {
+class Shell : CliktCommand() {
     override fun run() {
         val cmd = arrayOf(SystemUtils.shell)
         val env = System.getenv().toMutableMap()

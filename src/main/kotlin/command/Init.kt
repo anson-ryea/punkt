@@ -1,8 +1,8 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.command.options.GlobalOptionGroup
-import com.an5on.command.options.InitOptionGroup
+import com.an5on.command.options.GlobalOptions
+import com.an5on.command.options.InitOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.git.CloneOperation.clone
 import com.an5on.git.InitOperation.init
@@ -21,16 +21,16 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  *
  * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository at local state path.
  * Currently, [repo] supports the formats specified in [commonPatterns].
- * @property globalOptions The global options for the command, provided by [com.an5on.command.options.GlobalOptionGroup].
- * @property initOptions The options specific to the init command, provided by [InitOptionGroup].
+ * @property globalOptions The global options for the command, provided by [com.an5on.command.options.GlobalOptions].
+ * @property initOptions The options specific to the init command, provided by [InitOptions].
  * @see commonPatterns
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
 class Init : CliktCommand() {
-    val globalOptions by GlobalOptionGroup()
-    val initOptions by InitOptionGroup()
-    val repo: String? by argument(
+    private val globalOptions by GlobalOptions()
+    private val initOptions by InitOptions()
+    private val repo: String? by argument(
         help = "Clone from the specified remote Punkt repository"
     ).optional()
 
@@ -68,17 +68,17 @@ class Init : CliktCommand() {
 
         fold(
             {
-            if (repo == null) {
-                init(globalOptions.useBundledGit )
-            } else {
-                clone(repo!!, initOptions, globalOptions.useBundledGit)
-            }
-        },
+                if (repo == null) {
+                    init(globalOptions.useBundledGit)
+                } else {
+                    clone(repo!!, initOptions, globalOptions.useBundledGit)
+                }
+            },
             { e ->
                 logger.error { e.message }
                 throw ProgramResult(1)
             }, {
-                echoSuccess()
+                echoSuccess(verbosityOption = globalOptions.verbosity)
             })
     }
 

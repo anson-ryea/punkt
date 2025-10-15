@@ -9,6 +9,9 @@ object SystemUtils {
         System.getProperty("os.name").lowercase().startsWith("mac") -> OsType.DARWIN
         else -> OsType.LINUX
     }
+
+    val workingPath = Path(System.getProperty("user.dir"))
+
     val homePath = Path(System.getProperty("user.home"))
 
     val configPath: Path = when (osType) {

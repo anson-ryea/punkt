@@ -10,7 +10,7 @@ import com.github.ajalt.clikt.parameters.types.int
  * @property branch The branch of the remote Punkt repository to clone. If not provided, the default branch is cloned.
  * @property depth The depth for a shallow clone of the remote Punkt repository. If not provided, a full clone is performed.
  */
-class InitOptionGroup: OptionGroup() {
+class InitOptions : OptionGroup() {
     val ssh: Boolean by option(
         help = "Use SSH for cloning"
     ).flag()
@@ -19,7 +19,7 @@ class InitOptionGroup: OptionGroup() {
         help = "Set the branch of the remote Punkt repository to clone"
     )
     val depth: Int? by option(
-        names = arrayOf("-p", "--depth"),
+        names = arrayOf("-d", "--depth"),
         help = "Clone the remote Punkt repository shallowly with the specified depth"
     ).int()
 }

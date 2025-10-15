@@ -1,8 +1,8 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.command.options.CommonOptionGroup
-import com.an5on.command.options.GlobalOptionGroup
+import com.an5on.command.options.CommonOptions
+import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.SyncOperation.sync
 import com.an5on.states.tracked.TrackedEntriesStore
@@ -22,8 +22,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * @since 0.1.0
  */
 class Sync : CliktCommand() {
-    private val globalOptions by GlobalOptionGroup()
-    private val commonOptions by CommonOptionGroup()
+    private val globalOptions by GlobalOptions()
+    private val commonOptions by CommonOptions()
     private val targets by argument().convert {
         replaceTildeWithHomeDirPathname(it)
     }.path(
@@ -35,8 +35,6 @@ class Sync : CliktCommand() {
     ).convert { it.toRealPath() }.multiple().unique().optional()
 
     override fun run() {
-        val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
-
         TrackedEntriesStore.connect()
 
         fold(
@@ -46,7 +44,7 @@ class Sync : CliktCommand() {
                 throw ProgramResult(e.statusCode)
             },
             {
-                echoSuccess()
+                echoSuccess(verbosityOption = globalOptions.verbosity)
             }
         )
 

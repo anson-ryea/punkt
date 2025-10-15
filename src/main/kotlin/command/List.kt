@@ -1,45 +1,30 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.command.options.CommonOptionGroup
-import com.an5on.command.options.ListOptions
+import com.an5on.command.options.CommonOptions
+import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.ListOperation.list
-import com.an5on.operation.PathStyles
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
-import com.github.ajalt.clikt.parameters.options.convert
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * List files in the local state.
  *
- * @property commonOptionGroup the common options for include and exclude
+ * @property commonOptions the common options for include and exclude
  * @property pathStyle the style for displaying paths
  * @property paths the list of paths to list, or null to list all existing local files
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
 class List : CliktCommand() {
-    private val commonOptionGroup by CommonOptionGroup()
-    private val pathStyle by option(
-        "-p", "--path-style",
-        help = "Set the path style for displaying the list of managed dotfiles. Options are 'absolute' or 'relative' to the home directory."
-    )
-        .choice(
-        *PathStyles.entries
-            .map { it.name.lowercase().replace("_", "-") }
-            .toTypedArray(),
-    )
-        .convert { PathStyles.valueOf(it.uppercase().replace("-", "_")) }
-        .default(PathStyles.ABSOLUTE)
-    val paths by argument().convert {
+    private val globalOptions by GlobalOptions()
+    private val commonOptions by CommonOptions()
+    private val paths by argument().convert {
         replaceTildeWithHomeDirPathname(it)
     }.path(
         canBeFile = true,
@@ -48,21 +33,14 @@ class List : CliktCommand() {
     ).multiple().unique().optional()
 
     override fun run() {
-        val options = ListOptions(
-            commonOptionGroup.include,
-            commonOptionGroup.exclude,
-            pathStyle,
-        )
-        val echos = Echos(::echo, ::echoStage, ::echoSuccess, ::echoWarning)
-
         fold(
-            { list(paths, options, echos) },
+            { list(paths, globalOptions, commonOptions, echos) },
             { e ->
                 logger.error { e.message }
                 throw ProgramResult(e.statusCode)
             },
             {
-                echoSuccess()
+                echoSuccess(verbosityOption = globalOptions.verbosity)
             }
         )
     }
