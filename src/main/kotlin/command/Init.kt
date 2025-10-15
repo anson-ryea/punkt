@@ -4,17 +4,16 @@ import arrow.core.raise.fold
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.InitOptions
 import com.an5on.config.ActiveConfiguration.configuration
+import com.an5on.error.LocalError
 import com.an5on.git.CloneOperation.clone
 import com.an5on.git.InitOperation.init
 import com.an5on.git.RepoPattern.commonPatterns
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
-import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
@@ -62,9 +61,7 @@ class Init : CliktCommand() {
      */
     override fun run() {
         if (LocalState.exists()) {
-            echoError("Punkt is already initialised at ${configuration.general.localStatePath}")
-            logger.error { "Punkt is already initialised at ${configuration.general.localStatePath}" }
-            throw ProgramResult(1)
+            handleError(LocalError.LocalAlreadyInitialised())
         }
 
         fold(
@@ -75,14 +72,8 @@ class Init : CliktCommand() {
                     clone(repo!!, initOptions, globalOptions.useBundledGit)
                 }
             },
-            { e ->
-                echoError(e.message)
-                logger.error { e.message }
-                throw ProgramResult(e.statusCode)
-            }, {
+            { handleError(it) }, {
                 echoSuccess(verbosityOption = globalOptions.verbosity)
             })
     }
-
-    private val logger = KotlinLogging.logger {}
 }
