@@ -13,4 +13,11 @@ sealed interface PunktError {
         get() = 1
     val cause: Throwable?
         get() = null
+
+    data class OperationCancelled(
+        override val message: String = "Operation cancelled by user",
+        override val cause: Throwable? = null
+    ) : PunktError {
+        override val code: String = "PUNKT_OPERATION_CANCELLED"
+    }
 }

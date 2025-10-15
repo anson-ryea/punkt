@@ -1,10 +1,13 @@
 package com.an5on.command
 
 import com.an5on.command.CommandUtils.determineVerbosity
+import com.an5on.error.PunktError
 import com.an5on.type.VerbosityType
 import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextStyles
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 
 fun CliktCommand.echoWithVerbosity(
@@ -106,3 +109,11 @@ val CliktCommand.echos: Echos
             )
         }
     )
+
+private val logger = KotlinLogging.logger {}
+
+fun CliktCommand.handleError(e: PunktError) {
+    echoError(e.message)
+    logger.error { e.message }
+    throw ProgramResult(e.statusCode)
+}
