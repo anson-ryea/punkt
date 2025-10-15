@@ -15,6 +15,6 @@ object SystemInitExecutor: SystemGitExecutor() {
 
         val args = listOf("init", path.pathString)
 
-        return execute(args, path)
+        return execute(args)
     }
 }
