@@ -1,10 +1,16 @@
 package com.an5on.file
 
 
+import com.an5on.config.ActiveConfiguration.configuration
+import com.an5on.operation.PathStyle
+import com.an5on.states.active.ActiveUtils.toActive
+import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.system.SystemUtils.homePath
 import org.apache.commons.codec.digest.Blake3
 import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.pathString
+import kotlin.io.path.relativeTo
 
 /**
  * Utility functions for file operations.
@@ -33,4 +39,20 @@ object FileUtils {
      * @return the Blake3 hash of the file's contents as a hex string
      */
     fun getBlake3HashHexString(file: File) = Blake3.hash(file.readBytes()).toHexString()
+
+    fun Path.toStringInPathStyle(pathStyle: PathStyle): String = when (pathStyle) {
+        PathStyle.ABSOLUTE -> this.toActive().pathString
+
+        PathStyle.RELATIVE -> this.toActive().relativeTo(configuration.general.activeStatePath).pathString
+
+        PathStyle.LOCAL_ABSOLUTE -> this.toLocal().pathString
+
+        PathStyle.LOCAL_RELATIVE -> this.toLocal().relativeTo(configuration.general.localStatePath).pathString
+    }
+
+    fun Collection<Path>.toStringInPathStyle(pathStyle: PathStyle): String =
+        this.sorted()
+            .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
+
+    fun determinePathStyle(pathStyleOption: PathStyle?) = pathStyleOption ?: configuration.general.pathStyle
 }
