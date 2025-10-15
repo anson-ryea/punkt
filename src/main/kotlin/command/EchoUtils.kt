@@ -70,6 +70,15 @@ fun CliktCommand.echoWarning(
     )
 }
 
+fun CliktCommand.echoError(
+    message: Any?
+) {
+    echo(
+        TextStyles.bold(TextColors.red(" :< $message")),
+        err = true
+    )
+}
+
 val CliktCommand.echos: Echos
     get() = Echos(
         echoWithVerbosity = { message, trailingNewLine, err, verbosityOption, minimumVerbosity ->
