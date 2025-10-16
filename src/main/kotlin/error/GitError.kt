@@ -60,7 +60,7 @@ sealed interface GitError : PunktError {
     }
 
     data class InitFailed(
-        val path: Path = configuration.general.localStatePath,
+        val path: Path = configuration.global.localStatePath,
         override val cause: Throwable? = null
     ) : GitError {
         override val code: String = "GIT_INIT_FAILED"
@@ -70,7 +70,7 @@ sealed interface GitError : PunktError {
 
     data class CloneFailed(
         val url: String,
-        val path: Path = configuration.general.localStatePath,
+        val path: Path = configuration.global.localStatePath,
         override val cause: Throwable? = null
     ) : GitError {
         override val code: String = "GIT_CLONE_FAILED"

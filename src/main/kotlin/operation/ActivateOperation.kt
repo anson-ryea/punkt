@@ -89,7 +89,7 @@ object ActivateOperation {
         echos.echoStage("Activating: existing synced local files", verbosity, VerbosityType.NORMAL)
 
         val existingLocalPaths =
-            configuration.general.localStatePath.expand(commonOptions.recursive, TrueFileFilter.INSTANCE)
+            configuration.global.localStatePath.expand(commonOptions.recursive, TrueFileFilter.INSTANCE)
 
         commit(existingLocalPaths, echos)
     }

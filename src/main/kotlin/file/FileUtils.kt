@@ -43,16 +43,16 @@ object FileUtils {
     fun Path.toStringInPathStyle(pathStyle: PathStyle): String = when (pathStyle) {
         PathStyle.ABSOLUTE -> this.toActive().pathString
 
-        PathStyle.RELATIVE -> this.toActive().relativeTo(configuration.general.activeStatePath).pathString
+        PathStyle.RELATIVE -> this.toActive().relativeTo(configuration.global.activeStatePath).pathString
 
         PathStyle.LOCAL_ABSOLUTE -> this.toLocal().pathString
 
-        PathStyle.LOCAL_RELATIVE -> this.toLocal().relativeTo(configuration.general.localStatePath).pathString
+        PathStyle.LOCAL_RELATIVE -> this.toLocal().relativeTo(configuration.global.localStatePath).pathString
     }
 
     fun Collection<Path>.toStringInPathStyle(pathStyle: PathStyle): String =
         this.sorted()
             .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
 
-    fun determinePathStyle(pathStyleOption: PathStyle?) = pathStyleOption ?: configuration.general.pathStyle
+    fun determinePathStyle(pathStyleOption: PathStyle?) = pathStyleOption ?: configuration.global.pathStyle
 }

@@ -106,7 +106,7 @@ object DiffOperation {
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(ExistsInBothActiveAndLocalFileFilter)
 
-        val existingLocalPaths = configuration.general.localStatePath.expand(true, includeExcludeFilter, true)
+        val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter, true)
 
         echos.echoWithVerbosity(
             generateUnifiedDiffStringFromFiles(existingLocalPaths),

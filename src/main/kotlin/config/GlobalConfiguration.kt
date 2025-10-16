@@ -4,6 +4,7 @@ import com.an5on.operation.PathStyle
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils
 import com.an5on.type.VerbosityType
+import kotlinx.serialization.Serializable
 import java.nio.file.Path
 
 /**
@@ -17,7 +18,8 @@ import java.nio.file.Path
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-data class GeneralConfiguration(
+@Serializable
+data class GlobalConfiguration(
     val localStatePath: Path = SystemUtils.homePath.resolve(
         if (SystemUtils.osType == OsType.WINDOWS) {
             "AppData\\Local\\punkt"

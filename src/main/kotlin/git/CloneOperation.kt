@@ -11,7 +11,7 @@ import com.an5on.type.BooleanWithAuto
 
 object CloneOperation {
     fun Raise<GitError>.clone(repo: String, initOptions: InitOptions, useBundledGitOption: BooleanWithAuto?) {
-        val localPath = configuration.general.localStatePath
+        val localPath = configuration.global.localStatePath
         val repoUrl = parseRepoUrl(repo, initOptions.ssh)
         val useBundledGit = GitUtils.determineSystemOrBundledGit(useBundledGitOption)
 

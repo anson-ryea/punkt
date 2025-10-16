@@ -9,7 +9,7 @@ import com.an5on.type.BooleanWithAuto
 
 object PushOperation {
     fun Raise<GitError>.push(force: Boolean = false, useBundledGitOption: BooleanWithAuto?) {
-        val localPath = configuration.general.localStatePath
+        val localPath = configuration.global.localStatePath
         val useBundledGit = GitUtils.determineSystemOrBundledGit(useBundledGitOption)
 
         if (useBundledGit) {

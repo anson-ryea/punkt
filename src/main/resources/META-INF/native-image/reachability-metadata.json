@@ -60,6 +60,19 @@
             "com.an5on.type.BooleanWithAuto",
             "java.lang.String",
             "java.lang.String",
+            "com.an5on.type.GitOnLocalChangeType",
+            "int",
+            "kotlin.jvm.internal.DefaultConstructorMarker"
+          ]
+        },
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.util.Set",
+            "com.an5on.type.BooleanWithAuto",
+            "java.lang.String",
+            "java.lang.String",
             "boolean",
             "boolean",
             "boolean",
@@ -77,6 +90,9 @@
     },
     {
       "type": "com.an5on.type.BooleanWithAuto"
+    },
+    {
+      "type": "com.an5on.type.GitOnLocalChangeType"
     },
     {
       "type": "com.an5on.type.VerbosityType"
@@ -312,15 +328,6 @@
     },
     {
       "type": "java.nio.file.Path"
-    },
-    {
-      "type": "java.security.MessageDigestSpi"
-    },
-    {
-      "type": "java.security.interfaces.RSAPrivateKey"
-    },
-    {
-      "type": "java.security.interfaces.RSAPublicKey"
     },
     {
       "type": "java.sql.Date"
@@ -1674,178 +1681,104 @@
       "type": "org.apache.logging.slf4j.SLF4JServiceProvider"
     },
     {
+      "type": "org.h2.mvstore.MVStore$TxCounter",
+      "fields": [
+        {
+          "name": "counter"
+        }
+      ]
+    },
+    {
+      "type": "org.h2.mvstore.Page",
+      "fields": [
+        {
+          "name": "pos"
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.async.FilePathAsync",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.mem.FilePathMem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.mem.FilePathMemLZF",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomapped.FilePathNioMapped",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomem.FilePathNioMem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomem.FilePathNioMemLZF",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.retry.FilePathRetryOnInterrupt",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.split.FilePathSplit",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.zip.FilePathZip",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.osgi.framework.FrameworkUtil"
-    },
-    {
-      "type": "sun.security.provider.SHA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.SHA2$SHA256",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.SHA5$SHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.provider.X509Factory",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSAKeyFactory$Legacy",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSASignature$SHA256withRSA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.rsa.RSASignature$SHA384withRSA",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.AuthorityInfoAccessExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.AuthorityKeyIdentifierExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.BasicConstraintsExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.CRLDistributionPointsExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.CertificatePoliciesExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.ExtendedKeyUsageExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.KeyUsageExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.SubjectAlternativeNameExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "sun.security.x509.SubjectKeyIdentifierExtension",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
-        }
-      ]
     }
   ],
   "resources": [
@@ -1977,10 +1910,6 @@
     },
     {
       "glob": "log4j218b4aac2.yml"
-    },
-    {
-      "module": "java.base",
-      "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
     },
     {
       "module": "java.xml",

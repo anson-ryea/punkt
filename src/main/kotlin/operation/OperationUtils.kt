@@ -105,7 +105,7 @@ object OperationUtils {
      * A set of active paths corresponding to all existing local paths.
      */
     val existingLocalPathsToActivePaths =
-        configuration.general.localStatePath.expandToActive(true, TrueFileFilter.INSTANCE)
+        configuration.global.localStatePath.expandToActive(true, TrueFileFilter.INSTANCE)
 
     fun determineGitOnLocalChange(gitOnLocalChangeOption: GitOnLocalChangeType?) =
         gitOnLocalChangeOption ?: configuration.git.gitOnLocalChange
@@ -119,7 +119,7 @@ object OperationUtils {
         }
         if (ordinal % 2 == 1) {
             add(
-                configuration.general.localStatePath,
+                configuration.global.localStatePath,
                 globalOptions.useBundledGit
             )
         }

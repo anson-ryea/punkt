@@ -29,6 +29,6 @@ sealed interface LocalError : PunktError {
     ) : LocalError {
         override val code: String = "LOCAL_ALREADY_INITIALISED"
         override val message: String
-            get() = "punkt is already initialised at: ${configuration.general.localStatePath}"
+            get() = "punkt is already initialised at: ${configuration.global.localStatePath}"
     }
 }

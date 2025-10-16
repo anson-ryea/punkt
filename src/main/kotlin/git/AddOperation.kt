@@ -10,7 +10,7 @@ import java.nio.file.Path
 
 object AddOperation {
     fun Raise<GitError>.add(targetPath: Path, useBundledGitOption: BooleanWithAuto?) {
-        val localPath = configuration.general.localStatePath
+        val localPath = configuration.global.localStatePath
         val useBundledGit = GitUtils.determineSystemOrBundledGit(useBundledGitOption)
 
         if (useBundledGit) {

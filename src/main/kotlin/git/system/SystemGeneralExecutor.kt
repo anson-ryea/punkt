@@ -19,6 +19,6 @@ object SystemGeneralExecutor: SystemGitExecutor() {
             LocalError.LocalNotFound()
         }
 
-        return execute(args, configuration.general.localStatePath)
+        return execute(args, configuration.global.localStatePath)
     }
 }

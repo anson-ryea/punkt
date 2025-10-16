@@ -6,7 +6,7 @@ import kotlin.enums.enumEntries
 
 object CommandUtils {
     const val ECHO_CONTENT_INDENTATION = "    " // 4 spaces
-    fun determineVerbosity(verbosityOption: VerbosityType?) = verbosityOption ?: configuration.general.verbosity
+    fun determineVerbosity(verbosityOption: VerbosityType?) = verbosityOption ?: configuration.global.verbosity
 
     inline fun <reified T : Enum<T>> Enum.Companion.toChoices() =
         enumEntries<T>()

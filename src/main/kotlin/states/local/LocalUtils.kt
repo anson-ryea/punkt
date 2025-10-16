@@ -38,19 +38,19 @@ object LocalUtils {
     fun Path.toLocal(): Path {
         return when {
             isLocal() -> this
-            !isAbsolute -> configuration.general.localStatePath.resolve(
-                pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
+            !isAbsolute -> configuration.global.localStatePath.resolve(
+                pathString.replace(dotPrefixRegex, configuration.global.dotReplacementPrefix)
             ).normalize()
 
-            startsWith(configuration.general.activeStatePath) -> configuration.general.localStatePath.resolve(
-                relativeTo(configuration.general.activeStatePath).pathString.replace(
+            startsWith(configuration.global.activeStatePath) -> configuration.global.localStatePath.resolve(
+                relativeTo(configuration.global.activeStatePath).pathString.replace(
                     dotPrefixRegex,
-                    configuration.general.dotReplacementPrefix
+                    configuration.global.dotReplacementPrefix
                 )
             ).normalize()
 
             else -> Path(
-                pathString.replace(dotPrefixRegex, configuration.general.dotReplacementPrefix)
+                pathString.replace(dotPrefixRegex, configuration.global.dotReplacementPrefix)
             ).normalize()
         }
     }
@@ -67,7 +67,7 @@ object LocalUtils {
      *
      * @return true if the path is local, false otherwise
      */
-    fun Path.isLocal() = this.startsWith(configuration.general.localStatePath)
+    fun Path.isLocal() = this.startsWith(configuration.global.localStatePath)
 
     /**
      * Checks if this file is within the local directory.

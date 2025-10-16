@@ -34,10 +34,10 @@ class Init : CliktCommand() {
     ).optional()
 
     override fun help(context: Context) = """
-    Initialises a Punkt local repository at ${configuration.general.localStatePath}.
+    Initialises a Punkt local repository at ${configuration.global.localStatePath}.
             
-    If a remote Punkt repository URL is provided, it clones the repository to ${configuration.general.localStatePath}.
-    Otherwise, it initialises an empty Punkt local repository at ${configuration.general.localStatePath}.
+    If a remote Punkt repository URL is provided, it clones the repository to ${configuration.global.localStatePath}.
+    Otherwise, it initialises an empty Punkt local repository at ${configuration.global.localStatePath}.
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:

@@ -79,7 +79,7 @@ object ListOperation {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
 
-        val existingLocalPaths = configuration.general.localStatePath.expand(true, includeExcludeFilter)
+        val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter)
 
         val pathStyle = determinePathStyle(globalOptions.pathStyle)
 

@@ -13,7 +13,7 @@ class Shell : CliktCommand() {
         val env = System.getenv().toMutableMap()
 
         val builder = PtyProcessBuilder(cmd)
-            .setDirectory(configuration.general.localStatePath.pathString)
+            .setDirectory(configuration.global.localStatePath.pathString)
             .setEnvironment(env)
             .setConsole(true)
 

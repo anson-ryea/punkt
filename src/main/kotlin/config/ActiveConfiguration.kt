@@ -1,9 +1,8 @@
 package com.an5on.config
 
 import com.an5on.system.SystemUtils
-import com.sksamuel.hoplite.ConfigLoaderBuilder
-import com.sksamuel.hoplite.ExperimentalHoplite
-import com.sksamuel.hoplite.addPathSource
+import kotlinx.serialization.json.Json
+
 /**
  * Provides access to the active configuration loaded from the configuration file.
  *
@@ -14,11 +13,10 @@ object ActiveConfiguration {
     /**
      * The loaded configuration instance.
      */
-    @OptIn(ExperimentalHoplite::class)
-    val configuration = ConfigLoaderBuilder
-        .default()
-        .withExplicitSealedTypes()
-        .addPathSource(SystemUtils.configPath, optional = true)
-        .build()
-        .loadConfigOrThrow<Configuration>()
+    val configuration = loadJsonConfig()
+
+    private fun loadJsonConfig(): Configuration {
+        val configContent = SystemUtils.configPath.toFile().takeIf { it.exists() }?.readText() ?: "{}"
+        return Json.decodeFromString<Configuration>(configContent)
+    }
 }

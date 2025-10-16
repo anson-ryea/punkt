@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation(platform("io.arrow-kt:arrow-stack:2.1.0"))
     implementation("io.arrow-kt:arrow-core")
     implementation("commons-io:commons-io:2.20.0")
@@ -37,8 +38,6 @@ dependencies {
     implementation("commons-codec:commons-codec:1.19.0")
     implementation("io.github.java-diff-utils:java-diff-utils:4.16")
     implementation("io.github.java-diff-utils:java-diff-utils-jgit:4.16")
-    implementation("com.sksamuel.hoplite:hoplite-core:3.0.0.RC1")
-    implementation("com.sksamuel.hoplite:hoplite-json:3.0.0.RC1")
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
     testImplementation(kotlin("test"))
 }
