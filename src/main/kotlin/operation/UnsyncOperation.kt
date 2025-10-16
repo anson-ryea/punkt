@@ -70,7 +70,7 @@ object UnsyncOperation {
             true,
             false,
             verbosity,
-            VerbosityType.VERBOSE
+            VerbosityType.FULL
         )
         LocalState.pendingTransactions.forEach { transaction ->
             echos.echoWithVerbosity(
@@ -78,7 +78,7 @@ object UnsyncOperation {
                 true,
                 false,
                 verbosity,
-                VerbosityType.VERBOSE
+                VerbosityType.FULL
             )
         }
 

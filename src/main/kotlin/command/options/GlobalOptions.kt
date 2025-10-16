@@ -28,11 +28,11 @@ class GlobalOptions : OptionGroup("Global Options") {
         .convert {
             Enum.enumEntryOf<VerbosityType>(it)
         }
-        .optionalValue(VerbosityType.VERBOSE)
+        .optionalValue(VerbosityType.FULL, false)
 
     val pathStyle by option(
         "-p", "--path-style",
-        help = "Set the path style for displaying the list of managed dotfiles. Options are 'absolute' or 'relative' to the home directory."
+        help = "Set the path style for displaying the list of managed dotfiles."
     )
         .choice(
             *Enum.toChoices<PathStyle>()

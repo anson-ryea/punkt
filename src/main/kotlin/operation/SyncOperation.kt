@@ -104,7 +104,7 @@ object SyncOperation {
             true,
             false,
             verbosity,
-            VerbosityType.VERBOSE
+            VerbosityType.FULL
         )
         LocalState.pendingTransactions.forEach { transaction ->
             echos.echoWithVerbosity(
@@ -112,7 +112,7 @@ object SyncOperation {
                 true,
                 false,
                 verbosity,
-                VerbosityType.VERBOSE
+                VerbosityType.FULL
             )
         }
 
