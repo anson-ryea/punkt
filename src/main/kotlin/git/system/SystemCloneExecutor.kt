@@ -25,6 +25,6 @@ object SystemCloneExecutor: SystemGitExecutor() {
             add(path.pathString)
         }
 
-        return execute(args, path)
+        return execute(args)
     }
 }
