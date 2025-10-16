@@ -1,5 +1,6 @@
 package com.an5on.command
 
+import com.an5on.punkt.BuildConfig.APP_VERSION
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.versionOption
 
@@ -11,7 +12,7 @@ import com.github.ajalt.clikt.parameters.options.versionOption
  */
 class Command : CliktCommand(name = "punkt") {
     init {
-        versionOption("")
+        versionOption(APP_VERSION)
     }
 
     override fun run() = Unit

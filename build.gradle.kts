@@ -4,10 +4,11 @@ plugins {
     kotlin("plugin.serialization") version "2.2.20"
     id("org.graalvm.buildtools.native") version "0.11.1"
     id("org.jetbrains.dokka") version "2.0.0"
+    id("com.github.gmazzo.buildconfig") version "5.7.0"
 }
 
 group = "com.an5on"
-version = "1.0-SNAPSHOT"
+version = "0.0.0"
 
 val cliktVersion = "5.0.3"
 
@@ -79,4 +80,8 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(24))
     }
+}
+
+buildConfig {
+    buildConfigField("APP_VERSION", provider { version.toString() })
 }
