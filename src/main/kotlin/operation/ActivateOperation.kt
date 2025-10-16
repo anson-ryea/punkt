@@ -18,7 +18,7 @@ import com.an5on.states.active.ActiveTransactionCopyToActive
 import com.an5on.states.active.ActiveTransactionMakeDirectories
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
-import com.an5on.type.VerbosityType
+import com.an5on.type.Verbosity
 import org.apache.commons.io.filefilter.TrueFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -71,7 +71,7 @@ object ActivateOperation {
             .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Activating: $activePath", verbosity, VerbosityType.NORMAL)
+            echos.echoStage("Activating: $activePath", verbosity, Verbosity.NORMAL)
 
             ensure(activePath.existsInLocal()) {
                 LocalError.LocalPathNotFound(activePath)
@@ -86,7 +86,7 @@ object ActivateOperation {
     private fun activateExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
         val verbosity = determineVerbosity(globalOptions.verbosity)
 
-        echos.echoStage("Activating: existing synced local files", verbosity, VerbosityType.NORMAL)
+        echos.echoStage("Activating: existing synced local files", verbosity, Verbosity.NORMAL)
 
         val existingLocalPaths =
             configuration.global.localStatePath.expand(commonOptions.recursive, TrueFileFilter.INSTANCE)

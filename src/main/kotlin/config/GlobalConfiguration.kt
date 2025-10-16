@@ -1,9 +1,10 @@
 package com.an5on.config
 
-import com.an5on.operation.PathStyle
+import com.an5on.type.PathStyle
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils
-import com.an5on.type.VerbosityType
+import com.an5on.type.Interactivity
+import com.an5on.type.Verbosity
 import kotlinx.serialization.Serializable
 import java.nio.file.Path
 
@@ -37,6 +38,7 @@ data class GlobalConfiguration(
     ),
     val sshPath: Path = SystemUtils.homePath.resolve(".ssh"),
     val dotReplacementPrefix: String = "punkt_",
-    val verbosity: VerbosityType = VerbosityType.NORMAL,
+    val verbosity: Verbosity = Verbosity.NORMAL,
     val pathStyle: PathStyle = PathStyle.ABSOLUTE,
+    val interactivity: Interactivity = Interactivity.ALWAYS
 )

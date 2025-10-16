@@ -2,7 +2,7 @@ package com.an5on.file
 
 
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.operation.PathStyle
+import com.an5on.type.PathStyle
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.system.SystemUtils.homePath

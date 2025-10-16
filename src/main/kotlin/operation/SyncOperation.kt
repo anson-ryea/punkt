@@ -16,7 +16,8 @@ import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionCopyToLocal
 import com.an5on.states.local.LocalTransactionMakeDirectories
-import com.an5on.type.VerbosityType
+import com.an5on.type.Interactivity
+import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextStyles
 import com.github.ajalt.mordant.terminal.Terminal
@@ -82,7 +83,7 @@ object SyncOperation {
 //            .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedActivePaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Syncing: $activePath", verbosity, VerbosityType.NORMAL)
+            echos.echoStage("Syncing: $activePath", verbosity, Verbosity.NORMAL)
 
             activePath.expand(commonOptions.recursive, includeExcludeFilter)
         }.toSet()
@@ -104,7 +105,7 @@ object SyncOperation {
             true,
             false,
             verbosity,
-            VerbosityType.FULL
+            Verbosity.FULL
         )
         LocalState.pendingTransactions.forEach { transaction ->
             echos.echoWithVerbosity(
@@ -112,11 +113,11 @@ object SyncOperation {
                 true,
                 false,
                 verbosity,
-                VerbosityType.FULL
+                Verbosity.FULL
             )
         }
 
-        if (globalOptions.prompt) {
+        if (globalOptions.interactivity == Interactivity.ALWAYS) {
             if (YesNoPrompt(
                     ECHO_CONTENT_INDENTATION +
                             TextStyles.bold(
@@ -132,7 +133,7 @@ object SyncOperation {
                     true,
                     false,
                     verbosity,
-                    VerbosityType.QUIET
+                    Verbosity.QUIET
                 )
                 LocalState.pendingTransactions.clear()
 

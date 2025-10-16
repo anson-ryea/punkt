@@ -15,7 +15,7 @@ import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
-import com.an5on.type.VerbosityType
+import com.an5on.type.Verbosity
 import java.nio.file.Path
 
 /**
@@ -71,7 +71,7 @@ object ListOperation {
             true,
             false,
             globalOptions.verbosity,
-            VerbosityType.QUIET
+            Verbosity.QUIET
         )
     }
 
@@ -88,7 +88,7 @@ object ListOperation {
             true,
             false,
             globalOptions.verbosity,
-            VerbosityType.QUIET
+            Verbosity.QUIET
         )
     }
 }

@@ -1,12 +1,12 @@
 package com.an5on.command
 
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.type.VerbosityType
+import com.an5on.type.Verbosity
 import kotlin.enums.enumEntries
 
 object CommandUtils {
     const val ECHO_CONTENT_INDENTATION = "    " // 4 spaces
-    fun determineVerbosity(verbosityOption: VerbosityType?) = verbosityOption ?: configuration.global.verbosity
+    fun determineVerbosity(verbosityOption: Verbosity?) = verbosityOption ?: configuration.global.verbosity
 
     inline fun <reified T : Enum<T>> Enum.Companion.toChoices() =
         enumEntries<T>()

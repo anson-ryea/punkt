@@ -3,7 +3,7 @@ package com.an5on.config
 import com.an5on.git.bundled.BundledGitCredentialsProviderType
 import com.an5on.system.SystemUtils
 import com.an5on.type.BooleanWithAuto
-import com.an5on.type.GitOnLocalChangeType
+import com.an5on.type.GitOnLocalChange
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,5 +23,5 @@ data class GitConfiguration(
     val useBundledGit: BooleanWithAuto = BooleanWithAuto.AUTO,
     val bundledGitName: String = SystemUtils.username,
     val bundledGitEmail: String = "",
-    val gitOnLocalChange: GitOnLocalChangeType = GitOnLocalChangeType.NONE,
+    val gitOnLocalChange: GitOnLocalChange = GitOnLocalChange.NONE,
 )

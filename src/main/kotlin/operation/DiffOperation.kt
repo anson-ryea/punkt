@@ -16,7 +16,7 @@ import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
-import com.an5on.type.VerbosityType
+import com.an5on.type.Verbosity
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import com.github.difflib.algorithm.jgit.HistogramDiff
@@ -95,7 +95,7 @@ object DiffOperation {
             true,
             false,
             verbosity,
-            VerbosityType.QUIET
+            Verbosity.QUIET
         )
     }
 
@@ -113,7 +113,7 @@ object DiffOperation {
             true,
             false,
             verbosity,
-            VerbosityType.QUIET
+            Verbosity.QUIET
         )
     }
 

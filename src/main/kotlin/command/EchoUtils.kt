@@ -2,7 +2,7 @@ package com.an5on.command
 
 import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.error.PunktError
-import com.an5on.type.VerbosityType
+import com.an5on.type.Verbosity
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.mordant.rendering.TextColors
@@ -14,8 +14,8 @@ fun CliktCommand.echoWithVerbosity(
     message: Any?,
     trailingNewLine: Boolean = true,
     err: Boolean = false,
-    verbosityOption: VerbosityType?,
-    minimumVerbosity: VerbosityType = VerbosityType.NORMAL
+    verbosityOption: Verbosity?,
+    minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
     if (determineVerbosity(verbosityOption) < minimumVerbosity) return
 
@@ -29,8 +29,8 @@ fun CliktCommand.echoWithVerbosity(
  */
 fun CliktCommand.echoStage(
     message: Any?,
-    verbosityOption: VerbosityType?,
-    minimumVerbosity: VerbosityType = VerbosityType.NORMAL
+    verbosityOption: Verbosity?,
+    minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
     if (determineVerbosity(verbosityOption) < minimumVerbosity) return
 
@@ -46,8 +46,8 @@ fun CliktCommand.echoStage(
  */
 fun CliktCommand.echoSuccess(
     message: Any? = "Done!",
-    verbosityOption: VerbosityType?,
-    minimumVerbosity: VerbosityType = VerbosityType.NORMAL
+    verbosityOption: Verbosity?,
+    minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
     if (determineVerbosity(verbosityOption) < minimumVerbosity) return
 
@@ -63,8 +63,8 @@ fun CliktCommand.echoSuccess(
  */
 fun CliktCommand.echoWarning(
     message: Any?,
-    verbosityOption: VerbosityType?,
-    minimumVerbosity: VerbosityType = VerbosityType.NORMAL
+    verbosityOption: Verbosity?,
+    minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
     if (determineVerbosity(verbosityOption) < minimumVerbosity) return
 

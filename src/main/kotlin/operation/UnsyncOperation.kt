@@ -14,7 +14,8 @@ import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionDelete
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.states.local.LocalUtils.toLocal
-import com.an5on.type.VerbosityType
+import com.an5on.type.Interactivity
+import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextStyles
 import com.github.ajalt.mordant.terminal.Terminal
@@ -54,7 +55,7 @@ object UnsyncOperation {
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            echos.echoStage("Unsyncing: ${activePath.pathString}", verbosity, VerbosityType.NORMAL)
+            echos.echoStage("Unsyncing: ${activePath.pathString}", verbosity, Verbosity.NORMAL)
 
             activePath.toLocal()
         }.toSet()
@@ -70,7 +71,7 @@ object UnsyncOperation {
             true,
             false,
             verbosity,
-            VerbosityType.FULL
+            Verbosity.FULL
         )
         LocalState.pendingTransactions.forEach { transaction ->
             echos.echoWithVerbosity(
@@ -78,11 +79,11 @@ object UnsyncOperation {
                 true,
                 false,
                 verbosity,
-                VerbosityType.FULL
+                Verbosity.FULL
             )
         }
 
-        if (globalOptions.prompt) {
+        if (globalOptions.interactivity == Interactivity.ALWAYS) {
             if (YesNoPrompt(
                     ECHO_CONTENT_INDENTATION +
                             TextStyles.bold(

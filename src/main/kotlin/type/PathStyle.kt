@@ -1,4 +1,4 @@
-package com.an5on.operation
+package com.an5on.type
 
 /**
  * Represents the styles for displaying paths in list operations.

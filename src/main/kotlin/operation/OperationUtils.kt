@@ -9,7 +9,7 @@ import com.an5on.git.CommitOperation.commit
 import com.an5on.git.PushOperation.push
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.toLocal
-import com.an5on.type.GitOnLocalChangeType
+import com.an5on.type.GitOnLocalChange
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.TrueFileFilter
@@ -107,7 +107,7 @@ object OperationUtils {
     val existingLocalPathsToActivePaths =
         configuration.global.localStatePath.expandToActive(true, TrueFileFilter.INSTANCE)
 
-    fun determineGitOnLocalChange(gitOnLocalChangeOption: GitOnLocalChangeType?) =
+    fun determineGitOnLocalChange(gitOnLocalChangeOption: GitOnLocalChange?) =
         gitOnLocalChangeOption ?: configuration.git.gitOnLocalChange
 
     fun Raise<GitError>.executeGitOnLocalChange(globalOptions: GlobalOptions) {

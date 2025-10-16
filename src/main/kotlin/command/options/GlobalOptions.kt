@@ -2,10 +2,12 @@ package com.an5on.command.options
 
 import com.an5on.command.CommandUtils.enumEntryOf
 import com.an5on.command.CommandUtils.toChoices
-import com.an5on.operation.PathStyle
+import com.an5on.config.ActiveConfiguration.configuration
+import com.an5on.type.PathStyle
 import com.an5on.type.BooleanWithAuto
-import com.an5on.type.GitOnLocalChangeType
-import com.an5on.type.VerbosityType
+import com.an5on.type.GitOnLocalChange
+import com.an5on.type.Interactivity
+import com.an5on.type.Verbosity
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.choice
@@ -18,17 +20,19 @@ class GlobalOptions : OptionGroup("Global Options") {
         .convert {
             Enum.enumEntryOf<BooleanWithAuto>(it)
         }
+        .default(configuration.git.useBundledGit)
 
     val verbosity by option(
         "-v", "--verbosity"
     )
         .choice(
-            *Enum.toChoices<VerbosityType>()
+            *Enum.toChoices<Verbosity>()
         )
         .convert {
-            Enum.enumEntryOf<VerbosityType>(it)
+            Enum.enumEntryOf<Verbosity>(it)
         }
-        .optionalValue(VerbosityType.FULL, false)
+        .optionalValue(Verbosity.FULL, false)
+        .default(configuration.global.verbosity)
 
     val pathStyle by option(
         "-p", "--path-style",
@@ -38,13 +42,22 @@ class GlobalOptions : OptionGroup("Global Options") {
             *Enum.toChoices<PathStyle>()
         )
         .convert { Enum.enumEntryOf<PathStyle>(it) }
-        .default(PathStyle.ABSOLUTE)
+        .default(configuration.global.pathStyle)
 
-    val prompt by option().flag()
+    val interactivity by option(
+        "-y"
+    )
+        .choice(
+            *Enum.toChoices<Interactivity>()
+        )
+        .convert { Enum.enumEntryOf<Interactivity>(it) }
+        .optionalValue(Interactivity.NEVER, false)
+        .default(configuration.global.interactivity)
 
     val gitOnLocalChange by option()
         .choice(
-            *Enum.toChoices<GitOnLocalChangeType>()
+            *Enum.toChoices<GitOnLocalChange>()
         )
-        .convert { Enum.enumEntryOf<GitOnLocalChangeType>(it) }
+        .convert { Enum.enumEntryOf<GitOnLocalChange>(it) }
+        .default(configuration.git.gitOnLocalChange)
 }
