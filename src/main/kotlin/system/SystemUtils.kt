@@ -31,4 +31,9 @@ object SystemUtils {
         OsType.WINDOWS -> "powershell.exe"
         else -> "/bin/bash"
     }
+
+    val sshIdentitiesPath: Path = when (osType) {
+        OsType.WINDOWS -> homePath.resolve(".ssh")
+        else -> homePath.resolve(".ssh")
+    }
 }

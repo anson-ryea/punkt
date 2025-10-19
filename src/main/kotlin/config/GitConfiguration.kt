@@ -5,6 +5,7 @@ import com.an5on.system.SystemUtils
 import com.an5on.type.BooleanWithAuto
 import com.an5on.type.GitOnLocalChange
 import kotlinx.serialization.Serializable
+import java.nio.file.Path
 
 /**
  * Represents the Git-related configuration settings for the Punkt application.
@@ -24,4 +25,5 @@ data class GitConfiguration(
     val bundledGitName: String = SystemUtils.username,
     val bundledGitEmail: String = "",
     val gitOnLocalChange: GitOnLocalChange = GitOnLocalChange.NONE,
+    val gitSshIdentitiesPath: Path = SystemUtils.sshIdentitiesPath
 )

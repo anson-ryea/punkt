@@ -5,10 +5,11 @@ import arrow.core.raise.catch
 import arrow.core.raise.ensure
 import com.an5on.error.GitError
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.errors.GitAPIException
 import java.nio.file.Path
 
 object BundledPushOperation {
-    fun Raise<GitError>.bundledPush(path: Path, force: Boolean = false) {
+    fun Raise<GitError>.bundledPush(path: Path, force: Boolean = false): Unit =
         catch(
             {
                 val localRepo = Git.open(path.toFile())
@@ -22,12 +23,12 @@ object BundledPushOperation {
                 pushCommand.setAtomic(true)
                     .setForce(force)
                     .call()
-            },
-            { e ->
-                when (e) {
-                    else -> throw e
-                }
+            })
+        {
+            when (it) {
+                is GitAPIException -> raise(GitError.BundledGitOperationFailed("Add", it))
+                else -> throw it
             }
-        )
-    }
+        }
+
 }
