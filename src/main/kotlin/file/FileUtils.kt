@@ -55,4 +55,8 @@ object FileUtils {
             .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
 
     fun determinePathStyle(pathStyleOption: PathStyle?) = pathStyleOption ?: configuration.global.pathStyle
+
+    fun readPunktIgnore(ignoreFile: File) {
+
+    }
 }

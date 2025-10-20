@@ -10,6 +10,7 @@ import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
+import com.an5on.file.filter.DefaultIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
@@ -19,7 +20,6 @@ import com.an5on.states.active.ActiveTransactionMakeDirectories
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Verbosity
-import org.apache.commons.io.filefilter.TrueFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
@@ -39,7 +39,12 @@ object ActivateOperation {
      * @param options the activation options
      * @param echos the echo functions for output
      */
-    fun Raise<PunktError>.activate(activePaths: Set<Path>?, globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
+    fun Raise<PunktError>.activate(
+        activePaths: Set<Path>?,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos
+    ) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
@@ -68,6 +73,7 @@ object ActivateOperation {
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultIgnoreFileFilter)
             .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
@@ -89,7 +95,7 @@ object ActivateOperation {
         echos.echoStage("Activating: existing synced local files", verbosity, Verbosity.NORMAL)
 
         val existingLocalPaths =
-            configuration.global.localStatePath.expand(commonOptions.recursive, TrueFileFilter.INSTANCE)
+            configuration.global.localStatePath.expand(commonOptions.recursive, DefaultIgnoreFileFilter)
 
         commit(existingLocalPaths, echos)
     }

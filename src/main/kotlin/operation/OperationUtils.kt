@@ -9,6 +9,7 @@ import com.an5on.git.CommitOperation.commit
 import com.an5on.git.PushOperation.push
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.system.SystemUtils
 import com.an5on.type.GitOnLocalChange
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.IOFileFilter
@@ -88,7 +89,10 @@ object OperationUtils {
      * @return the set of expanded active paths
      */
     fun File.expandToActive(recursive: Boolean = true, filter: IOFileFilter, filesOnly: Boolean = false) =
-        this.expand(recursive, filter, filesOnly).map { it.toActive() }.toSet()
+        this.expand(recursive, filter, filesOnly)
+            .map { it.toActive() }
+            .filterNot { it.toPath() == SystemUtils.homePath }
+            .toSet()
 
     /**
      * Expands this path and converts the results to active paths.
@@ -99,13 +103,17 @@ object OperationUtils {
      * @return the set of expanded active paths
      */
     fun Path.expandToActive(recursive: Boolean = true, filter: IOFileFilter, filesOnly: Boolean = false) =
-        this.toFile().expand(recursive, filter, filesOnly).map { it.toPath().toActive() }.toSet()
+        this.toFile().expandToActive(recursive, filter, filesOnly)
+            .map { it.toPath() }
+            .filterNot { it == SystemUtils.homePath }
+            .toSet()
 
     /**
      * A set of active paths corresponding to all existing local paths.
      */
     val existingLocalPathsToActivePaths =
-        configuration.global.localStatePath.expandToActive(true, TrueFileFilter.INSTANCE)
+        configuration.global.localStatePath
+            .expandToActive(true, TrueFileFilter.INSTANCE)
 
     fun determineGitOnLocalChange(gitOnLocalChangeOption: GitOnLocalChange?) =
         gitOnLocalChangeOption ?: configuration.git.gitOnLocalChange

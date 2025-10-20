@@ -10,6 +10,7 @@ import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.FileUtils.determinePathStyle
 import com.an5on.file.FileUtils.toStringInPathStyle
+import com.an5on.file.filter.DefaultIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
@@ -56,6 +57,7 @@ object ListOperation {
     private fun Raise<PunktError>.listPaths(activePaths: Set<Path>, globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultIgnoreFileFilter)
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
             ensure(activePath.existsInLocal()) {
@@ -78,14 +80,18 @@ object ListOperation {
     private fun listExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultIgnoreFileFilter)
 
-        val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter)
+        val existingLocalPaths = configuration.global.localStatePath
+            .expand(true, includeExcludeFilter)
+            .filterNot { it == configuration.global.localStatePath }
+            .toSet()
 
         val pathStyle = determinePathStyle(globalOptions.pathStyle)
 
         echos.echoWithVerbosity(
             existingLocalPaths.toStringInPathStyle(pathStyle),
-            true,
+            existingLocalPaths.isNotEmpty(),
             false,
             globalOptions.verbosity,
             Verbosity.QUIET

@@ -10,6 +10,7 @@ import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.filter.DefaultIgnoreFileFilter
 import com.an5on.operation.OperationUtils.executeGitOnLocalChange
 import com.an5on.operation.OperationUtils.existingLocalPathsToActivePaths
 import com.an5on.operation.OperationUtils.expand
@@ -80,6 +81,7 @@ object SyncOperation {
 
         val includeExcludeFilter = RegexFileFilter(commonOptions.include.pattern)
             .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
+            .and(DefaultIgnoreFileFilter)
 //            .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedActivePaths = activePaths.flatMap { activePath ->

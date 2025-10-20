@@ -9,6 +9,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.filter.DefaultIgnoreFileFilter
 import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
 import com.an5on.operation.OperationUtils.expand
@@ -80,6 +81,7 @@ object DiffOperation {
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
@@ -104,6 +106,7 @@ object DiffOperation {
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
         val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter, true)
