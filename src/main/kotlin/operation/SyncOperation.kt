@@ -2,20 +2,26 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import com.an5on.command.CommandUtils.ECHO_CONTENT_INDENTATION
+import com.an5on.command.CommandUtils.determineVerbosity
+import com.an5on.command.CommandUtils.indented
 import com.an5on.command.Echos
-import com.an5on.command.options.CommonOptionGroup
-import com.an5on.command.options.GlobalOptionGroup
-import com.an5on.config.ActiveConfiguration.configuration
+import com.an5on.command.options.CommonOptions
+import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.git.AddOperation.add
-import com.an5on.git.CommitOperation.commit
-import com.an5on.git.PushOperation.push
+import com.an5on.operation.OperationUtils.executeGitOnLocalChange
 import com.an5on.operation.OperationUtils.existingLocalPathsToActivePaths
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionCopyToLocal
 import com.an5on.states.local.LocalTransactionMakeDirectories
+import com.an5on.type.Interactivity
+import com.an5on.type.Verbosity
+import com.github.ajalt.mordant.rendering.TextColors
+import com.github.ajalt.mordant.rendering.TextStyles
+import com.github.ajalt.mordant.terminal.Terminal
+import com.github.ajalt.mordant.terminal.YesNoPrompt
 import org.apache.commons.io.filefilter.RegexFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -36,32 +42,24 @@ object SyncOperation {
      * @param commonOptions the sync options
      * @param echos the echo functions for output
      */
-    fun Raise<PunktError>.sync(activePaths: Set<Path>?, globalOptions: GlobalOptionGroup, commonOptions: CommonOptionGroup, echos: Echos) {
+    fun Raise<PunktError>.sync(
+        activePaths: Set<Path>?,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos,
+        terminal: Terminal
+    ) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
 
         if (activePaths.isNullOrEmpty()) {
-            syncExistingLocal(commonOptions, echos)
+            syncExistingLocal(globalOptions, commonOptions, echos, terminal)
         } else {
-            syncPaths(activePaths, commonOptions, echos)
+            syncPaths(activePaths, globalOptions, commonOptions, echos, terminal)
         }
 
-        if (configuration.git.addOnLocalChange) {
-            add(configuration.general.localStatePath,
-                globalOptions.useBundledGit
-                )
-        }
-
-        if (configuration.git.commitOnLocalChange) {
-            commit("test",
-                globalOptions.useBundledGit
-            )
-        }
-
-        if (configuration.git.pushOnLocalChange) {
-            push(false, globalOptions.useBundledGit)
-        }
+        executeGitOnLocalChange(globalOptions)
     }
 
     /**
@@ -71,14 +69,21 @@ object SyncOperation {
      * @param commonOptions the sync options
      * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.syncPaths(activePaths: Set<Path>, commonOptions: CommonOptionGroup, echos: Echos) {
+    private fun Raise<PunktError>.syncPaths(
+        activePaths: Set<Path>,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos,
+        terminal: Terminal
+    ) {
+        val verbosity = determineVerbosity(globalOptions.verbosity)
 
         val includeExcludeFilter = RegexFileFilter(commonOptions.include.pattern)
             .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
 //            .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedActivePaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Syncing: $activePath")
+            echos.echoStage("Syncing: $activePath", verbosity, Verbosity.NORMAL)
 
             activePath.expand(commonOptions.recursive, includeExcludeFilter)
         }.toSet()
@@ -93,10 +98,58 @@ object SyncOperation {
             }
         )
 
+        if (LocalState.pendingTransactions.isEmpty()) return
+
+        echos.echoWithVerbosity(
+            "The following operations will be performed:".indented(),
+            true,
+            false,
+            verbosity,
+            Verbosity.FULL
+        )
+        LocalState.pendingTransactions.forEach { transaction ->
+            echos.echoWithVerbosity(
+                "${transaction.type} - ${transaction.activePath}".indented(),
+                true,
+                false,
+                verbosity,
+                Verbosity.FULL
+            )
+        }
+
+        if (globalOptions.interactivity == Interactivity.ALWAYS) {
+            if (YesNoPrompt(
+                    ECHO_CONTENT_INDENTATION +
+                            TextStyles.bold(
+                                TextColors.yellow(
+                                    "Do you want to sync ${LocalState.pendingTransactions.size} items?".indented()
+                                )
+                            ),
+                    terminal
+                ).ask() != true
+            ) {
+                echos.echoWithVerbosity(
+                    "Operation cancelled by user",
+                    true,
+                    false,
+                    verbosity,
+                    Verbosity.QUIET
+                )
+                LocalState.pendingTransactions.clear()
+
+                raise(PunktError.OperationCancelled("No changes to the filesystem were made"))
+            }
+        }
+
         LocalState.commit()
     }
 
-    private fun Raise<PunktError>.syncExistingLocal(commonOptions: CommonOptionGroup, echos: Echos) {
-        syncPaths(existingLocalPathsToActivePaths, commonOptions, echos)
+    private fun Raise<PunktError>.syncExistingLocal(
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos,
+        terminal: Terminal
+    ) {
+        syncPaths(existingLocalPathsToActivePaths, globalOptions, commonOptions, echos, terminal)
     }
 }

@@ -1,7 +1,6 @@
 package com.an5on.error
 
 import com.an5on.git.bundled.BundledGitCredentialsProviderType
-import com.an5on.config.ActiveConfiguration.configuration
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -18,30 +17,6 @@ sealed interface GitError : PunktError {
             get() = "Invalid remote repository URL: $repo"
     }
 
-    data class GcmNotSet(
-        override val cause: Throwable? = null
-    ) : GitError {
-        override val code: String = "GIT_GCM_NOT_SET"
-        override val message: String
-            get() = "Git Credential Manager (GCM) is not installed or not configured"
-    }
-
-    data class EnvCredentialsNotSet(
-        override val cause: Throwable? = null
-    ) : GitError {
-        override val code: String = "GIT_ENV_CREDENTIALS_NOT_SET"
-        override val message: String
-            get() = "Environment variables GIT_USERNAME and GIT_PASSWORD are not set"
-    }
-
-    data class GhCliAuthNotSet(
-        override val cause: Throwable? = null
-    ) : GitError {
-        override val code: String = "GIT_GH_CLI_AUTH_NOT_SET"
-        override val message: String
-            get() = "GitHub CLI is not installed or not authenticated"
-    }
-
     data class BundledCredentialsNotFound(
         val methods: Collection<BundledGitCredentialsProviderType>,
         override val cause: Throwable? = null
@@ -56,54 +31,26 @@ sealed interface GitError : PunktError {
     ) : GitError {
         override val code: String = "GIT_SYSTEM_GIT_NOT_FOUND"
         override val message: String
-            get() = "System Git is not installed or not found in PATH"
+            get() = "System Git is not installed or not found in PATH,\n" +
+                    "you may use bundled Git by --use-bundled-git option or setting 'git.useBundledGit' to true in configuration"
     }
 
-    data class InitFailed(
-        val path: Path = configuration.general.localStatePath,
+    data class SystemGitOperationFailed(
+        val args: List<String>,
         override val cause: Throwable? = null
     ) : GitError {
-        override val code: String = "GIT_INIT_FAILED"
+        override val code: String = "GIT_SYSTEM_OPERATION_FAILED"
         override val message: String
-            get() = "Failed to initialise git repository at ${path.pathString}"
+            get() = "System Git operation failed with arguments: ${args.joinToString(" ")}"
     }
 
-    data class CloneFailed(
-        val url: String,
-        val path: Path = configuration.general.localStatePath,
+    data class BundledGitOperationFailed(
+        val command: String,
         override val cause: Throwable? = null
     ) : GitError {
-        override val code: String = "GIT_CLONE_FAILED"
+        override val code: String = "GIT_BUNDLED_OPERATION_FAILED"
         override val message: String
-            get() = "Failed to git clone $url to ${path.pathString}"
-    }
-
-    data class AddFailed(
-        val repoPath: Path,
-        val targetPath: Path,
-        override val cause: Throwable? = null
-    ) : GitError {
-        override val code: String = "GIT_ADD_FAILED"
-        override val message: String
-            get() = "Failed to git add ${targetPath.pathString} in repository at ${repoPath.pathString}"
-    }
-
-    data class CommitFailed(
-        val path: Path,
-        override val cause: Throwable? = null
-    ) : GitError {
-        override val code: String = "GIT_COMMIT_FAILED"
-        override val message: String
-            get() = "Failed to git commit in repository at ${path.pathString}"
-    }
-
-    data class PushFailed(
-        val path: Path,
-        override val cause: Throwable? = null
-    ) : GitError {
-        override val code: String = "GIT_PUSH_FAILED"
-        override val message: String
-            get() = "Failed to git push in repository at ${path.pathString}"
+            get() = "Bundled Git operation failed with command: $command"
     }
 
     data class RemoteNotSet(
@@ -114,6 +61,4 @@ sealed interface GitError : PunktError {
         override val message: String
             get() = "Remote is not set in repository at ${path.pathString}"
     }
-
-
 }

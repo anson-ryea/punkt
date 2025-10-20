@@ -9,6 +9,9 @@ object SystemUtils {
         System.getProperty("os.name").lowercase().startsWith("mac") -> OsType.DARWIN
         else -> OsType.LINUX
     }
+
+    val workingPath = Path(System.getProperty("user.dir"))
+
     val homePath = Path(System.getProperty("user.home"))
 
     val configPath: Path = when (osType) {
@@ -27,5 +30,10 @@ object SystemUtils {
     val shell: String = System.getenv("SHELL") ?: when (osType) {
         OsType.WINDOWS -> "powershell.exe"
         else -> "/bin/bash"
+    }
+
+    val sshIdentitiesPath: Path = when (osType) {
+        OsType.WINDOWS -> homePath.resolve(".ssh")
+        else -> homePath.resolve(".ssh")
     }
 }

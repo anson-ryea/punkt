@@ -4,19 +4,19 @@ import arrow.core.raise.Raise
 import arrow.core.raise.catch
 import com.an5on.error.GitError
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.errors.GitAPIException
 import java.nio.file.Path
 
 object BundledInitOperation {
-    fun Raise<GitError>.bundledInit(path: Path) {
+    fun Raise<GitError>.bundledInit(path: Path): Unit =
         catch(
             {
                 Git.init().setDirectory(path.toFile()).call()
-            },
-            { e ->
-                when (e) {
-                    else -> throw e
-                }
+            })
+        {
+            when (it) {
+                is GitAPIException -> raise(GitError.BundledGitOperationFailed("Add", it))
+                else -> throw it
             }
-        )
-    }
+        }
 }

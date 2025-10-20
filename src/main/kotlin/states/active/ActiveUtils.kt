@@ -19,7 +19,7 @@ import kotlin.io.path.relativeTo
  * @since 0.1.0
  */
 object ActiveUtils {
-    private val dotReplacementPrefixRegex = Regex(configuration.general.dotReplacementPrefix)
+    private val dotReplacementPrefixRegex = Regex(configuration.global.dotReplacementPrefix)
 
     /**
      * Converts this path to its corresponding active path.
@@ -29,21 +29,26 @@ object ActiveUtils {
      * @return the active path equivalent
      */
     fun Path.toActive(): Path {
-        assert(!this.isAbsolute || this.isLocal())
+        return when {
+            !isLocal() -> this
+            !isAbsolute -> {
+                configuration.global.activeStatePath.resolve(
+                    pathString.replace(dotReplacementPrefixRegex, ".")
+                ).normalize()
+            }
 
-        return if (!this.isAbsolute) {
-            configuration.general.activeStatePath.resolve(
-                this.pathString.replace(dotReplacementPrefixRegex, ".")
-            ).normalize()
-        } else if (this.startsWith(configuration.general.localStatePath)) {
-            configuration.general.activeStatePath.resolve(
-                this.relativeTo(configuration.general.localStatePath).pathString
-                    .replace(dotReplacementPrefixRegex, ".")
-            )
-        } else {
-            Path(
-                this.pathString.replace(dotReplacementPrefixRegex, ".")
-            ).normalize()
+            startsWith(configuration.global.localStatePath) -> {
+                configuration.global.activeStatePath.resolve(
+                    relativeTo(configuration.global.localStatePath).pathString
+                        .replace(dotReplacementPrefixRegex, ".")
+                )
+            }
+
+            else -> {
+                Path(
+                    pathString.replace(dotReplacementPrefixRegex, ".")
+                ).normalize()
+            }
         }
     }
 

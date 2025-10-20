@@ -1,7 +1,10 @@
 package com.an5on.config
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Configuration(
-    val general: GeneralConfiguration,
+    val global: GlobalConfiguration = GlobalConfiguration(),
 //    val command: CommandConfiguration,
-    val git: GitConfiguration
+    val git: GitConfiguration = GitConfiguration(),
 )

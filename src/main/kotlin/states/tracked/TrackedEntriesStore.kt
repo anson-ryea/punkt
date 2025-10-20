@@ -20,11 +20,11 @@ object TrackedEntriesStore {
 
     private fun openStore(): Either<PunktError, Unit> = either {
         try {
-            if (!configuration.general.trackerPath.exists()) {
-                configuration.general.trackerPath.parent.toFile().mkdirs()
+            if (!configuration.global.trackerPath.exists()) {
+                configuration.global.trackerPath.parent.toFile().mkdirs()
             }
 
-            val store = MVStore.open(configuration.general.trackerPath.pathString)
+            val store = MVStore.open(configuration.global.trackerPath.pathString)
             trackedStore = store
         } catch (e: Exception) {
             throw e
@@ -33,7 +33,7 @@ object TrackedEntriesStore {
 
     private fun openMap(): Either<PunktError, Unit> = either {
         try {
-            val store = trackedStore ?: raise(TrackedError.ConnectFailed(configuration.general.trackerPath))
+            val store = trackedStore ?: raise(TrackedError.ConnectFailed(configuration.global.trackerPath))
             val map = store.openMap<String, ByteArray>("trackedEntriesMap")
             trackedEntriesMap = map
         } catch (e: Exception) {

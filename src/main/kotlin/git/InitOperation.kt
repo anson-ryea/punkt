@@ -5,11 +5,11 @@ import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.GitError
 import com.an5on.git.bundled.BundledInitOperation.bundledInit
 import com.an5on.git.system.SystemInitExecutor.systemInit
-import com.an5on.type.BooleanWithAutoAndDefault
+import com.an5on.type.BooleanWithAuto
 
 object InitOperation {
-    fun Raise<GitError>.init(useBundledGitOption: BooleanWithAutoAndDefault) {
-        val localPath = configuration.general.localStatePath
+    fun Raise<GitError>.init(useBundledGitOption: BooleanWithAuto?) {
+        val localPath = configuration.global.localStatePath
         val useBundledGit = GitUtils.determineSystemOrBundledGit(useBundledGitOption)
 
         if (useBundledGit) {

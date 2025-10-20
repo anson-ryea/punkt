@@ -22,7 +22,7 @@ object LocalState {
      *
      * @return `true` if the local Punkt repository exists, `false` otherwise.
      */
-    fun exists() = configuration.general.localStatePath.exists()
+    fun exists() = configuration.global.localStatePath.exists()
 
     /**
      * A set of pending transactions to be committed.

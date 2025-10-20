@@ -1,44 +1,43 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.command.options.GlobalOptionGroup
-import com.an5on.command.options.InitOptionGroup
+import com.an5on.command.options.GlobalOptions
+import com.an5on.command.options.InitOptions
 import com.an5on.config.ActiveConfiguration.configuration
+import com.an5on.error.LocalError
 import com.an5on.git.CloneOperation.clone
 import com.an5on.git.InitOperation.init
 import com.an5on.git.RepoPattern.commonPatterns
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
-import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
  *
  * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository at local state path.
  * Currently, [repo] supports the formats specified in [commonPatterns].
- * @property globalOptions The global options for the command, provided by [com.an5on.command.options.GlobalOptionGroup].
- * @property initOptions The options specific to the init command, provided by [InitOptionGroup].
+ * @property globalOptions The global options for the command, provided by [com.an5on.command.options.GlobalOptions].
+ * @property initOptions The options specific to the init command, provided by [InitOptions].
  * @see commonPatterns
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
 class Init : CliktCommand() {
-    val globalOptions by GlobalOptionGroup()
-    val initOptions by InitOptionGroup()
-    val repo: String? by argument(
+    private val globalOptions by GlobalOptions()
+    private val initOptions by InitOptions()
+    private val repo: String? by argument(
         help = "Clone from the specified remote Punkt repository"
     ).optional()
 
     override fun help(context: Context) = """
-    Initialises a Punkt local repository at ${configuration.general.localStatePath}.
+    Initialises a Punkt local repository at ${configuration.global.localStatePath}.
             
-    If a remote Punkt repository URL is provided, it clones the repository to ${configuration.general.localStatePath}.
-    Otherwise, it initialises an empty Punkt local repository at ${configuration.general.localStatePath}.
+    If a remote Punkt repository URL is provided, it clones the repository to ${configuration.global.localStatePath}.
+    Otherwise, it initialises an empty Punkt local repository at ${configuration.global.localStatePath}.
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
@@ -62,25 +61,19 @@ class Init : CliktCommand() {
      */
     override fun run() {
         if (LocalState.exists()) {
-            logger.error { "Punkt is already initialised at ${configuration.general.localStatePath}" }
-            throw ProgramResult(1)
+            handleError(LocalError.LocalAlreadyInitialised())
         }
 
         fold(
             {
-            if (repo == null) {
-                init(globalOptions.useBundledGit )
-            } else {
-                clone(repo!!, initOptions, globalOptions.useBundledGit)
-            }
-        },
-            { e ->
-                logger.error { e.message }
-                throw ProgramResult(1)
-            }, {
-                echoSuccess()
+                if (repo == null) {
+                    init(globalOptions.useBundledGit)
+                } else {
+                    clone(repo!!, initOptions, globalOptions.useBundledGit)
+                }
+            },
+            { handleError(it) }, {
+                echoSuccess(verbosityOption = globalOptions.verbosity)
             })
     }
-
-    private val logger = KotlinLogging.logger {}
 }

@@ -41,6 +41,8 @@
             "java.nio.file.Path",
             "java.nio.file.Path",
             "java.lang.String",
+            "com.an5on.type.VerbosityType",
+            "com.an5on.operation.PathStyle",
             "int",
             "kotlin.jvm.internal.DefaultConstructorMarker"
           ]
@@ -50,6 +52,19 @@
     {
       "type": "com.an5on.config.GitConfiguration",
       "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.util.Set",
+            "com.an5on.type.BooleanWithAuto",
+            "java.lang.String",
+            "java.lang.String",
+            "com.an5on.type.GitOnLocalChangeType",
+            "int",
+            "kotlin.jvm.internal.DefaultConstructorMarker"
+          ]
+        },
         {
           "name": "<init>",
           "parameterTypes": [
@@ -71,7 +86,16 @@
       "type": "com.an5on.git.bundled.BundledGitCredentialsProviderType"
     },
     {
+      "type": "com.an5on.operation.PathStyle"
+    },
+    {
       "type": "com.an5on.type.BooleanWithAuto"
+    },
+    {
+      "type": "com.an5on.type.GitOnLocalChangeType"
+    },
+    {
+      "type": "com.an5on.type.VerbosityType"
     },
     {
       "type": "com.fasterxml.jackson.core.JsonParser"
@@ -296,15 +320,6 @@
       "type": "java.lang.ClassValue"
     },
     {
-      "type": "java.lang.Comparable"
-    },
-    {
-      "type": "java.lang.Enum"
-    },
-    {
-      "type": "java.lang.Iterable"
-    },
-    {
       "type": "java.lang.Object",
       "allDeclaredFields": true
     },
@@ -319,9 +334,6 @@
     },
     {
       "type": "java.sql.Time"
-    },
-    {
-      "type": "java.util.Collection"
     },
     {
       "type": "java.util.LinkedHashMap"
@@ -340,12 +352,6 @@
     },
     {
       "type": "kotlin.Boolean"
-    },
-    {
-      "type": "kotlin.Comparable"
-    },
-    {
-      "type": "kotlin.Enum"
     },
     {
       "type": "kotlin.Metadata",
@@ -394,12 +400,6 @@
     },
     {
       "type": "kotlin.String"
-    },
-    {
-      "type": "kotlin.collections.Collection"
-    },
-    {
-      "type": "kotlin.collections.Iterable"
     },
     {
       "type": "kotlin.collections.List"
@@ -1679,6 +1679,103 @@
     },
     {
       "type": "org.apache.logging.slf4j.SLF4JServiceProvider"
+    },
+    {
+      "type": "org.h2.mvstore.MVStore$TxCounter",
+      "fields": [
+        {
+          "name": "counter"
+        }
+      ]
+    },
+    {
+      "type": "org.h2.mvstore.Page",
+      "fields": [
+        {
+          "name": "pos"
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.async.FilePathAsync",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.mem.FilePathMem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.mem.FilePathMemLZF",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomapped.FilePathNioMapped",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomem.FilePathNioMem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomem.FilePathNioMemLZF",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.retry.FilePathRetryOnInterrupt",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.split.FilePathSplit",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.zip.FilePathZip",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "org.osgi.framework.FrameworkUtil"

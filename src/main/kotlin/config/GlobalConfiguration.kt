@@ -1,7 +1,11 @@
 package com.an5on.config
 
+import com.an5on.type.PathStyle
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils
+import com.an5on.type.Interactivity
+import com.an5on.type.Verbosity
+import kotlinx.serialization.Serializable
 import java.nio.file.Path
 
 /**
@@ -15,7 +19,8 @@ import java.nio.file.Path
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-data class GeneralConfiguration(
+@Serializable
+data class GlobalConfiguration(
     val localStatePath: Path = SystemUtils.homePath.resolve(
         if (SystemUtils.osType == OsType.WINDOWS) {
             "AppData\\Local\\punkt"
@@ -33,4 +38,7 @@ data class GeneralConfiguration(
     ),
     val sshPath: Path = SystemUtils.homePath.resolve(".ssh"),
     val dotReplacementPrefix: String = "punkt_",
+    val verbosity: Verbosity = Verbosity.NORMAL,
+    val pathStyle: PathStyle = PathStyle.ABSOLUTE,
+    val interactivity: Interactivity = Interactivity.ALWAYS
 )

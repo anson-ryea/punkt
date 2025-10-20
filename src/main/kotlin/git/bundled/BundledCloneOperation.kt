@@ -6,7 +6,7 @@ import com.an5on.error.GitError
 import com.an5on.git.bundled.BundledGitCredentialsProvider.buildCredentialsProvider
 import com.an5on.git.bundled.BundledGitCredentialsProvider.sshSessionFactory
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.api.errors.InvalidRemoteException
+import org.eclipse.jgit.api.errors.GitAPIException
 import org.eclipse.jgit.transport.SshTransport
 import java.nio.file.Path
 
@@ -17,31 +17,28 @@ object BundledCloneOperation {
         ssh: Boolean = false,
         branch: String? = null,
         depth: Int? = null
-    ) {
-        catch({
-            Git.cloneRepository().apply {
-                setDirectory(path.toFile())
-                setURI(repoUrl)
+    ) = catch({
+        Git.cloneRepository().apply {
+            setDirectory(path.toFile())
+            setURI(repoUrl)
 
-                branch?.let { setBranch(it) }
-                depth?.let { setDepth(it) }
+            branch?.let { setBranch(it) }
+            depth?.let { setDepth(it) }
 
-                if (ssh) {
-                    setTransportConfigCallback { transport ->
-                        if (transport is SshTransport) {
-                            transport.sshSessionFactory = sshSessionFactory
-                        }
+            if (ssh) {
+                setTransportConfigCallback { transport ->
+                    if (transport is SshTransport) {
+                        transport.sshSessionFactory = sshSessionFactory
                     }
-                } else {
-                    setCredentialsProvider(buildCredentialsProvider())
                 }
+            } else {
+                setCredentialsProvider(buildCredentialsProvider())
             }
-                .call()
-        }, { e ->
-            when (e) {
-                is InvalidRemoteException -> GitError.InvalidRemote(repoUrl, e)
-                else -> throw e
-            }
-        })
+        }.call()
+    }) {
+        when (it) {
+            is GitAPIException -> raise(GitError.BundledGitOperationFailed("Clone", it))
+            else -> throw it
+        }
     }
 }

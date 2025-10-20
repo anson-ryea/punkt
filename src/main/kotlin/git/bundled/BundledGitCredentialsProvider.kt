@@ -3,6 +3,7 @@ package com.an5on.git.bundled
 import arrow.core.raise.Raise
 import com.an5on.config.ActiveConfiguration
 import com.an5on.error.GitError
+import com.an5on.git.bundled.BundledGitCredentialsProvider.sshSessionFactory
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import org.eclipse.jgit.transport.CredentialsProvider
@@ -52,32 +53,33 @@ object BundledGitCredentialsProvider {
      *
      * @return A [org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider] with the retrieved username and password, or null if not found.
      */
-    private fun buildCredentialsProviderFromGitCredentialManager(): Result<UsernamePasswordCredentialsProvider?> = runCatching {
-        // ask GCM for host=github.com over HTTPS
-        val process = ProcessBuilder("git-credential-manager", "get")
-            .start().apply {
-                outputStream.use {
-                    it.write("protocol=https\nhost=github.com\n\n".toByteArray())
-                    it.flush()
+    private fun buildCredentialsProviderFromGitCredentialManager(): Result<UsernamePasswordCredentialsProvider?> =
+        runCatching {
+            // ask GCM for host=github.com over HTTPS
+            val process = ProcessBuilder("git-credential-manager", "get")
+                .start().apply {
+                    outputStream.use {
+                        it.write("protocol=https\nhost=github.com\n\n".toByteArray())
+                        it.flush()
+                    }
                 }
-            }
 
-        // output from GCM is in the format:
-        // username=audrey
-        // password=hello
-        val map = process.inputStream.bufferedReader().lineSequence()
-            .mapNotNull { it.split('=', limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }
-            .toMap()
+            // output from GCM is in the format:
+            // username=audrey
+            // password=hello
+            val map = process.inputStream.bufferedReader().lineSequence()
+                .mapNotNull { it.split('=', limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }
+                .toMap()
 
-        val username = map["username"]
-        val password = map["password"]
+            val username = map["username"]
+            val password = map["password"]
 
-        if (username == null || password == null)
-            null
-        else
-            UsernamePasswordCredentialsProvider(username, password)
+            if (username == null || password == null)
+                null
+            else
+                UsernamePasswordCredentialsProvider(username, password)
 
-    }
+        }
 
     private fun buildCredentialsProviderFromEnvironment(): UsernamePasswordCredentialsProvider? {
         val username = System.getenv("GIT_USERNAME")
@@ -108,12 +110,18 @@ object BundledGitCredentialsProvider {
         override fun createDefaultJSch(fs: FS?): JSch? {
             val jsch = super.createDefaultJSch(fs)
             TODO()
-//            when {
-//                ActiveConfiguration.sshPrivateKeyPathname != null -> jsch.addIdentity(ActiveConfiguration.sshPrivateKeyPathname)
-//                File("${ActiveConfiguration.sshPathname}/id_rsa").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_rsa")
-//                File("${ActiveConfiguration.sshPathname}/id_ed25519").exists() -> jsch.addIdentity("${ActiveConfiguration.sshPathname}/id_ed25519")
-//            }
             return jsch
         }
+    }
+
+    private val commonSshEncryptionAlgorithms = listOf(
+        "id_rsa",
+        "id_ed25519",
+        "id_dsa",
+        "id_ecdsa"
+    )
+
+    private fun findIdentity(host: String) {
+        TODO()
     }
 }

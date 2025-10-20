@@ -2,8 +2,10 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.Echos
-import com.an5on.command.options.ActivateOptions
+import com.an5on.command.options.CommonOptions
+import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
@@ -16,6 +18,7 @@ import com.an5on.states.active.ActiveTransactionCopyToActive
 import com.an5on.states.active.ActiveTransactionMakeDirectories
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
+import com.an5on.type.Verbosity
 import org.apache.commons.io.filefilter.TrueFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -36,15 +39,15 @@ object ActivateOperation {
      * @param options the activation options
      * @param echos the echo functions for output
      */
-    fun Raise<PunktError>.activate(activePaths: Set<Path>?, options: ActivateOptions, echos: Echos) {
+    fun Raise<PunktError>.activate(activePaths: Set<Path>?, globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
 
         if (activePaths.isNullOrEmpty()) {
-            activateExistingLocal(options, echos)
+            activateExistingLocal(globalOptions, commonOptions, echos)
         } else {
-            activatePaths(activePaths, options, echos)
+            activatePaths(activePaths, globalOptions, commonOptions, echos)
         }
     }
 
@@ -52,29 +55,41 @@ object ActivateOperation {
      * Activates the specified set of active paths.
      *
      * @param activePaths the set of active paths to activate
-     * @param options the activation options
+     * @param commonOptions the activation options
      * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.activatePaths(activePaths: Set<Path>, options: ActivateOptions, echos: Echos) {
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(options.include)
-            .and(RegexBasedOnActiveFileFilter(options.exclude).negate())
+    private fun Raise<PunktError>.activatePaths(
+        activePaths: Set<Path>,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos
+    ) {
+        val verbosity = determineVerbosity(globalOptions.verbosity)
+
+        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+            .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Activating: $activePath")
+            echos.echoStage("Activating: $activePath", verbosity, Verbosity.NORMAL)
 
             ensure(activePath.existsInLocal()) {
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            activePath.expandToLocal(options.recursive, includeExcludeFilter)
+            activePath.expandToLocal(commonOptions.recursive, includeExcludeFilter)
         }.toSet()
 
         commit(expandedLocalPaths, echos)
     }
 
-    private fun activateExistingLocal(options: ActivateOptions, echos: Echos) {
-        val existingLocalPaths = configuration.general.localStatePath.expand(options.recursive, TrueFileFilter.INSTANCE)
+    private fun activateExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
+        val verbosity = determineVerbosity(globalOptions.verbosity)
+
+        echos.echoStage("Activating: existing synced local files", verbosity, Verbosity.NORMAL)
+
+        val existingLocalPaths =
+            configuration.global.localStatePath.expand(commonOptions.recursive, TrueFileFilter.INSTANCE)
 
         commit(existingLocalPaths, echos)
     }
