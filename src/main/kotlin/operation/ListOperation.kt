@@ -90,10 +90,8 @@ object ListOperation {
             .filterNot { it == configuration.global.localStatePath }
             .toSet()
 
-        val pathStyle = determinePathStyle(globalOptions.pathStyle)
-
         echos.echoWithVerbosity(
-            existingLocalPaths.toStringInPathStyle(pathStyle),
+            existingLocalPaths.toStringInPathStyle(globalOptions.pathStyle),
             existingLocalPaths.isNotEmpty(),
             false,
             globalOptions.verbosity,
