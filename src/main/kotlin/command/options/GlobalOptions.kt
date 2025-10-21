@@ -45,7 +45,8 @@ class GlobalOptions : OptionGroup("Global Options") {
         .default(configuration.global.pathStyle)
 
     val interactivity by option(
-        "-y"
+        "-y",
+        "--interactivity"
     )
         .choice(
             *Enum.toChoices<Interactivity>()

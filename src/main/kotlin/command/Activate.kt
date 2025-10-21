@@ -5,6 +5,7 @@ import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
 import com.an5on.operation.ActivateOperation.activate
+import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
@@ -30,7 +31,7 @@ class Activate : PunktCommand() {
 
     override fun run() {
         fold(
-            { activate(targets, globalOptions, commonOptions, echos) },
+            { activate(targets, globalOptions, commonOptions, echos, terminal) },
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)

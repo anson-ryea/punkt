@@ -2,6 +2,7 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
+import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
@@ -18,7 +19,9 @@ import com.an5on.states.active.ActiveTransactionCopyToActive
 import com.an5on.states.active.ActiveTransactionMakeDirectories
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
+import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
+import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
@@ -42,16 +45,17 @@ object ActivateOperation {
         activePaths: Set<Path>?,
         globalOptions: GlobalOptions,
         commonOptions: CommonOptions,
-        echos: Echos
+        echos: Echos,
+        terminal: Terminal
     ) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
 
         if (activePaths.isNullOrEmpty()) {
-            activateExistingLocal(globalOptions, commonOptions, echos)
+            activateExistingLocal(globalOptions, commonOptions, echos, terminal)
         } else {
-            activatePaths(activePaths, globalOptions, commonOptions, echos)
+            activatePaths(activePaths, globalOptions, commonOptions, echos, terminal)
         }
     }
 
@@ -66,7 +70,8 @@ object ActivateOperation {
         activePaths: Set<Path>,
         globalOptions: GlobalOptions,
         commonOptions: CommonOptions,
-        echos: Echos
+        echos: Echos,
+        terminal: Terminal,
     ) {
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
@@ -87,23 +92,38 @@ object ActivateOperation {
             activePath.expandToLocal(commonOptions.recursive, includeExcludeFilter)
         }.toSet()
 
-        commit(expandedLocalPaths, echos)
+        commit(expandedLocalPaths, globalOptions, echos, terminal)
     }
 
-    private fun activateExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
+    private fun Raise<PunktError>.activateExistingLocal(
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos,
+        terminal: Terminal
+    ) {
         echos.echoStage(
             "Activating: existing synced local files",
             globalOptions.verbosity,
             Verbosity.NORMAL
         )
 
-        val existingLocalPaths =
-            configuration.global.localStatePath.expand(commonOptions.recursive, DefaultLocalIgnoreFileFilter)
+        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+            .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultLocalIgnoreFileFilter)
+            .and(ActiveEqualsLocalFileFilter.negate())
 
-        commit(existingLocalPaths, echos)
+        val existingLocalPaths =
+            configuration.global.localStatePath.expand(commonOptions.recursive, includeExcludeFilter)
+
+        commit(existingLocalPaths, globalOptions, echos, terminal)
     }
 
-    private fun commit(localPaths: Set<Path>, echos: Echos) {
+    private fun Raise<PunktError>.commit(
+        localPaths: Collection<Path>,
+        globalOptions: GlobalOptions,
+        echos: Echos,
+        terminal: Terminal
+    ) {
         ActiveState.pendingTransactions.addAll(
             localPaths.map { localPath ->
                 if (localPath.isDirectory()) {
@@ -114,6 +134,22 @@ object ActivateOperation {
             }
         )
 
-        ActiveState.transact()
+        if (localPaths.isEmpty()) return
+
+        ActiveState.echoPendingTransactions(globalOptions.verbosity, echos)
+
+        if (globalOptions.interactivity == Interactivity.ALWAYS) {
+            if (punktYesNoPrompt(
+                    "Do you want to activate ${ActiveState.pendingTransactions.size} items?",
+                    terminal
+                ).ask() != true
+            ) {
+                ActiveState.pendingTransactions.clear()
+
+                raise(PunktError.OperationCancelled("No changes to the filesystem were made"))
+            }
+        }
+
+        ActiveState.commit()
     }
 }

@@ -2,7 +2,6 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.indented
 import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
@@ -103,22 +102,7 @@ object SyncOperation {
 
         if (LocalState.pendingTransactions.isEmpty()) return
 
-        echos.echoWithVerbosity(
-            "The following operations will be performed:".indented(),
-            true,
-            false,
-            globalOptions.verbosity,
-            Verbosity.FULL
-        )
-        LocalState.pendingTransactions.forEach { transaction ->
-            echos.echoWithVerbosity(
-                "${transaction.type} - ${transaction.activePath}".indented(),
-                true,
-                false,
-                globalOptions.verbosity,
-                Verbosity.FULL
-            )
-        }
+        LocalState.echoPendingTransactions(globalOptions.verbosity, echos)
 
         if (globalOptions.interactivity == Interactivity.ALWAYS) {
             if (punktYesNoPrompt(
