@@ -93,9 +93,10 @@ object DiffOperation {
             activePath.expandToLocal(true, includeExcludeFilter, true)
         }
 
+        val unifiedDiff = generateUnifiedDiffStringFromFiles(expandedLocalPaths)
         echos.echoWithVerbosity(
-            generateUnifiedDiffStringFromFiles(expandedLocalPaths),
-            true,
+            unifiedDiff,
+            unifiedDiff.isNotBlank(),
             false,
             globalOptions.verbosity,
             Verbosity.QUIET
@@ -110,9 +111,10 @@ object DiffOperation {
 
         val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter, true)
 
+        val unifiedDiff = generateUnifiedDiffStringFromFiles(existingLocalPaths)
         echos.echoWithVerbosity(
-            generateUnifiedDiffStringFromFiles(existingLocalPaths),
-            true,
+            unifiedDiff,
+            unifiedDiff.isNotBlank(),
             false,
             globalOptions.verbosity,
             Verbosity.QUIET
