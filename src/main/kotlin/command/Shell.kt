@@ -3,12 +3,11 @@ package com.an5on.command
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.system.SystemUtils
 import com.an5on.system.SystemUtils.environmentVariables
-import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
 import com.pty4j.PtyProcessBuilder
 import kotlin.io.path.pathString
 
-class Shell : CliktCommand() {
+class Shell : PunktCommand() {
     override fun run() {
         val cmd = arrayOf(SystemUtils.shell)
 

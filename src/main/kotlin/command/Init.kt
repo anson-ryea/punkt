@@ -9,7 +9,6 @@ import com.an5on.git.CloneOperation.clone
 import com.an5on.git.InitOperation.init
 import com.an5on.git.RepoPattern.commonPatterns
 import com.an5on.states.local.LocalState
-import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
@@ -26,7 +25,7 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-class Init : CliktCommand() {
+class Init : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val initOptions by InitOptions()
     private val repo: String? by argument(
