@@ -2,15 +2,16 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.file.filter.DefaultIgnoreFileFilter
+import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
+import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
+import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
@@ -77,11 +78,11 @@ object DiffOperation {
         commonOptions: CommonOptions,
         echos: Echos
     ) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
-            .and(DefaultIgnoreFileFilter)
+            .and(DefaultActiveIgnoreFileFilter)
+            .and(PunktIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
@@ -96,17 +97,15 @@ object DiffOperation {
             generateUnifiedDiffStringFromFiles(expandedLocalPaths),
             true,
             false,
-            verbosity,
+            globalOptions.verbosity,
             Verbosity.QUIET
         )
     }
 
     private fun diffExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
-
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
-            .and(DefaultIgnoreFileFilter)
+            .and(DefaultLocalIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
         val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter, true)
@@ -115,7 +114,7 @@ object DiffOperation {
             generateUnifiedDiffStringFromFiles(existingLocalPaths),
             true,
             false,
-            verbosity,
+            globalOptions.verbosity,
             Verbosity.QUIET
         )
     }

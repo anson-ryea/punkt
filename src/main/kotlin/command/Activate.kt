@@ -1,7 +1,6 @@
 package com.an5on.command
 
 import arrow.core.raise.fold
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
@@ -35,7 +34,7 @@ class Activate : CliktCommand() {
             { activate(targets, globalOptions, commonOptions, echos) },
             { handleError(it) },
             {
-                echoSuccess(verbosityOption = determineVerbosity(globalOptions.verbosity))
+                echoSuccess(verbosityOption = globalOptions.verbosity)
             }
         )
     }

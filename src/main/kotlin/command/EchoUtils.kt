@@ -1,6 +1,5 @@
 package com.an5on.command
 
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.error.PunktError
 import com.an5on.type.Verbosity
 import com.github.ajalt.clikt.core.CliktCommand
@@ -9,15 +8,14 @@ import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextStyles
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-
 fun CliktCommand.echoWithVerbosity(
     message: Any?,
     trailingNewLine: Boolean = true,
     err: Boolean = false,
-    verbosityOption: Verbosity?,
+    verbosityOption: Verbosity,
     minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
-    if (determineVerbosity(verbosityOption) < minimumVerbosity) return
+    if (verbosityOption < minimumVerbosity) return
 
     echo(message, trailingNewLine, err)
 }
@@ -29,10 +27,10 @@ fun CliktCommand.echoWithVerbosity(
  */
 fun CliktCommand.echoStage(
     message: Any?,
-    verbosityOption: Verbosity?,
+    verbosityOption: Verbosity,
     minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
-    if (determineVerbosity(verbosityOption) < minimumVerbosity) return
+    if (verbosityOption < minimumVerbosity) return
 
     echo(
         TextStyles.bold((TextColors.cyan)("~~> ") + message)
@@ -46,10 +44,10 @@ fun CliktCommand.echoStage(
  */
 fun CliktCommand.echoSuccess(
     message: Any? = "Done!",
-    verbosityOption: Verbosity?,
+    verbosityOption: Verbosity,
     minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
-    if (determineVerbosity(verbosityOption) < minimumVerbosity) return
+    if (verbosityOption < minimumVerbosity) return
 
     echo(
         TextColors.green(" :> ") + message
@@ -63,10 +61,10 @@ fun CliktCommand.echoSuccess(
  */
 fun CliktCommand.echoWarning(
     message: Any?,
-    verbosityOption: Verbosity?,
+    verbosityOption: Verbosity,
     minimumVerbosity: Verbosity = Verbosity.NORMAL
 ) {
-    if (determineVerbosity(verbosityOption) < minimumVerbosity) return
+    if (verbosityOption < minimumVerbosity) return
 
     echo(
         TextColors.yellow(" :| ") + message

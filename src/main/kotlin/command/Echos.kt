@@ -13,8 +13,8 @@ import com.an5on.type.Verbosity
  * @since 0.1.0
  */
 data class Echos(
-    val echoWithVerbosity: (message: Any?, trailingNewLine: Boolean, err: Boolean, verbosityOption: Verbosity?, minimumVerbosity: Verbosity) -> Unit,
-    val echoStage: (message: Any?, verbosityOption: Verbosity?, minimumVerbosity: Verbosity) -> Unit,
-    val echoSuccess: (message: Any?, verbosityOption: Verbosity?, minimumVerbosity: Verbosity) -> Unit,
-    val echoWarning: (message: Any?, verbosityOption: Verbosity?, minimumVerbosity: Verbosity) -> Unit,
+    val echoWithVerbosity: (message: Any?, trailingNewLine: Boolean, err: Boolean, verbosityOption: Verbosity, minimumVerbosity: Verbosity) -> Unit,
+    val echoStage: (message: Any?, verbosityOption: Verbosity, minimumVerbosity: Verbosity) -> Unit,
+    val echoSuccess: (message: Any?, verbosityOption: Verbosity, minimumVerbosity: Verbosity) -> Unit,
+    val echoWarning: (message: Any?, verbosityOption: Verbosity, minimumVerbosity: Verbosity) -> Unit,
 )

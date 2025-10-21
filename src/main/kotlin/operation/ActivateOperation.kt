@@ -2,7 +2,6 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
@@ -10,7 +9,7 @@ import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
-import com.an5on.file.filter.DefaultIgnoreFileFilter
+import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
@@ -69,15 +68,17 @@ object ActivateOperation {
         commonOptions: CommonOptions,
         echos: Echos
     ) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
 
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
-            .and(DefaultIgnoreFileFilter)
             .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Activating: $activePath", verbosity, Verbosity.NORMAL)
+            echos.echoStage(
+                "Activating: $activePath",
+                globalOptions.verbosity,
+                Verbosity.NORMAL
+            )
 
             ensure(activePath.existsInLocal()) {
                 LocalError.LocalPathNotFound(activePath)
@@ -90,12 +91,14 @@ object ActivateOperation {
     }
 
     private fun activateExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
-
-        echos.echoStage("Activating: existing synced local files", verbosity, Verbosity.NORMAL)
+        echos.echoStage(
+            "Activating: existing synced local files",
+            globalOptions.verbosity,
+            Verbosity.NORMAL
+        )
 
         val existingLocalPaths =
-            configuration.global.localStatePath.expand(commonOptions.recursive, DefaultIgnoreFileFilter)
+            configuration.global.localStatePath.expand(commonOptions.recursive, DefaultLocalIgnoreFileFilter)
 
         commit(existingLocalPaths, echos)
     }

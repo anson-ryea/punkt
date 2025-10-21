@@ -2,15 +2,15 @@ package com.an5on.operation
 
 import arrow.core.raise.Raise
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.ECHO_CONTENT_INDENTATION
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.CommandUtils.indented
+import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.file.filter.DefaultIgnoreFileFilter
+import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
+import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.operation.OperationUtils.executeGitOnLocalChange
 import com.an5on.operation.OperationUtils.existingLocalPathsToActivePaths
 import com.an5on.operation.OperationUtils.expand
@@ -19,10 +19,7 @@ import com.an5on.states.local.LocalTransactionCopyToLocal
 import com.an5on.states.local.LocalTransactionMakeDirectories
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
-import com.github.ajalt.mordant.rendering.TextColors
-import com.github.ajalt.mordant.rendering.TextStyles
 import com.github.ajalt.mordant.terminal.Terminal
-import com.github.ajalt.mordant.terminal.YesNoPrompt
 import org.apache.commons.io.filefilter.RegexFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -77,15 +74,19 @@ object SyncOperation {
         echos: Echos,
         terminal: Terminal
     ) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
 
         val includeExcludeFilter = RegexFileFilter(commonOptions.include.pattern)
             .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
-            .and(DefaultIgnoreFileFilter)
+            .and(DefaultActiveIgnoreFileFilter)
+            .and(PunktIgnoreFileFilter)
 //            .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedActivePaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Syncing: $activePath", verbosity, Verbosity.NORMAL)
+            echos.echoStage(
+                "Syncing: $activePath",
+                globalOptions.verbosity,
+                Verbosity.NORMAL
+            )
 
             activePath.expand(commonOptions.recursive, includeExcludeFilter)
         }.toSet()
@@ -106,7 +107,7 @@ object SyncOperation {
             "The following operations will be performed:".indented(),
             true,
             false,
-            verbosity,
+            globalOptions.verbosity,
             Verbosity.FULL
         )
         LocalState.pendingTransactions.forEach { transaction ->
@@ -114,29 +115,17 @@ object SyncOperation {
                 "${transaction.type} - ${transaction.activePath}".indented(),
                 true,
                 false,
-                verbosity,
+                globalOptions.verbosity,
                 Verbosity.FULL
             )
         }
 
         if (globalOptions.interactivity == Interactivity.ALWAYS) {
-            if (YesNoPrompt(
-                    ECHO_CONTENT_INDENTATION +
-                            TextStyles.bold(
-                                TextColors.yellow(
-                                    "Do you want to sync ${LocalState.pendingTransactions.size} items?".indented()
-                                )
-                            ),
+            if (punktYesNoPrompt(
+                    "Do you want to sync ${LocalState.pendingTransactions.size} items?",
                     terminal
                 ).ask() != true
             ) {
-                echos.echoWithVerbosity(
-                    "Operation cancelled by user",
-                    true,
-                    false,
-                    verbosity,
-                    Verbosity.QUIET
-                )
                 LocalState.pendingTransactions.clear()
 
                 raise(PunktError.OperationCancelled("No changes to the filesystem were made"))
