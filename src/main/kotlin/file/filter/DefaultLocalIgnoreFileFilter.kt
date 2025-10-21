@@ -1,5 +1,6 @@
 package com.an5on.file.filter
 
+import com.an5on.config.ActiveConfiguration.configuration
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.PathMatcherFileFilter
 import org.apache.commons.io.filefilter.TrueFileFilter
@@ -8,8 +9,8 @@ import java.nio.file.FileSystems
 
 object DefaultLocalIgnoreFileFilter : IOFileFilter {
     private val defaultPathMatchers = listOf(
-        "**/.*",
-        "**/.*/**"
+        "${configuration.global.localStatePath}**/.*",
+        "${configuration.global.localStatePath}**/.*/**"
     ).map { pathPattern ->
         FileSystems.getDefault().getPathMatcher("glob:$pathPattern")
     }
