@@ -8,6 +8,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
+import kotlin.io.path.pathString
 
 object PunktIgnoreFileFilter : IOFileFilter {
     private fun readPunktIgnore(): List<PathMatcher> {
@@ -23,7 +24,7 @@ object PunktIgnoreFileFilter : IOFileFilter {
             .filterNot { it.isBlank() || it.startsWith("#") }
             .map {
                 if (!it.startsWith("/")) {
-                    SystemUtils.homePath.resolve(it)
+                    SystemUtils.homePath.pathString + it
                 } else {
                     it
                 }
