@@ -51,6 +51,4 @@ object FileUtils {
     fun Collection<Path>.toStringInPathStyle(pathStyle: PathStyle): String =
         this.sorted()
             .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
-
-    fun determinePathStyle(pathStyleOption: PathStyle?) = pathStyleOption ?: configuration.global.pathStyle
 }

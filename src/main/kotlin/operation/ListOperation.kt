@@ -8,7 +8,6 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.file.FileUtils.determinePathStyle
 import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
@@ -37,7 +36,12 @@ object ListOperation {
      * @param options the list options
      * @param echo the echo functions for output
      */
-    fun Raise<PunktError>.list(activePaths: Set<Path>?, globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
+    fun Raise<PunktError>.list(
+        activePaths: Set<Path>?,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos
+    ) {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
@@ -56,7 +60,12 @@ object ListOperation {
      * @param options the list options
      * @param echo the echo functions for output
      */
-    private fun Raise<PunktError>.listPaths(activePaths: Set<Path>, globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
+    private fun Raise<PunktError>.listPaths(
+        activePaths: Set<Path>,
+        globalOptions: GlobalOptions,
+        commonOptions: CommonOptions,
+        echos: Echos
+    ) {
         val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultActiveIgnoreFileFilter)
@@ -70,9 +79,8 @@ object ListOperation {
             activePath.expandToLocal(true, includeExcludeFilter)
         }.toSet()
 
-        val pathStyle = determinePathStyle(globalOptions.pathStyle)
         echos.echoWithVerbosity(
-            expandedLocalPaths.toStringInPathStyle(pathStyle),
+            expandedLocalPaths.toStringInPathStyle(globalOptions.pathStyle),
             true,
             false,
             globalOptions.verbosity,
@@ -91,7 +99,7 @@ object ListOperation {
             .toSet()
 
         echos.echoWithVerbosity(
-            existingLocalPaths.toStringInPathStyle(globalOptions.pathStyle),
+            globalOptions.pathStyle,
             existingLocalPaths.isNotEmpty(),
             false,
             globalOptions.verbosity,
