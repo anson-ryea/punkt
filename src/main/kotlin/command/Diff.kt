@@ -3,7 +3,7 @@ package com.an5on.command
 import arrow.core.raise.fold
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
-import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
+import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.DiffOperation.diff
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -21,7 +21,7 @@ class Diff : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val paths by argument().convert {
-        replaceTildeWithHomeDirPathname(it)
+        it.expandTildeWithHomePathname()
     }.path(
         canBeFile = true,
         canBeDir = true,

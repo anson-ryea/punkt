@@ -3,7 +3,7 @@ package com.an5on.command
 import arrow.core.raise.fold
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
-import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
+import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.ActivateOperation.activate
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
@@ -22,7 +22,7 @@ class Activate : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val targets by argument().convert {
-        replaceTildeWithHomeDirPathname(it)
+        it.expandTildeWithHomePathname()
     }.path(
         canBeFile = true,
         canBeDir = true,

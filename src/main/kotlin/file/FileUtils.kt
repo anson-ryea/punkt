@@ -26,11 +26,9 @@ object FileUtils {
      *
      * This function is useful for expanding user home directory references in pathnames.
      *
-     * @param pathname the pathname string that may contain a leading ~
      * @return the pathname with ~ replaced by the absolute home directory path
      */
-    fun replaceTildeWithHomeDirPathname(pathname: String): String =
-        pathname.replaceFirst("~", homePath.pathString)
+    fun String.expandTildeWithHomePathname(): String = replaceFirst("~", homePath.pathString)
 
     /**
      * Computes the Blake3 hash of the given file and returns it as a hexadecimal string.
