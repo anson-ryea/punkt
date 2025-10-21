@@ -1,5 +1,9 @@
 package com.an5on.command
 
+import com.an5on.command.CommandUtils.prependError
+import com.an5on.command.CommandUtils.prependStage
+import com.an5on.command.CommandUtils.prependSuccess
+import com.an5on.command.CommandUtils.prependWaring
 import com.an5on.error.PunktError
 import com.an5on.type.Verbosity
 import com.github.ajalt.clikt.core.CliktCommand
@@ -36,7 +40,7 @@ abstract class PunktCommand : CliktCommand() {
         if (verbosityOption < minimumVerbosity) return
 
         echo(
-            TextStyles.bold((TextColors.cyan)("~~> ") + message)
+            TextStyles.bold(message.toString().prependStage())
         )
     }
 
@@ -52,9 +56,7 @@ abstract class PunktCommand : CliktCommand() {
     ) {
         if (verbosityOption < minimumVerbosity) return
 
-        echo(
-            TextColors.green(" :> ") + message
-        )
+        echo(message.toString().prependSuccess())
     }
 
     /**
@@ -70,7 +72,7 @@ abstract class PunktCommand : CliktCommand() {
         if (verbosityOption < minimumVerbosity) return
 
         echo(
-            TextColors.yellow(" :| ") + message
+            TextColors.yellow(message.toString().prependWaring())
         )
     }
 
@@ -78,37 +80,17 @@ abstract class PunktCommand : CliktCommand() {
         message: Any?
     ) {
         echo(
-            TextStyles.bold(TextColors.red(" :< $message")),
+            TextStyles.bold(TextColors.red(message.toString().prependError())),
             err = true
         )
     }
 
     val echos: Echos
         get() = Echos(
-            echoWithVerbosity = { message, trailingNewLine, err, verbosityOption, minimumVerbosity ->
-                echoWithVerbosity(message, trailingNewLine, err, verbosityOption, minimumVerbosity)
-            },
-            echoStage = { message, verbosityOption, minimumVerbosity ->
-                echoStage(
-                    message,
-                    verbosityOption,
-                    minimumVerbosity
-                )
-            },
-            echoSuccess = { message, verbosityOption, minimumVerbosity ->
-                echoSuccess(
-                    message,
-                    verbosityOption,
-                    minimumVerbosity
-                )
-            },
-            echoWarning = { message, verbosityOption, minimumVerbosity ->
-                echoWarning(
-                    message,
-                    verbosityOption,
-                    minimumVerbosity
-                )
-            }
+            ::echoWithVerbosity,
+            ::echoStage,
+            ::echoSuccess,
+            ::echoWarning,
         )
 
     fun handleError(e: PunktError) {
