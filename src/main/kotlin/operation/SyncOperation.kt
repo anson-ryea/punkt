@@ -8,6 +8,7 @@ import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.operation.OperationUtils.executeGitOnLocalChange
@@ -74,11 +75,10 @@ object SyncOperation {
         terminal: Terminal
     ) {
 
-        val includeExcludeFilter = RegexFileFilter(commonOptions.include.pattern)
+        val filter = RegexFileFilter(commonOptions.include.pattern)
             .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
             .and(DefaultActiveIgnoreFileFilter)
             .and(PunktIgnoreFileFilter)
-//            .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedActivePaths = activePaths.flatMap { activePath ->
             echos.echoStage(
@@ -86,8 +86,7 @@ object SyncOperation {
                 globalOptions.verbosity,
                 Verbosity.NORMAL
             )
-
-            activePath.expand(commonOptions.recursive, includeExcludeFilter)
+            activePath.expand(filter.and(ActiveEqualsLocalFileFilter.negate()), if (commonOptions.recursive) filter else null)
         }.toSet()
 
         LocalState.pendingTransactions.addAll(

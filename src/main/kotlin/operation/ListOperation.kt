@@ -66,7 +66,7 @@ object ListOperation {
         commonOptions: CommonOptions,
         echos: Echos
     ) {
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultActiveIgnoreFileFilter)
             .and(PunktIgnoreFileFilter)
@@ -76,7 +76,7 @@ object ListOperation {
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            activePath.expandToLocal(true, includeExcludeFilter)
+            activePath.expandToLocal(filter)
         }.toSet()
 
         echos.echoWithVerbosity(
@@ -89,17 +89,17 @@ object ListOperation {
     }
 
     private fun listExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultLocalIgnoreFileFilter)
 
         val existingLocalPaths = configuration.global.localStatePath
-            .expand(true, includeExcludeFilter)
+            .expand(filter)
             .filterNot { it == configuration.global.localStatePath }
             .toSet()
 
         echos.echoWithVerbosity(
-            globalOptions.pathStyle,
+            existingLocalPaths.toStringInPathStyle(globalOptions.pathStyle),
             existingLocalPaths.isNotEmpty(),
             false,
             globalOptions.verbosity,

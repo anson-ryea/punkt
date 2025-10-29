@@ -74,9 +74,8 @@ object ActivateOperation {
         terminal: Terminal,
     ) {
 
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
-            .and(ActiveEqualsLocalFileFilter.negate())
 
         val expandedLocalPaths = activePaths.flatMap { activePath ->
             echos.echoStage(
@@ -89,7 +88,7 @@ object ActivateOperation {
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            activePath.expandToLocal(commonOptions.recursive, includeExcludeFilter)
+            activePath.expandToLocal(filter.and(ActiveEqualsLocalFileFilter.negate()), filter)
         }.toSet()
 
         commit(expandedLocalPaths, globalOptions, echos, terminal)
@@ -107,13 +106,17 @@ object ActivateOperation {
             Verbosity.NORMAL
         )
 
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultLocalIgnoreFileFilter)
-            .and(ActiveEqualsLocalFileFilter.negate())
 
         val existingLocalPaths =
-            configuration.global.localStatePath.expand(commonOptions.recursive, includeExcludeFilter)
+            configuration.global.localStatePath.expand(
+                filter.and(ActiveEqualsLocalFileFilter.negate()),
+                filter
+            )
+
+        println(existingLocalPaths)
 
         commit(existingLocalPaths, globalOptions, echos, terminal)
     }

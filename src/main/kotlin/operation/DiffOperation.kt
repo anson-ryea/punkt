@@ -8,11 +8,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
-import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
-import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
-import com.an5on.file.filter.PunktIgnoreFileFilter
-import com.an5on.file.filter.RegexBasedOnActiveFileFilter
+import com.an5on.file.filter.*
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveUtils.toActive
@@ -79,7 +75,7 @@ object DiffOperation {
         echos: Echos
     ) {
 
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultActiveIgnoreFileFilter)
             .and(PunktIgnoreFileFilter)
@@ -90,7 +86,7 @@ object DiffOperation {
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            activePath.expandToLocal(true, includeExcludeFilter, true)
+            activePath.expandToLocal(filter, filesOnly = true)
         }
 
         val unifiedDiff = generateUnifiedDiffStringFromFiles(expandedLocalPaths)
@@ -104,12 +100,12 @@ object DiffOperation {
     }
 
     private fun diffExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultLocalIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
-        val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter, true)
+        val existingLocalPaths = configuration.global.localStatePath.expand(filter, filesOnly = true)
 
         val unifiedDiff = generateUnifiedDiffStringFromFiles(existingLocalPaths)
         echos.echoWithVerbosity(
