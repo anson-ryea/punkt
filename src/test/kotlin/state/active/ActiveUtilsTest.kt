@@ -4,7 +4,6 @@ package state.active
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.states.active.ActiveUtils.toActive
 import java.io.File
-import kotlin.io.path.Path
 import kotlin.io.path.pathString
 import kotlin.test.Test
 import kotlin.test.assertEquals
