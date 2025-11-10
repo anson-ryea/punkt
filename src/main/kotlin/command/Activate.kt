@@ -1,10 +1,9 @@
 package com.an5on.command
 
-import arrow.core.raise.fold
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
-import com.an5on.operation.ActivateOperation.activate
+import com.an5on.operation.ActivateOperation
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -30,8 +29,13 @@ class Activate : PunktCommand() {
     ).multiple().unique().optional()
 
     override fun run() {
-        fold(
-            { activate(targets, globalOptions, commonOptions, echos, terminal) },
+        ActivateOperation(
+            targets,
+            globalOptions,
+            commonOptions,
+            echos,
+            terminal
+        ).operate().fold(
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)

@@ -1,10 +1,10 @@
 package com.an5on.command
 
-import arrow.core.raise.fold
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
-import com.an5on.operation.DiffOperation.diff
+import com.an5on.operation.DiffOperation
+import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
@@ -31,8 +31,13 @@ class Diff : PunktCommand() {
     ).convert { it.toRealPath() }.multiple().unique().optional()
 
     override fun run() {
-        fold(
-            { diff(paths, globalOptions, commonOptions, echos) },
+        DiffOperation(
+            paths,
+            globalOptions,
+            commonOptions,
+            echos,
+            terminal
+        ).operate().fold(
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)

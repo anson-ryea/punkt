@@ -1,6 +1,7 @@
 package com.an5on.operation
 
 import arrow.core.raise.Raise
+import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
@@ -17,7 +18,6 @@ import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveState
 import com.an5on.states.active.ActiveTransactionCopyToActive
 import com.an5on.states.active.ActiveTransactionMakeDirectories
-import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
@@ -33,32 +33,19 @@ import kotlin.io.path.isDirectory
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-object ActivateOperation {
-    /**
-     * Activates the specified active paths or all existing local files if no paths are provided.
-     *
-     * @param activePaths the set of active paths to activate, or null to activate all existing local files
-     * @param options the activation options
-     * @param echos the echo functions for output
-     */
-    fun Raise<PunktError>.activate(
-        activePaths: Set<Path>?,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
-        if (activePaths.isNullOrEmpty()) {
-            activateExistingLocal(globalOptions, commonOptions, echos, terminal)
-        } else {
-            activatePaths(activePaths, globalOptions, commonOptions, echos, terminal)
-        }
-    }
-
+class ActivateOperation(
+    activePaths: Set<Path>?,
+    globalOptions: GlobalOptions,
+    commonOptions: CommonOptions,
+    echos: Echos,
+    terminal: Terminal
+) : OperableWithBothPathsAndExistingLocal(
+    activePaths,
+    globalOptions,
+    commonOptions,
+    echos,
+    terminal
+) {
     /**
      * Activates the specified set of active paths.
      *
@@ -66,18 +53,12 @@ object ActivateOperation {
      * @param commonOptions the activation options
      * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.activatePaths(
-        activePaths: Set<Path>,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal,
-    ) {
+    override fun operateWithPaths(paths: Set<Path>) = either {
 
         val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
 
-        val expandedLocalPaths = activePaths.flatMap { activePath ->
+        val expandedLocalPaths = paths.flatMap { activePath ->
             echos.echoStage(
                 "Activating: $activePath",
                 globalOptions.verbosity,
@@ -94,12 +75,7 @@ object ActivateOperation {
         commit(expandedLocalPaths, globalOptions, echos, terminal)
     }
 
-    private fun Raise<PunktError>.activateExistingLocal(
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
+    override fun operateWithExistingLocal() = either {
         echos.echoStage(
             "Activating: existing synced local files",
             globalOptions.verbosity,

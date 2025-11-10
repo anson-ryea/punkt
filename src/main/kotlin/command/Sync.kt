@@ -1,10 +1,9 @@
 package com.an5on.command
 
-import arrow.core.raise.fold
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
-import com.an5on.operation.SyncOperation.sync
+import com.an5on.operation.SyncOperation
 import com.an5on.states.tracked.TrackedEntriesStore
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
@@ -35,8 +34,13 @@ class Sync : PunktCommand() {
     override fun run() {
         TrackedEntriesStore.connect()
 
-        fold(
-            { sync(targets, globalOptions, commonOptions, echos, terminal) },
+        SyncOperation(
+            targets,
+            globalOptions,
+            commonOptions,
+            echos,
+            terminal
+        ).operate().fold(
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)

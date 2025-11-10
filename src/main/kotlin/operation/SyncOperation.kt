@@ -1,12 +1,11 @@
 package com.an5on.operation
 
-import arrow.core.raise.Raise
-import arrow.core.raise.ensure
+import arrow.core.Either
+import arrow.core.raise.either
 import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
-import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
@@ -32,61 +31,39 @@ import kotlin.io.path.isDirectory
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-object SyncOperation {
-    /**
-     * Syncs the specified active paths or all existing local files if no paths are provided.
-     *
-     * @param activePaths the set of active paths to sync, or null to sync all existing local files
-     * @param commonOptions the sync options
-     * @param echos the echo functions for output
-     */
-    fun Raise<PunktError>.sync(
-        activePaths: Set<Path>?,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
-        if (activePaths.isNullOrEmpty()) {
-            syncExistingLocal(globalOptions, commonOptions, echos, terminal)
-        } else {
-            syncPaths(activePaths, globalOptions, commonOptions, echos, terminal)
-        }
-
-        executeGitOnLocalChange(globalOptions)
-    }
+class SyncOperation(
+    activePaths: Set<Path>?,
+    globalOptions: GlobalOptions,
+    commonOptions: CommonOptions,
+    echos: Echos,
+    terminal: Terminal,
+) : OperableWithBothPathsAndExistingLocal(
+    activePaths,
+    globalOptions,
+    commonOptions,
+    echos,
+    terminal
+) {
 
     /**
      * Syncs the specified set of active paths.
-     *
-     * @param activePaths the set of active paths to sync
-     * @param commonOptions the sync options
-     * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.syncPaths(
-        activePaths: Set<Path>,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-
+    override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
         val filter = RegexFileFilter(commonOptions.include.pattern)
             .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
             .and(DefaultActiveIgnoreFileFilter)
             .and(PunktIgnoreFileFilter)
 
-        val expandedActivePaths = activePaths.flatMap { activePath ->
+        val expandedActivePaths = paths.flatMap { activePath ->
             echos.echoStage(
                 "Syncing: $activePath",
                 globalOptions.verbosity,
                 Verbosity.NORMAL
             )
-            activePath.expand(filter.and(ActiveEqualsLocalFileFilter.negate()), if (commonOptions.recursive) filter else null)
+            activePath.expand(
+                filter.and(ActiveEqualsLocalFileFilter.negate()),
+                if (commonOptions.recursive) filter else null
+            )
         }.toSet()
 
         LocalState.pendingTransactions.addAll(
@@ -99,7 +76,9 @@ object SyncOperation {
             }
         )
 
-        if (LocalState.pendingTransactions.isEmpty()) return
+        if (LocalState.pendingTransactions.isEmpty()) {
+            return Either.Right(Unit)
+        }
 
         LocalState.echoPendingTransactions(globalOptions.verbosity, echos)
 
@@ -118,12 +97,11 @@ object SyncOperation {
         LocalState.commit()
     }
 
-    private fun Raise<PunktError>.syncExistingLocal(
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-        syncPaths(existingLocalPathsToActivePaths, globalOptions, commonOptions, echos, terminal)
+    override fun operateWithExistingLocal() = either<PunktError, Unit> {
+        operateWithPaths(existingLocalPathsToActivePaths)
+    }
+
+    override fun runAfter(): Either<PunktError, Unit> = either {
+        executeGitOnLocalChange(globalOptions)
     }
 }
