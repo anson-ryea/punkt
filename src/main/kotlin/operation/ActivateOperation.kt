@@ -21,6 +21,7 @@ import com.an5on.states.active.ActiveTransactionMakeDirectories
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
+import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -43,6 +44,7 @@ class ActivateOperation(
     activePaths,
     globalOptions,
     commonOptions,
+    OptionGroup(),
     echos,
     terminal
 ) {

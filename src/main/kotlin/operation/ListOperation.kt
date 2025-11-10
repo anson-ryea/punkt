@@ -17,6 +17,7 @@ import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Verbosity
+import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
 
@@ -38,6 +39,7 @@ class ListOperation(
     activePaths,
     globalOptions,
     commonOptions,
+    OptionGroup(),
     echos,
     terminal
 ) {
