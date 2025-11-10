@@ -1,16 +1,17 @@
+group = "com.an5on"
+version = "0.0.0"
+
+val kotlinVersion = "2.2.21"
+val cliktVersion = "5.0.3"
+
 plugins {
     application
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.serialization") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
     id("org.graalvm.buildtools.native") version "0.11.1"
     id("org.jetbrains.dokka") version "2.0.0"
     id("com.github.gmazzo.buildconfig") version "5.7.0"
 }
-
-group = "com.an5on"
-version = "0.0.0"
-
-val cliktVersion = "5.0.3"
 
 repositories {
     mavenCentral()

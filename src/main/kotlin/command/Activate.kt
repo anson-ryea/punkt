@@ -1,12 +1,10 @@
 package com.an5on.command
 
-import arrow.core.raise.fold
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
-import com.an5on.file.FileUtils.replaceTildeWithHomeDirPathname
-import com.an5on.operation.ActivateOperation.activate
-import com.github.ajalt.clikt.core.CliktCommand
+import com.an5on.file.FileUtils.expandTildeWithHomePathname
+import com.an5on.operation.ActivateOperation
+import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
@@ -19,11 +17,11 @@ import com.github.ajalt.clikt.parameters.types.path
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-class Activate : CliktCommand() {
+class Activate : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val targets by argument().convert {
-        replaceTildeWithHomeDirPathname(it)
+        it.expandTildeWithHomePathname()
     }.path(
         canBeFile = true,
         canBeDir = true,
@@ -31,11 +29,16 @@ class Activate : CliktCommand() {
     ).multiple().unique().optional()
 
     override fun run() {
-        fold(
-            { activate(targets, globalOptions, commonOptions, echos) },
+        ActivateOperation(
+            targets,
+            globalOptions,
+            commonOptions,
+            echos,
+            terminal
+        ).operate().fold(
             { handleError(it) },
             {
-                echoSuccess(verbosityOption = determineVerbosity(globalOptions.verbosity))
+                echoSuccess(verbosityOption = globalOptions.verbosity)
             }
         )
     }

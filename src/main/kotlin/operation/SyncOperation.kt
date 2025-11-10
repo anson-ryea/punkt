@@ -1,15 +1,15 @@
 package com.an5on.operation
 
-import arrow.core.raise.Raise
-import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.ECHO_CONTENT_INDENTATION
-import com.an5on.command.CommandUtils.determineVerbosity
-import com.an5on.command.CommandUtils.indented
+import arrow.core.Either
+import arrow.core.raise.either
+import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
-import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.filter.ActiveEqualsLocalFileFilter
+import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
+import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.operation.OperationUtils.executeGitOnLocalChange
 import com.an5on.operation.OperationUtils.existingLocalPathsToActivePaths
 import com.an5on.operation.OperationUtils.expand
@@ -18,10 +18,7 @@ import com.an5on.states.local.LocalTransactionCopyToLocal
 import com.an5on.states.local.LocalTransactionMakeDirectories
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
-import com.github.ajalt.mordant.rendering.TextColors
-import com.github.ajalt.mordant.rendering.TextStyles
 import com.github.ajalt.mordant.terminal.Terminal
-import com.github.ajalt.mordant.terminal.YesNoPrompt
 import org.apache.commons.io.filefilter.RegexFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -34,58 +31,39 @@ import kotlin.io.path.isDirectory
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-object SyncOperation {
-    /**
-     * Syncs the specified active paths or all existing local files if no paths are provided.
-     *
-     * @param activePaths the set of active paths to sync, or null to sync all existing local files
-     * @param commonOptions the sync options
-     * @param echos the echo functions for output
-     */
-    fun Raise<PunktError>.sync(
-        activePaths: Set<Path>?,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
-        if (activePaths.isNullOrEmpty()) {
-            syncExistingLocal(globalOptions, commonOptions, echos, terminal)
-        } else {
-            syncPaths(activePaths, globalOptions, commonOptions, echos, terminal)
-        }
-
-        executeGitOnLocalChange(globalOptions)
-    }
+class SyncOperation(
+    activePaths: Set<Path>?,
+    globalOptions: GlobalOptions,
+    commonOptions: CommonOptions,
+    echos: Echos,
+    terminal: Terminal,
+) : OperableWithBothPathsAndExistingLocal(
+    activePaths,
+    globalOptions,
+    commonOptions,
+    echos,
+    terminal
+) {
 
     /**
      * Syncs the specified set of active paths.
-     *
-     * @param activePaths the set of active paths to sync
-     * @param commonOptions the sync options
-     * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.syncPaths(
-        activePaths: Set<Path>,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
-
-        val includeExcludeFilter = RegexFileFilter(commonOptions.include.pattern)
+    override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
+        val filter = RegexFileFilter(commonOptions.include.pattern)
             .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
-//            .and(ActiveEqualsLocalFileFilter.negate())
+            .and(DefaultActiveIgnoreFileFilter)
+            .and(PunktIgnoreFileFilter)
 
-        val expandedActivePaths = activePaths.flatMap { activePath ->
-            echos.echoStage("Syncing: $activePath", verbosity, Verbosity.NORMAL)
-
-            activePath.expand(commonOptions.recursive, includeExcludeFilter)
+        val expandedActivePaths = paths.flatMap { activePath ->
+            echos.echoStage(
+                "Syncing: $activePath",
+                globalOptions.verbosity,
+                Verbosity.NORMAL
+            )
+            activePath.expand(
+                filter.and(ActiveEqualsLocalFileFilter.negate()),
+                if (commonOptions.recursive) filter else null
+            )
         }.toSet()
 
         LocalState.pendingTransactions.addAll(
@@ -98,43 +76,18 @@ object SyncOperation {
             }
         )
 
-        if (LocalState.pendingTransactions.isEmpty()) return
-
-        echos.echoWithVerbosity(
-            "The following operations will be performed:".indented(),
-            true,
-            false,
-            verbosity,
-            Verbosity.FULL
-        )
-        LocalState.pendingTransactions.forEach { transaction ->
-            echos.echoWithVerbosity(
-                "${transaction.type} - ${transaction.activePath}".indented(),
-                true,
-                false,
-                verbosity,
-                Verbosity.FULL
-            )
+        if (LocalState.pendingTransactions.isEmpty()) {
+            return Either.Right(Unit)
         }
 
+        LocalState.echoPendingTransactions(globalOptions.verbosity, echos)
+
         if (globalOptions.interactivity == Interactivity.ALWAYS) {
-            if (YesNoPrompt(
-                    ECHO_CONTENT_INDENTATION +
-                            TextStyles.bold(
-                                TextColors.yellow(
-                                    "Do you want to sync ${LocalState.pendingTransactions.size} items?".indented()
-                                )
-                            ),
+            if (punktYesNoPrompt(
+                    "Do you want to sync ${LocalState.pendingTransactions.size} items?",
                     terminal
                 ).ask() != true
             ) {
-                echos.echoWithVerbosity(
-                    "Operation cancelled by user",
-                    true,
-                    false,
-                    verbosity,
-                    Verbosity.QUIET
-                )
                 LocalState.pendingTransactions.clear()
 
                 raise(PunktError.OperationCancelled("No changes to the filesystem were made"))
@@ -144,12 +97,11 @@ object SyncOperation {
         LocalState.commit()
     }
 
-    private fun Raise<PunktError>.syncExistingLocal(
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos,
-        terminal: Terminal
-    ) {
-        syncPaths(existingLocalPathsToActivePaths, globalOptions, commonOptions, echos, terminal)
+    override fun operateWithExistingLocal() = either<PunktError, Unit> {
+        operateWithPaths(existingLocalPathsToActivePaths)
+    }
+
+    override fun runAfter(): Either<PunktError, Unit> = either {
+        executeGitOnLocalChange(globalOptions)
     }
 }

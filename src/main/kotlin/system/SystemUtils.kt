@@ -14,6 +14,8 @@ object SystemUtils {
 
     val homePath = Path(System.getProperty("user.home"))
 
+    val environmentVariables = System.getenv().toMutableMap()
+
     val configPath: Path = when (osType) {
         OsType.WINDOWS -> System.getenv("APPDATA")?.let { Path(it) } ?: homePath.resolve("\\AppData\\Roaming")
         OsType.DARWIN -> homePath.resolve("Library/Application Support")

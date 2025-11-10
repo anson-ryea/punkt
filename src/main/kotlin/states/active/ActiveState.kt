@@ -1,6 +1,9 @@
 package com.an5on.states.active
 
+import com.an5on.command.CommandUtils.indented
+import com.an5on.command.Echos
 import com.an5on.states.active.ActiveUtils.toActive
+import com.an5on.type.Verbosity
 import org.apache.commons.io.FileUtils
 import java.nio.file.Files
 import java.nio.file.Path
@@ -21,10 +24,30 @@ object ActiveState {
      */
     val pendingTransactions = mutableSetOf<ActiveTransaction>()
 
+    fun echoPendingTransactions(verbosity: Verbosity, echos: Echos) {
+        echos.echoWithVerbosity(
+            "The following operations will be performed:".indented(),
+            true,
+            false,
+            verbosity,
+            Verbosity.FULL
+        )
+
+        pendingTransactions.forEach { transaction ->
+            echos.echoWithVerbosity(
+                "${transaction.type} - ${transaction.localPath}".indented(),
+                true,
+                false,
+                verbosity,
+                Verbosity.FULL
+            )
+        }
+    }
+
     /**
      * Executes all pending transactions.
      */
-    fun transact() {
+    fun commit() {
         pendingTransactions.forEach {
             it.run()
         }

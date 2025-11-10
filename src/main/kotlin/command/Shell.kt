@@ -2,21 +2,19 @@ package com.an5on.command
 
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.system.SystemUtils
-import com.github.ajalt.clikt.core.CliktCommand
+import com.an5on.system.SystemUtils.environmentVariables
 import com.github.ajalt.clikt.core.ProgramResult
 import com.pty4j.PtyProcessBuilder
 import kotlin.io.path.pathString
 
-class Shell : CliktCommand() {
+class Shell : PunktCommand() {
     override fun run() {
         val cmd = arrayOf(SystemUtils.shell)
-        val env = System.getenv().toMutableMap()
 
         val builder = PtyProcessBuilder(cmd)
             .setDirectory(configuration.global.localStatePath.pathString)
-            .setEnvironment(env)
+            .setEnvironment(environmentVariables)
             .setConsole(true)
-
         val process = builder.start()
 
         // Forward PTY output to stdout
@@ -31,6 +29,7 @@ class Shell : CliktCommand() {
         }
 
         val exitCode = process.waitFor()
+        process.destroy()
         throw ProgramResult(exitCode)
     }
 }

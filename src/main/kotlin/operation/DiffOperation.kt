@@ -1,22 +1,20 @@
 package com.an5on.operation
 
-import arrow.core.raise.Raise
+import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.determineVerbosity
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
-import com.an5on.file.filter.RegexBasedOnActiveFileFilter
+import com.an5on.file.filter.*
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveUtils.toActive
-import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Verbosity
+import com.github.ajalt.mordant.terminal.Terminal
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import com.github.difflib.algorithm.jgit.HistogramDiff
@@ -33,35 +31,23 @@ import kotlin.io.path.pathString
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-object DiffOperation {
+class DiffOperation(
+    activePaths: Set<Path>?,
+    globalOptions: GlobalOptions,
+    commonOptions: CommonOptions,
+    echos: Echos,
+    terminal: Terminal
+) : OperableWithBothPathsAndExistingLocal(
+    activePaths,
+    globalOptions,
+    commonOptions,
+    echos,
+    terminal
+) {
     /**
      * The number of context lines to include in unified diffs.
      */
-    const val PATCH_CONTEXT_SIZE = 3
-
-    /**
-     * Computes and displays diffs for the specified active paths or all existing local files if no paths are provided.
-     *
-     * @param paths the set of active paths to diff, or null to diff all existing local files
-     * @param options the diff options
-     * @param echos the echo functions for output
-     */
-    fun Raise<PunktError>.diff(
-        paths: Set<Path>?,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos
-    ) {
-        ensure(LocalState.exists()) {
-            LocalError.LocalNotFound()
-        }
-
-        if (paths == null || paths.isEmpty()) {
-            diffExistingLocal(globalOptions, commonOptions, echos)
-        } else {
-            diffPaths(paths, globalOptions, commonOptions, echos)
-        }
-    }
+    private val patchContextSize = 3
 
     /**
      * Computes and displays diffs for the specified set of active paths.
@@ -70,49 +56,45 @@ object DiffOperation {
      * @param options the diff options
      * @param echos the echo functions for output
      */
-    private fun Raise<PunktError>.diffPaths(
-        activePaths: Set<Path>,
-        globalOptions: GlobalOptions,
-        commonOptions: CommonOptions,
-        echos: Echos
-    ) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
-
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+    override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultActiveIgnoreFileFilter)
+            .and(PunktIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
-        val expandedLocalPaths = activePaths.flatMap { activePath ->
+        val expandedLocalPaths = paths.flatMap { activePath ->
             ensure(activePath.existsInLocal()) {
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            activePath.expandToLocal(true, includeExcludeFilter, true)
+            activePath.expandToLocal(filter, filesOnly = true)
         }
 
+        val unifiedDiff = generateUnifiedDiffStringFromFiles(expandedLocalPaths)
         echos.echoWithVerbosity(
-            generateUnifiedDiffStringFromFiles(expandedLocalPaths),
-            true,
+            unifiedDiff,
+            unifiedDiff.isNotBlank(),
             false,
-            verbosity,
+            globalOptions.verbosity,
             Verbosity.QUIET
         )
     }
 
-    private fun diffExistingLocal(globalOptions: GlobalOptions, commonOptions: CommonOptions, echos: Echos) {
-        val verbosity = determineVerbosity(globalOptions.verbosity)
-
-        val includeExcludeFilter = RegexBasedOnActiveFileFilter(commonOptions.include)
+    override fun operateWithExistingLocal() = either<PunktError, Unit> {
+        val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
+            .and(DefaultLocalIgnoreFileFilter)
             .and(ExistsInBothActiveAndLocalFileFilter)
 
-        val existingLocalPaths = configuration.global.localStatePath.expand(true, includeExcludeFilter, true)
+        val existingLocalPaths = configuration.global.localStatePath.expand(filter, filesOnly = true)
 
+        val unifiedDiff = generateUnifiedDiffStringFromFiles(existingLocalPaths)
         echos.echoWithVerbosity(
-            generateUnifiedDiffStringFromFiles(existingLocalPaths),
-            true,
+            unifiedDiff,
+            unifiedDiff.isNotBlank(),
             false,
-            verbosity,
+            globalOptions.verbosity,
             Verbosity.QUIET
         )
     }
@@ -140,7 +122,7 @@ object DiffOperation {
                     activePath.pathString,
                     localFileAllLines,
                     patch,
-                    PATCH_CONTEXT_SIZE
+                    patchContextSize
                 ).joinToString("\n")
             }
         }.joinToString("\n")
