@@ -13,12 +13,12 @@ enum class LocalTransactionType {
     COPY_TO_LOCAL,
 
     /**
-     * Transaction type for creating the necessary directories in the local state.
+     * Transaction type for keeping necessary empty directories in the local path.
      */
-    MKDIRS,
+    KEEP_DIRECTORY,
 
     /**
      * Transaction type for removing a file or directory from the local state.
      */
-    REMOVE
+    REMOVE,
 }

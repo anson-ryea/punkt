@@ -6,6 +6,7 @@ import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
+import com.an5on.command.options.SyncOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
@@ -16,7 +17,7 @@ import com.an5on.operation.OperationUtils.executeGitOnLocalChange
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionCopyToLocal
-import com.an5on.states.local.LocalTransactionMakeDirectories
+import com.an5on.states.local.LocalTransactionKeepDirectory
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.terminal.Terminal
@@ -36,15 +37,18 @@ class SyncOperation(
     activePaths: Set<Path>?,
     globalOptions: GlobalOptions,
     commonOptions: CommonOptions,
+    syncOptions: SyncOptions,
     echos: Echos,
     terminal: Terminal,
 ) : OperableWithBothPathsAndExistingLocal(
     activePaths,
     globalOptions,
     commonOptions,
+    syncOptions,
     echos,
     terminal
 ) {
+    private val syncOptions = specificOptions as SyncOptions
     private val filter = RegexFileFilter(commonOptions.include.pattern)
         .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
         .and(DefaultActiveIgnoreFileFilter)
@@ -62,14 +66,15 @@ class SyncOperation(
             )
             activePath.expand(
                 filter.and(ActiveEqualsLocalFileFilter.negate()),
-                if (commonOptions.recursive) filter else null
+                if (commonOptions.recursive) filter else null,
+                !syncOptions.keepEmptyFolders
             )
         }.toSet()
 
         LocalState.pendingTransactions.addAll(
             expandedActivePaths.map { activePath ->
-                if (activePath.isDirectory()) {
-                    LocalTransactionMakeDirectories(activePath)
+                if (syncOptions.keepEmptyFolders && activePath.isDirectory() && activePath.toFile().list().isEmpty()) {
+                    LocalTransactionKeepDirectory(activePath)
                 } else {
                     LocalTransactionCopyToLocal(activePath)
                 }
