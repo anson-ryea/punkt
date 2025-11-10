@@ -6,12 +6,13 @@ import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
+import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.operation.OperationUtils.executeGitOnLocalChange
-import com.an5on.operation.OperationUtils.existingLocalPathsToActivePaths
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionCopyToLocal
@@ -44,16 +45,15 @@ class SyncOperation(
     echos,
     terminal
 ) {
+    private val filter = RegexFileFilter(commonOptions.include.pattern)
+        .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
+        .and(DefaultActiveIgnoreFileFilter)
+        .and(PunktIgnoreFileFilter)
 
     /**
      * Syncs the specified set of active paths.
      */
     override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
-        val filter = RegexFileFilter(commonOptions.include.pattern)
-            .and(RegexFileFilter(commonOptions.exclude.pattern).negate())
-            .and(DefaultActiveIgnoreFileFilter)
-            .and(PunktIgnoreFileFilter)
-
         val expandedActivePaths = paths.flatMap { activePath ->
             echos.echoStage(
                 "Syncing: $activePath",
@@ -98,7 +98,12 @@ class SyncOperation(
     }
 
     override fun operateWithExistingLocal() = either<PunktError, Unit> {
-        operateWithPaths(existingLocalPathsToActivePaths)
+        operateWithPaths(
+            configuration.global.localStatePath.expand(
+                filter.and(DefaultLocalIgnoreFileFilter),
+                filesOnly = true,
+            )
+        )
     }
 
     override fun runAfter(): Either<PunktError, Unit> = either {
