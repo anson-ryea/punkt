@@ -25,6 +25,15 @@
       "type": "com.fasterxml.jackson.databind.ObjectMapper"
     },
     {
+      "type": "com.github.ajalt.mordant.terminal.terminalinterface.ffm.TerminalInterfaceProviderFfm"
+    },
+    {
+      "type": "com.github.ajalt.mordant.terminal.terminalinterface.jna.TerminalInterfaceProviderJna"
+    },
+    {
+      "type": "com.github.ajalt.mordant.terminal.terminalinterface.nativeimage.TerminalInterfaceProviderNativeImage"
+    },
+    {
       "type": "com.pty4j.unix.PollfdStructure",
       "allDeclaredFields": true
     },
@@ -115,6 +124,15 @@
     },
     {
       "type": "java.nio.Buffer"
+    },
+    {
+      "type": "java.security.MessageDigestSpi"
+    },
+    {
+      "type": "java.security.interfaces.RSAPrivateKey"
+    },
+    {
+      "type": "java.security.interfaces.RSAPublicKey"
     },
     {
       "type": "java.sql.Date"
@@ -1326,6 +1344,185 @@
       "type": "org.apache.logging.slf4j.SLF4JServiceProvider"
     },
     {
+      "type": "org.eclipse.jgit.internal.JGitText",
+      "allPublicFields": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$AutoCRLF",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$CheckStat",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$EOL",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$HideDotFiles",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$LogRefUpdates",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$SymLinks",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.lib.CoreConfig$TrustPackedRefsStat",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.eclipse.jgit.util.sha1.SHA1$Sha1Implementation",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.mvstore.MVStore$TxCounter",
+      "fields": [
+        {
+          "name": "counter"
+        }
+      ]
+    },
+    {
+      "type": "org.h2.mvstore.Page",
+      "fields": [
+        {
+          "name": "pos"
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.async.FilePathAsync",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.mem.FilePathMem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.mem.FilePathMemLZF",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomapped.FilePathNioMapped",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomem.FilePathNioMem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.niomem.FilePathNioMemLZF",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.retry.FilePathRetryOnInterrupt",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.split.FilePathSplit",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.h2.store.fs.zip.FilePathZip",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.osgi.framework.FrameworkUtil"
     },
     {
@@ -1345,6 +1542,168 @@
         {
           "name": "<init>",
           "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.SHA2$SHA256",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.SHA5$SHA384",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.X509Factory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.RSAKeyFactory$Legacy",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.RSASignature$SHA256withRSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.RSASignature$SHA384withRSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.AuthorityInfoAccessExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.AuthorityKeyIdentifierExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.BasicConstraintsExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.CRLDistributionPointsExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.CertificatePoliciesExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.ExtendedKeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.KeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.SubjectAlternativeNameExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.SubjectKeyIdentifierExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
         }
       ]
     },
@@ -1378,6 +1737,9 @@
       "glob": "META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat"
     },
     {
+      "glob": "META-INF/services/com.github.ajalt.mordant.terminal.TerminalInterfaceProvider"
+    },
+    {
       "glob": "META-INF/services/java.lang.System$LoggerFinder"
     },
     {
@@ -1385,6 +1747,9 @@
     },
     {
       "glob": "META-INF/services/java.time.zone.ZoneRulesProvider"
+    },
+    {
+      "glob": "META-INF/services/java.util.spi.ResourceBundleControlProvider"
     },
     {
       "glob": "META-INF/services/javax.xml.parsers.DocumentBuilderFactory"
@@ -1489,17 +1854,47 @@
       "glob": "log4j218b4aac2.yml"
     },
     {
+      "glob": "org/eclipse/jgit/internal/JGitText.properties"
+    },
+    {
+      "glob": "org/eclipse/jgit/internal/JGitText_yue.properties"
+    },
+    {
+      "glob": "org/eclipse/jgit/internal/JGitText_yue_HK.properties"
+    },
+    {
+      "glob": "org/eclipse/jgit/internal/JGitText_yue_Hant.properties"
+    },
+    {
+      "glob": "org/eclipse/jgit/internal/JGitText_yue_Hant_HK.properties"
+    },
+    {
       "glob": "resources/com/pty4j/native/darwin/libpty.dylib"
     },
     {
       "glob": "resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper"
     },
     {
+      "module": "java.base",
+      "glob": "jdk/internal/icu/impl/data/icudt76b/nfc.nrm"
+    },
+    {
+      "module": "java.base",
+      "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
+    },
+    {
       "module": "java.xml",
       "glob": "jdk/xml/internal/jdkcatalog/JDKCatalog.xml"
     }
   ],
-  "bundles": [],
+  "bundles": [
+    {
+      "name": "org.eclipse.jgit.internal.JGitText",
+      "locales": [
+        "yue-Hant-HK"
+      ]
+    }
+  ],
   "jni": [
     {
       "type": "com.sun.jna.Callback"
