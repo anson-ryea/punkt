@@ -113,6 +113,11 @@ class SyncOperation(
     }
 
     override fun runAfter() = either<PunktError, Unit> {
+        echos.echoStage(
+            "Executing Git operations: ${configuration.git.gitOnLocalChange}",
+            globalOptions.verbosity,
+            Verbosity.NORMAL
+        )
         executeGitOnLocalChange(globalOptions, this@SyncOperation).bind()
     }
 }

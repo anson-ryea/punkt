@@ -8,6 +8,7 @@ import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
@@ -102,6 +103,11 @@ class UnsyncOperation(
     }
 
     override fun runAfter() = either {
+        echos.echoStage(
+            "Executing Git operations: ${configuration.git.gitOnLocalChange}",
+            globalOptions.verbosity,
+            Verbosity.NORMAL
+        )
         executeGitOnLocalChange(globalOptions, this@UnsyncOperation).bind()
     }
 }

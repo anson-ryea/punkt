@@ -6,7 +6,6 @@ import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.system.OsType
-import com.an5on.system.SystemUtils
 import com.an5on.system.SystemUtils.homePath
 import com.an5on.system.SystemUtils.osType
 import com.an5on.type.PathStyle
@@ -158,7 +157,7 @@ object FileUtils {
     ) =
         this.expand(fileFilter, dirFilter, filesOnly)
             .map { it.toActive() }
-            .filterNot { it.toPath() == SystemUtils.homePath }
+            .filterNot { it.toPath() == homePath }
             .toSet()
 
     /**
@@ -176,7 +175,7 @@ object FileUtils {
     ) =
         this.toFile().expandToActive(fileFilter, dirFilter, filesOnly)
             .map { it.toPath() }
-            .filterNot { it == SystemUtils.homePath }
+            .filterNot { it == homePath }
             .toSet()
 
     /**
