@@ -10,13 +10,15 @@ import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
 
 object DefaultActiveIgnoreFileFilter : IOFileFilter {
-    private val defaultPathMatchers = buildPathMatchers(
-        when (osType) {
-            OsType.WINDOWS -> configuration.global.ignoredActiveFilesForWindows
-            OsType.DARWIN -> configuration.global.ignoredActiveFilesForDarwin
-            OsType.LINUX -> configuration.global.ignoredActiveFilesForLinux
-        }
-    )
+    private val defaultPathMatchers by lazy {
+        buildPathMatchers(
+            when (osType) {
+                OsType.WINDOWS -> configuration.global.ignoredActiveFilesForWindows
+                OsType.DARWIN -> configuration.global.ignoredActiveFilesForDarwin
+                OsType.LINUX -> configuration.global.ignoredActiveFilesForLinux
+            }
+        )
+    }
 
     override fun accept(file: File?): Boolean = defaultPathMatchers.fold(TrueFileFilter.INSTANCE) { acc, pathMatcher ->
         acc.and(PathMatcherFileFilter(pathMatcher).negate())

@@ -25,5 +25,6 @@ data class GitConfiguration(
     val bundledGitName: String = SystemUtils.username,
     val bundledGitEmail: String = "",
     val gitOnLocalChange: GitOnLocalChange = GitOnLocalChange.NONE,
-    val gitSshIdentitiesPath: Path = SystemUtils.sshIdentitiesPath
+    val gitSshIdentitiesPath: Path = SystemUtils.sshIdentitiesPath,
+    val commitMessage: String = $$"[punkt] ${op} at ${date:dd-MM-yyyy'T'HH:mm:ss}",
 )

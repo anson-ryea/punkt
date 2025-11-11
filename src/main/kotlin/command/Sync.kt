@@ -43,7 +43,7 @@ class Sync : PunktCommand() {
             syncOptions,
             echos,
             terminal
-        ).operate().fold(
+        ).run().fold(
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)

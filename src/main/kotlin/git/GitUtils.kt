@@ -2,6 +2,7 @@ package com.an5on.git
 
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.type.BooleanWithAuto
+import org.apache.commons.text.StringSubstitutor
 import org.eclipse.jgit.lib.PersonIdent
 
 object GitUtils {
@@ -29,4 +30,16 @@ object GitUtils {
     }
 
     val bundledIdentity = PersonIdent(configuration.git.bundledGitName, configuration.git.bundledGitEmail)
+
+    fun substituteCommitMessage(commitMessage: String, operationName: String): String {
+        val interpolator = StringSubstitutor.createInterpolator()
+        val interpolatedMessage = interpolator.replace(commitMessage)
+        val substitutor = StringSubstitutor(
+            mapOf(
+                "op" to operationName
+            )
+        )
+        val substitutedMessage = substitutor.replace(interpolatedMessage)
+        return substitutedMessage
+    }
 }

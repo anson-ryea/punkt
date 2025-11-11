@@ -35,7 +35,7 @@ class Activate : PunktCommand() {
             commonOptions,
             echos,
             terminal
-        ).operate().fold(
+        ).run().fold(
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)
