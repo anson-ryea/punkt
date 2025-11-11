@@ -14,6 +14,7 @@ import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Verbosity
+import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.mordant.terminal.Terminal
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
@@ -41,6 +42,7 @@ class DiffOperation(
     activePaths,
     globalOptions,
     commonOptions,
+    OptionGroup(),
     echos,
     terminal
 ) {

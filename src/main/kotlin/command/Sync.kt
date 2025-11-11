@@ -2,6 +2,7 @@ package com.an5on.command
 
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
+import com.an5on.command.options.SyncOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.SyncOperation
 import com.an5on.states.tracked.TrackedEntriesStore
@@ -21,6 +22,7 @@ import com.github.ajalt.clikt.parameters.types.path
 class Sync : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
+    private val syncOptions by SyncOptions()
     private val targets by argument().convert {
         it.expandTildeWithHomePathname()
     }.path(
@@ -38,6 +40,7 @@ class Sync : PunktCommand() {
             targets,
             globalOptions,
             commonOptions,
+            syncOptions,
             echos,
             terminal
         ).operate().fold(

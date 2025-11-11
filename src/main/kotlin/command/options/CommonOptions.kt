@@ -39,5 +39,5 @@ class CommonOptions : OptionGroup("Common Options") {
         "--exclude",
         help = "Exclude file paths matching the regex pattern"
     ).convert { Regex(it) }
-        .defaultLazy { Regex("$^") } // Matches nothing if exclude is null
+        .defaultLazy { Regex("p^") } // Matches nothing if exclude is null
 }

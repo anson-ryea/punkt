@@ -9,6 +9,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.states.local.LocalState
+import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
 
@@ -16,6 +17,7 @@ abstract class OperableWithBothPathsAndExistingLocal(
     protected val activePaths: Set<Path>?,
     protected val globalOptions: GlobalOptions,
     protected val commonOptions: CommonOptions,
+    protected val specificOptions: OptionGroup,
     protected val echos: Echos,
     protected val terminal: Terminal,
 ) : Operable {

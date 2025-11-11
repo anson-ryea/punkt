@@ -1,9 +1,9 @@
 package com.an5on.config
 
-import com.an5on.type.PathStyle
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils
 import com.an5on.type.Interactivity
+import com.an5on.type.PathStyle
 import com.an5on.type.Verbosity
 import kotlinx.serialization.Serializable
 import java.nio.file.Path
@@ -40,5 +40,59 @@ data class GlobalConfiguration(
     val dotReplacementPrefix: String = "punkt_",
     val verbosity: Verbosity = Verbosity.NORMAL,
     val pathStyle: PathStyle = PathStyle.ABSOLUTE,
-    val interactivity: Interactivity = Interactivity.ALWAYS
+    val interactivity: Interactivity = Interactivity.ALWAYS,
+    val ignoredActiveFilesForDarwin: Set<String> = setOf(
+        ".DS_Store",
+        ".localized",
+        ".AppleDouble",
+        "__MACOSX",
+        ".LSOverride",
+        "._*",
+        "Icon",
+        ".DocumentRevisions-V100",
+        ".fseventsd",
+        ".Spotlight-V100",
+        ".TemporaryItems",
+        ".Trashes",
+        ".VolumeIcon.icns",
+        ".com.apple.timemachine.donotpresent",
+        ".AppleDB",
+        ".AppleDesktop",
+        "Network Trash Folder",
+        "Temporary Items",
+        ".apdisk",
+    ),
+    val ignoredActiveFilesForWindows: Set<String> = setOf(
+        "Thumbs.db",
+        "Thumbs.db:encryptable",
+        "ehthumbs.db",
+        "ehthumbs_vista.db",
+        "*.stackdump",
+        "[Dd]esktop.ini",
+        $$"$RECYCLE.BIN/**",
+        "*.cab",
+        "*.msi",
+        "*.msix",
+        "*.msm",
+        "*.msp",
+        "*.lnk"
+    ),
+    val ignoredActiveFilesForLinux: Set<String> = setOf(
+        ".*.swp",
+        ".*.swo",
+        ".*.swx",
+        ".directory",
+        ".Trash-*/**",
+        ".cache/**",
+        ".local/share/Trash/**",
+        "*~",
+        ".fuse_hidden*",
+        ".directory",
+        ".nfs*",
+        "nohup.out"
+    ),
+    val ignoredLocalFiles: Set<String> = setOf(
+        "**/.*",
+        "**/.*/**"
+    )
 )
