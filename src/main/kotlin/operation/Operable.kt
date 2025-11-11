@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.raise.either
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.error.GitError
 import com.an5on.error.PunktError
 import com.an5on.git.AddOperation.add
 import com.an5on.git.CommitOperation.commit
@@ -25,12 +24,12 @@ interface Operable {
     }
 
     companion object {
-        fun executeGitOnLocalChange(globalOptions: GlobalOptions, operation: Operable) = either<GitError, Unit> {
+        fun executeGitOnLocalChange(globalOptions: GlobalOptions, operation: Operable) = either {
             val operationName = operation.javaClass.simpleName.lowercase()
             val ordinal = globalOptions.gitOnLocalChange.ordinal
 
             if (ordinal == 0) {
-                return Either.Right(Unit)
+                return@either
             }
             if (ordinal % 2 == 1) {
                 add(
