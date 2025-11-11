@@ -13,7 +13,7 @@ import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.PunktIgnoreFileFilter
-import com.an5on.operation.OperationUtils.executeGitOnLocalChange
+import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
 import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionCopyToLocal
@@ -112,7 +112,7 @@ class SyncOperation(
         )
     }
 
-    override fun runAfter(): Either<PunktError, Unit> = either {
-        executeGitOnLocalChange(globalOptions)
+    override fun runAfter() = either<PunktError, Unit> {
+        executeGitOnLocalChange(globalOptions, this@SyncOperation)
     }
 }

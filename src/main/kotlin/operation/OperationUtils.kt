@@ -1,17 +1,10 @@
 package com.an5on.operation
 
-import arrow.core.raise.Raise
-import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.error.GitError
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
-import com.an5on.git.AddOperation.add
-import com.an5on.git.CommitOperation.commit
-import com.an5on.git.PushOperation.push
 import com.an5on.states.active.ActiveUtils.toActive
 import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.system.SystemUtils
-import com.an5on.type.GitOnLocalChange
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
@@ -134,31 +127,4 @@ object OperationUtils {
     val existingLocalPathsToActivePaths =
         configuration.global.localStatePath
             .expandToActive(DefaultLocalIgnoreFileFilter)
-
-    fun determineGitOnLocalChange(gitOnLocalChangeOption: GitOnLocalChange?) =
-        gitOnLocalChangeOption ?: configuration.git.gitOnLocalChange
-
-    fun Raise<GitError>.executeGitOnLocalChange(globalOptions: GlobalOptions) {
-        val gitOnLocalChange = determineGitOnLocalChange(globalOptions.gitOnLocalChange)
-        val ordinal = gitOnLocalChange.ordinal
-
-        if (ordinal == 0) {
-            return
-        }
-        if (ordinal % 2 == 1) {
-            add(
-                configuration.global.localStatePath,
-                globalOptions.useBundledGit
-            )
-        }
-        if (ordinal >= 2) {
-            commit(
-                "test",
-                globalOptions.useBundledGit
-            )
-        }
-        if (ordinal >= 4) {
-            push(false, globalOptions.useBundledGit)
-        }
-    }
 }

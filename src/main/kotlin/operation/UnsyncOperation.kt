@@ -10,7 +10,7 @@ import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.operation.OperationUtils.executeGitOnLocalChange
+import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionDelete
 import com.an5on.states.local.LocalUtils.existsInLocal
@@ -99,7 +99,9 @@ class UnsyncOperation(
         }
 
         LocalState.commit()
+    }
 
-        executeGitOnLocalChange(globalOptions)
+    override fun runAfter() = either {
+        executeGitOnLocalChange(globalOptions, this@UnsyncOperation)
     }
 }

@@ -3,25 +3,15 @@ package com.an5on.command.options
 import com.an5on.command.CommandUtils.enumEntryOf
 import com.an5on.command.CommandUtils.toChoices
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.type.PathStyle
-import com.an5on.type.BooleanWithAuto
-import com.an5on.type.GitOnLocalChange
-import com.an5on.type.Interactivity
-import com.an5on.type.Verbosity
+import com.an5on.type.*
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
-import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.options.convert
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.optionalValue
 import com.github.ajalt.clikt.parameters.types.choice
 
 class GlobalOptions : OptionGroup("Global Options") {
-    val useBundledGit by option()
-        .choice(
-            *Enum.toChoices<BooleanWithAuto>()
-        )
-        .convert {
-            Enum.enumEntryOf<BooleanWithAuto>(it)
-        }
-        .default(configuration.git.useBundledGit)
-
     val verbosity by option(
         "-v", "--verbosity"
     )
@@ -55,10 +45,22 @@ class GlobalOptions : OptionGroup("Global Options") {
         .optionalValue(Interactivity.NEVER, false)
         .default(configuration.global.interactivity)
 
+    val useBundledGit by option()
+        .choice(
+            *Enum.toChoices<BooleanWithAuto>()
+        )
+        .convert {
+            Enum.enumEntryOf<BooleanWithAuto>(it)
+        }
+        .default(configuration.git.useBundledGit)
+
     val gitOnLocalChange by option()
         .choice(
             *Enum.toChoices<GitOnLocalChange>()
         )
         .convert { Enum.enumEntryOf<GitOnLocalChange>(it) }
         .default(configuration.git.gitOnLocalChange)
+
+    val gitCommitMessage by option()
+        .default(configuration.git.commitMessage)
 }
