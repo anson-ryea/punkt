@@ -10,6 +10,7 @@ import com.an5on.command.options.SyncOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
 import com.an5on.file.FileUtils.expand
+import com.an5on.file.FileUtils.expandToActive
 import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
@@ -106,7 +107,7 @@ class SyncOperation(
 
     override fun operateWithExistingLocal() = either<PunktError, Unit> {
         operateWithPaths(
-            configuration.global.localStatePath.expand(
+            configuration.global.localStatePath.expandToActive(
                 filter.and(DefaultLocalIgnoreFileFilter),
                 filesOnly = true,
             )
