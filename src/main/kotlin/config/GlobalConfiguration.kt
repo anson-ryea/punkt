@@ -88,7 +88,6 @@ data class GlobalConfiguration(
         "*~",
         ".fuse_hidden*",
         ".directory",
-        ".Trash-*",
         ".nfs*",
         "nohup.out"
     ),
