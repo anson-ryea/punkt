@@ -102,6 +102,6 @@ class UnsyncOperation(
     }
 
     override fun runAfter() = either {
-        executeGitOnLocalChange(globalOptions, this@UnsyncOperation)
+        executeGitOnLocalChange(globalOptions, this@UnsyncOperation).bind()
     }
 }

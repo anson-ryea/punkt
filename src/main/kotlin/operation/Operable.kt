@@ -1,7 +1,6 @@
 package com.an5on.operation
 
 import arrow.core.Either
-import arrow.core.raise.Raise
 import arrow.core.raise.either
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
@@ -26,12 +25,12 @@ interface Operable {
     }
 
     companion object {
-        fun Raise<GitError>.executeGitOnLocalChange(globalOptions: GlobalOptions, operation: Operable) {
+        fun executeGitOnLocalChange(globalOptions: GlobalOptions, operation: Operable) = either<GitError, Unit> {
             val operationName = operation.javaClass.simpleName.lowercase()
             val ordinal = globalOptions.gitOnLocalChange.ordinal
 
             if (ordinal == 0) {
-                return
+                return Either.Right(Unit)
             }
             if (ordinal % 2 == 1) {
                 add(

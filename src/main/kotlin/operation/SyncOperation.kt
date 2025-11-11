@@ -113,6 +113,6 @@ class SyncOperation(
     }
 
     override fun runAfter() = either<PunktError, Unit> {
-        executeGitOnLocalChange(globalOptions, this@SyncOperation)
+        executeGitOnLocalChange(globalOptions, this@SyncOperation).bind()
     }
 }
