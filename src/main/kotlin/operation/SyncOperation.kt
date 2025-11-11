@@ -10,6 +10,7 @@ import com.an5on.command.options.SyncOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
 import com.an5on.file.FileUtils.expand
+import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
@@ -61,7 +62,7 @@ class SyncOperation(
     override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
         val expandedActivePaths = paths.flatMap { activePath ->
             echos.echoStage(
-                "Syncing: $activePath",
+                "Syncing: ${activePath.toStringInPathStyle(globalOptions.pathStyle)}",
                 globalOptions.verbosity,
                 Verbosity.NORMAL
             )

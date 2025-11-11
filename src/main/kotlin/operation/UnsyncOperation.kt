@@ -11,6 +11,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionDelete
@@ -20,7 +21,6 @@ import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
-import kotlin.io.path.pathString
 
 /**
  * Handles the unsync operation to remove files from the local state.
@@ -54,7 +54,7 @@ class UnsyncOperation(
             }
 
             echos.echoStage(
-                "Unsyncing: ${activePath.pathString}",
+                "Unsyncing: ${activePath.toStringInPathStyle(globalOptions.pathStyle)}",
                 globalOptions.verbosity,
                 Verbosity.NORMAL
             )

@@ -12,6 +12,7 @@ import com.an5on.error.LocalError
 import com.an5on.error.PunktError
 import com.an5on.file.FileUtils.expand
 import com.an5on.file.FileUtils.expandToLocal
+import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
@@ -62,7 +63,7 @@ class ActivateOperation(
 
         val expandedLocalPaths = paths.flatMap { activePath ->
             echos.echoStage(
-                "Activating: $activePath",
+                "Activating: ${activePath.toStringInPathStyle(globalOptions.pathStyle)}",
                 globalOptions.verbosity,
                 Verbosity.NORMAL
             )

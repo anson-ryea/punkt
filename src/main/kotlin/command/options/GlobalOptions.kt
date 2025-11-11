@@ -52,6 +52,7 @@ class GlobalOptions : OptionGroup("Global Options") {
         .convert {
             Enum.enumEntryOf<BooleanWithAuto>(it)
         }
+        .optionalValue(BooleanWithAuto.TRUE, false)
         .default(configuration.git.useBundledGit)
 
     val gitOnLocalChange by option()
