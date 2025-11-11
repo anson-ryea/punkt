@@ -64,7 +64,7 @@ object FileUtils {
     fun buildPathMatchers(patterns: Set<String>, isForLocal: Boolean = false): List<PathMatcher> {
         val prefixLocal = if (isForLocal) configuration.global.localStatePath.pathString else ""
         return patterns.map { pattern ->
-            val normalizedPattern = if (pattern.contains(File.separatorChar) || pattern.startsWith("**")) {
+            val normalizedPattern = if (pattern.contains('/') || pattern.contains('\\') || pattern.startsWith("**")) {
                 prefixLocal + pattern
             } else {
                 "$prefixLocal**/$pattern"
