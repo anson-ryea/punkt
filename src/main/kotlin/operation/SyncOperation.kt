@@ -21,6 +21,7 @@ import com.an5on.states.local.LocalTransactionKeepDirectory
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.terminal.Terminal
+import org.apache.commons.io.file.PathUtils.isEmpty
 import org.apache.commons.io.filefilter.RegexFileFilter
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -73,7 +74,7 @@ class SyncOperation(
 
         LocalState.pendingTransactions.addAll(
             expandedActivePaths.map { activePath ->
-                if (syncOptions.keepEmptyFolders && activePath.isDirectory() && activePath.toFile().list().isEmpty()) {
+                if (syncOptions.keepEmptyFolders && activePath.isDirectory() && isEmpty(activePath)) {
                     LocalTransactionKeepDirectory(activePath)
                 } else {
                     LocalTransactionCopyToLocal(activePath)
