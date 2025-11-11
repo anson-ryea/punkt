@@ -8,10 +8,12 @@ import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
 
 object DefaultLocalIgnoreFileFilter : IOFileFilter {
-    private val defaultPathMatchers = buildPathMatchers(
-        configuration.global.ignoredLocalFiles,
-        true
-    )
+    private val defaultPathMatchers by lazy {
+        buildPathMatchers(
+            configuration.global.ignoredLocalFiles,
+            true
+        )
+    }
 
     override fun accept(file: File?): Boolean = defaultPathMatchers.fold(TrueFileFilter.INSTANCE) { acc, pathMatcher ->
         acc.and(PathMatcherFileFilter(pathMatcher).negate())
