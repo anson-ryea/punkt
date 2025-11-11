@@ -1,16 +1,12 @@
 package com.an5on.file.filter
 
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.file.FileUtils.expandTildeWithHomePathname
-import com.an5on.system.SystemUtils
+import com.an5on.file.FileUtils.buildPathMatchers
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.PathMatcherFileFilter
 import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
-import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
 
 object PunktIgnoreFileFilter : IOFileFilter {
     val pathMatchers: List<PathMatcher>
@@ -30,19 +26,9 @@ object PunktIgnoreFileFilter : IOFileFilter {
             .readLines()
             .map { it.trim() }
             .filterNot { it.isBlank() || it.startsWith("#") }
-            .map {
-                if (it.startsWith("~")) {
-                    it.expandTildeWithHomePathname()
-                } else if (!Path(it).isAbsolute) {
-                    SystemUtils.homePath.pathString + it
-                } else {
-                    it
-                }
-            }
+            .toSet()
 
-        return lines.map { pattern ->
-            FileSystems.getDefault().getPathMatcher("glob:$pattern")
-        }
+        return buildPathMatchers(lines)
     }
 
     override fun accept(file: File?): Boolean {
