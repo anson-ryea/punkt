@@ -10,11 +10,11 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.FileUtils.expand
+import com.an5on.file.FileUtils.expandToLocal
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
-import com.an5on.operation.OperationUtils.expand
-import com.an5on.operation.OperationUtils.expandToLocal
 import com.an5on.states.active.ActiveState
 import com.an5on.states.active.ActiveTransactionCopyToActive
 import com.an5on.states.active.ActiveTransactionMakeDirectories

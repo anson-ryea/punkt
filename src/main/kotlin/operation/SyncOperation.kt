@@ -9,12 +9,12 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.SyncOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
+import com.an5on.file.FileUtils.expand
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
-import com.an5on.operation.OperationUtils.expand
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionCopyToLocal
 import com.an5on.states.local.LocalTransactionKeepDirectory
