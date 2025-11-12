@@ -1,4 +1,4 @@
-package com.an5on.git.bundled
+package com.an5on.git
 
 import kotlinx.serialization.Serializable
 

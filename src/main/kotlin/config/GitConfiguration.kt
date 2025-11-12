@@ -1,6 +1,6 @@
 package com.an5on.config
 
-import com.an5on.git.bundled.BundledGitCredentialsProviderType
+import com.an5on.git.BundledGitCredentialsProviderType
 import com.an5on.system.SystemUtils
 import com.an5on.type.BooleanWithAuto
 import com.an5on.type.GitOnLocalChange

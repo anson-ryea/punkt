@@ -1,21 +1,31 @@
 package com.an5on.git
 
-import arrow.core.raise.Raise
+import arrow.core.Either
+import arrow.core.Either.Companion.catchOrThrow
+import arrow.core.raise.either
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.GitError
-import com.an5on.git.bundled.BundledInitOperation.bundledInit
-import com.an5on.git.system.SystemInitExecutor.systemInit
 import com.an5on.type.BooleanWithAuto
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.errors.GitAPIException
+import java.nio.file.Path
+import kotlin.io.path.pathString
 
-object InitOperation {
-    fun Raise<GitError>.init(useBundledGitOption: BooleanWithAuto?) {
-        val localPath = configuration.global.localStatePath
-        val useBundledGit = GitUtils.determineSystemOrBundledGit(useBundledGitOption)
+class InitOperation(
+    useBundledGitOption: BooleanWithAuto,
+    private val repositoryPath: Path = configuration.global.localStatePath,
+) : GitOperableWithSystemAndBundled(
+    determineUseBundledGit(useBundledGitOption)
+) {
+    override fun operateWithBundled(): Either<GitError, Unit> = catchOrThrow<GitAPIException, Unit> {
+        Git.init().setDirectory(repositoryPath.toFile()).call()
+    }.mapLeft {
+        GitError.BundledGitOperationFailed("Init", it)
+    }
 
-        if (useBundledGit) {
-            bundledInit(localPath)
-        } else {
-            systemInit(localPath)
-        }
+    override fun operateWithSystem(): Either<GitError, Int> = either {
+        val args = listOf("init", repositoryPath.pathString)
+
+        executeSystemGit(args).bind()
     }
 }

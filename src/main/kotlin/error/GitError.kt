@@ -1,6 +1,6 @@
 package com.an5on.error
 
-import com.an5on.git.bundled.BundledGitCredentialsProviderType
+import com.an5on.git.BundledGitCredentialsProviderType
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
