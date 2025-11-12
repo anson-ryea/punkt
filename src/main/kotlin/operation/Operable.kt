@@ -25,7 +25,9 @@ interface Operable {
 
     companion object {
         fun executeGitOnLocalChange(globalOptions: GlobalOptions, operation: Operable) = either {
-            val operationName = operation.javaClass.simpleName.lowercase()
+            val operationName = operation.javaClass.simpleName
+                .replace("Operation", "")
+                .lowercase()
             val ordinal = globalOptions.gitOnLocalChange.ordinal
 
             if (ordinal == 0) {
@@ -44,7 +46,8 @@ interface Operable {
                 ).operate().bind()
             }
             if (ordinal >= 4) {
-                PushOperation(globalOptions.useBundledGit,
+                PushOperation(
+                    globalOptions.useBundledGit,
                     force = false
                 ).operate().bind()
             }
