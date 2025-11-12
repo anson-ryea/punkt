@@ -13,7 +13,7 @@ import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
 
-abstract class OperableWithBothPathsAndExistingLocal(
+abstract class OperableWithPathsAndExistingLocal(
     protected val activePaths: Set<Path>?,
     protected val globalOptions: GlobalOptions,
     protected val commonOptions: CommonOptions,

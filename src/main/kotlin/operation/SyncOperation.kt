@@ -43,7 +43,7 @@ class SyncOperation(
     syncOptions: SyncOptions,
     echos: Echos,
     terminal: Terminal,
-) : OperableWithBothPathsAndExistingLocal(
+) : OperableWithPathsAndExistingLocal(
     activePaths,
     globalOptions,
     commonOptions,

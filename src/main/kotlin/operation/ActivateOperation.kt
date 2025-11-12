@@ -41,7 +41,7 @@ class ActivateOperation(
     commonOptions: CommonOptions,
     echos: Echos,
     terminal: Terminal
-) : OperableWithBothPathsAndExistingLocal(
+) : OperableWithPathsAndExistingLocal(
     activePaths,
     globalOptions,
     commonOptions,
