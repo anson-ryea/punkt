@@ -12,9 +12,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.file.PathUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
-import java.nio.file.FileSystems
 import java.nio.file.Path
-import java.nio.file.PathMatcher
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
@@ -64,18 +62,6 @@ object FileUtils {
     fun Collection<Path>.toStringInPathStyle(pathStyle: PathStyle): String =
         this.sorted()
             .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
-
-    fun buildPathMatchers(patterns: Set<String>, isForLocal: Boolean = false): List<PathMatcher> {
-        val prefixLocal = if (isForLocal) configuration.global.localStatePath.pathString else ""
-        return patterns.map { pattern ->
-            val normalizedPattern = if (pattern.contains('/') || pattern.contains('\\') || pattern.startsWith("**")) {
-                prefixLocal + pattern
-            } else {
-                "$prefixLocal**/$pattern"
-            }.expandTildeWithHomePathname()
-            FileSystems.getDefault().getPathMatcher("glob:$normalizedPattern")
-        }
-    }
 
     /**
      * Regex pattern to match dot files, adjusted for the operating system.

@@ -95,8 +95,6 @@ class ActivateOperation(
                 filter
             )
 
-        println(existingLocalPaths)
-
         commit(existingLocalPaths, globalOptions, echos, terminal)
     }
 
