@@ -1,6 +1,6 @@
 package com.an5on.file.filter
 
-import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.file.FileUtils.toLocal
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 

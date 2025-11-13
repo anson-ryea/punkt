@@ -11,12 +11,12 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.FileUtils.existsInLocal
+import com.an5on.file.FileUtils.toLocal
 import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionDelete
-import com.an5on.states.local.LocalUtils.existsInLocal
-import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.terminal.Terminal

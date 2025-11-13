@@ -3,7 +3,7 @@ package com.an5on.states.local
 import com.an5on.command.CommandUtils.indented
 import com.an5on.command.Echos
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.file.FileUtils.toLocal
 import com.an5on.type.Verbosity
 import org.apache.commons.io.FileUtils
 import java.nio.file.Files

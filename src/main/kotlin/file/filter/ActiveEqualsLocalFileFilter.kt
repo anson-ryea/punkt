@@ -1,8 +1,8 @@
 package com.an5on.file.filter
 
-import com.an5on.states.active.ActiveUtils.contentEqualsActive
-import com.an5on.states.local.LocalUtils.contentEqualsLocal
-import com.an5on.states.local.LocalUtils.isLocal
+import com.an5on.file.FileUtils.contentEqualsActive
+import com.an5on.file.FileUtils.contentEqualsLocal
+import com.an5on.file.FileUtils.isLocal
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 
