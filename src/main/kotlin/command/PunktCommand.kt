@@ -85,7 +85,7 @@ abstract class PunktCommand : CliktCommand() {
         )
     }
 
-    val echos: Echos
+    protected val echos: Echos
         get() = Echos(
             ::echoWithVerbosity,
             ::echoStage,
@@ -93,7 +93,7 @@ abstract class PunktCommand : CliktCommand() {
             ::echoWarning,
         )
 
-    fun handleError(e: PunktError) {
+    protected fun handleError(e: PunktError) {
         echoError(e.message)
         logger.error { e.message }
         throw ProgramResult(e.statusCode)
