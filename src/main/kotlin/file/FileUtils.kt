@@ -214,21 +214,21 @@ object FileUtils {
      *
      * @return true if the contents are equal, false otherwise
      */
-    fun Path.fileContentEqualsActive(): Boolean {
-        assert(this.exists())
-
-        val activePath = this.toActive()
-        assert(activePath.exists())
-
-        return PathUtils.fileContentEquals(activePath, this)
-    }
+    fun Path.contentEqualsActive() = this.toFile().contentEqualsActive()
 
     /**
      * Checks if the content of this file equals the content of its active counterpart.
      *
      * @return true if the contents are equal, false otherwise
      */
-    fun File.contentEqualsActive() = this.toPath().fileContentEqualsActive()
+    fun File.contentEqualsActive(): Boolean {
+        assert(this.exists())
+
+        val activeFile = this.toActive()
+        assert(activeFile.exists())
+
+        return FileUtils.contentEquals(activeFile, this)
+    }
 
     /**
      * Expands this file or directory into a set of files and directories based on the filter.
