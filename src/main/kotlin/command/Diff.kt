@@ -39,9 +39,7 @@ class Diff : PunktCommand() {
             terminal
         ).run().fold(
             { handleError(it) },
-            {
-                echoSuccess(verbosityOption = globalOptions.verbosity)
-            }
+            {}
         )
     }
 }

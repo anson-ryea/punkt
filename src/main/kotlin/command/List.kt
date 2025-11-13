@@ -37,9 +37,7 @@ class List : PunktCommand() {
             terminal
         ).run().fold(
             { handleError(it) },
-            {
-                echoSuccess(verbosityOption = globalOptions.verbosity)
-            }
+            {}
         )
     }
 }
