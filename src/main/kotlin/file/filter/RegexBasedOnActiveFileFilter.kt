@@ -1,6 +1,6 @@
 package com.an5on.file.filter
 
-import com.an5on.states.active.ActiveUtils.toActive
+import com.an5on.file.FileUtils.toActive
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 

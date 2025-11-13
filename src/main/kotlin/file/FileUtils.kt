@@ -1,21 +1,21 @@
 package com.an5on.file
 
-
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
-import com.an5on.states.active.ActiveUtils.toActive
-import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils.homePath
 import com.an5on.system.SystemUtils.osType
 import com.an5on.type.PathStyle
 import org.apache.commons.codec.digest.Blake3
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.file.PathUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
+import kotlin.io.path.Path
+import kotlin.io.path.exists
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
 
@@ -75,6 +75,173 @@ object FileUtils {
             FileSystems.getDefault().getPathMatcher("glob:$normalizedPattern")
         }
     }
+
+    /**
+     * Regex pattern to match dot files, adjusted for the operating system.
+     */
+    val dotPrefixRegex = when (osType) {
+        OsType.WINDOWS -> Regex("^\\.(?!\\\\)|(?<=\\\\)\\.")
+        else -> Regex("^\\.(?!/)|(?<=/)\\.")
+    }
+
+    /**
+     * Converts this path to its corresponding local path.
+     *
+     * Replaces dot patterns with dot replacement strings and resolves relative to the local directory.
+     *
+     * @return the local path equivalent
+     */
+    fun Path.toLocal(): Path {
+        return when {
+            isLocal() -> this
+            !isAbsolute -> configuration.global.localStatePath.resolve(
+                pathString.replace(dotPrefixRegex, configuration.global.dotReplacementPrefix)
+            ).normalize()
+
+            startsWith(configuration.global.activeStatePath) -> configuration.global.localStatePath.resolve(
+                relativeTo(configuration.global.activeStatePath).pathString.replace(
+                    dotPrefixRegex,
+                    configuration.global.dotReplacementPrefix
+                )
+            ).normalize()
+
+            else -> Path(
+                pathString.replace(dotPrefixRegex, configuration.global.dotReplacementPrefix)
+            ).normalize()
+        }
+    }
+
+    /**
+     * Converts this file to its corresponding local file.
+     *
+     * @return the local file equivalent
+     */
+    fun File.toLocal(): File = this.toPath().toLocal().toFile()
+
+    /**
+     * Checks if this path is within the local directory.
+     *
+     * @return true if the path is local, false otherwise
+     */
+    fun Path.isLocal() = this.startsWith(configuration.global.localStatePath)
+
+    /**
+     * Checks if this file is within the local directory.
+     *
+     * @return true if the file is local, false otherwise
+     */
+    fun File.isLocal() = this.toPath().isLocal()
+
+    /**
+     * Checks if this path exists in the local state.
+     *
+     * @return true if the local path exists, false otherwise
+     */
+    fun Path.existsInLocal() = this.toLocal().exists()
+
+    /**
+     * Checks if this file exists in the local state.
+     *
+     * @return true if the local file exists, false otherwise
+     */
+    fun File.existsInLocal() = this.toPath().existsInLocal()
+
+    /**
+     * Checks if the content of this path equals the content of its local counterpart.
+     *
+     * @return true if the contents are equal, false otherwise
+     */
+    fun Path.fileContentEqualsLocal(): Boolean {
+        assert(this.exists())
+
+        val localPath = this.toLocal()
+
+        assert(localPath.exists())
+
+        return PathUtils.fileContentEquals(this, localPath)
+    }
+
+    /**
+     * Checks if the content of this file equals the content of its local counterpart.
+     *
+     * @return true if the contents are equal, false otherwise
+     */
+    fun File.contentEqualsLocal() = this.toPath().fileContentEqualsLocal()
+
+    private val dotReplacementPrefixRegex = Regex(configuration.global.dotReplacementPrefix)
+
+    /**
+     * Converts this path to its corresponding active path.
+     *
+     * Replaces dot replacement strings with dots and resolves relative to the home directory.
+     *
+     * @return the active path equivalent
+     */
+    fun Path.toActive(): Path {
+        return when {
+            !isLocal() -> this
+            !isAbsolute -> {
+                configuration.global.activeStatePath.resolve(
+                    pathString.replace(dotReplacementPrefixRegex, ".")
+                ).normalize()
+            }
+
+            startsWith(configuration.global.localStatePath) -> {
+                configuration.global.activeStatePath.resolve(
+                    relativeTo(configuration.global.localStatePath).pathString
+                        .replace(dotReplacementPrefixRegex, ".")
+                )
+            }
+
+            else -> {
+                Path(
+                    pathString.replace(dotReplacementPrefixRegex, ".")
+                ).normalize()
+            }
+        }
+    }
+
+    /**
+     * Converts this file to its corresponding active file.
+     *
+     * @return the active file equivalent
+     */
+    fun File.toActive(): File = this.toPath().toActive().toFile()
+
+    /**
+     * Checks if this path exists in the active state.
+     *
+     * @return true if the active path exists, false otherwise
+     */
+    fun Path.existsInActive() = this.toActive().exists()
+
+    /**
+     * Checks if this file exists in the active state.
+     *
+     * @return true if the active file exists, false otherwise
+     */
+    fun File.existsInActive() = this.toPath().existsInActive()
+
+    /**
+     * Checks if the content of this path equals the content of its active counterpart.
+     *
+     * @return true if the contents are equal, false otherwise
+     */
+    fun Path.fileContentEqualsActive(): Boolean {
+        assert(this.exists())
+
+        val activePath = this.toActive()
+        assert(activePath.exists())
+
+        return PathUtils.fileContentEquals(activePath, this)
+    }
+
+    /**
+     * Checks if the content of this file equals the content of its active counterpart.
+     *
+     * @return true if the contents are equal, false otherwise
+     */
+    fun File.contentEqualsActive() = this.toPath().fileContentEqualsActive()
 
     /**
      * Expands this file or directory into a set of files and directories based on the filter.

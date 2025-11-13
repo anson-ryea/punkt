@@ -2,7 +2,7 @@ package com.an5on.states.active
 
 import com.an5on.command.CommandUtils.indented
 import com.an5on.command.Echos
-import com.an5on.states.active.ActiveUtils.toActive
+import com.an5on.file.FileUtils.toActive
 import com.an5on.type.Verbosity
 import org.apache.commons.io.FileUtils
 import java.nio.file.Files

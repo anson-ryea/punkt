@@ -1,7 +1,7 @@
 package com.an5on.error
 
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.states.active.ActiveUtils.toActive
+import com.an5on.file.FileUtils.toActive
 import java.nio.file.Path
 
 sealed interface LocalError : PunktError {

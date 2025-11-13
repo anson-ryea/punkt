@@ -8,6 +8,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.FileUtils.existsInLocal
 import com.an5on.file.FileUtils.expand
 import com.an5on.file.FileUtils.expandToLocal
 import com.an5on.file.FileUtils.toStringInPathStyle
@@ -15,7 +16,6 @@ import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.PunktIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
-import com.an5on.states.local.LocalUtils.existsInLocal
 import com.an5on.type.Verbosity
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
 import com.github.ajalt.mordant.terminal.Terminal

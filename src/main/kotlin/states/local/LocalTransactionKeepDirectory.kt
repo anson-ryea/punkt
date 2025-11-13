@@ -1,6 +1,7 @@
 package com.an5on.states.local
 
-import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.file.FileUtils.toLocal
+import org.apache.commons.io.file.PathUtils.isEmpty
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -21,7 +22,7 @@ class LocalTransactionKeepDirectory(
     override val type = LocalTransactionType.KEEP_DIRECTORY
 
     override fun run() {
-        assert(activePath.toFile().list().isEmpty())
+        assert(isEmpty(activePath))
 
         val localPath = activePath.toLocal()
         val localKeepFilePath = localPath.resolve(".punktkeep")
