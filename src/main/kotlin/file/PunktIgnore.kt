@@ -18,10 +18,19 @@ object PunktIgnore : Ignore {
 
         val lines = ignoreFile
             .readLines()
-            .map { it.trim() }
-            .filterNot { it.isBlank() || it.startsWith("#") }
+            .map { it.stripComment() }
+            .filterNot { it.isBlank() }
             .toSet()
 
         return lines
+    }
+
+    private fun String.stripComment(): String {
+        val commentIndex = indexOf('#')
+        return if (commentIndex >= 0) {
+            take(commentIndex).trim()
+        } else {
+            trim()
+        }
     }
 }

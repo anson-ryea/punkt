@@ -15,9 +15,11 @@ class IgnoredOperation(
     val terminal: Terminal,
 ): Operable {
     override fun operate(): Either<PunktError, Unit> = either {
+        val message = PunktIgnore.ignorePatterns.joinToString(separator = "\n")
+
         echos.echoWithVerbosity(
-            PunktIgnore.ignorePatterns.joinToString(separator = "\n"),
-            true,
+            message,
+            message.isNotBlank(),
             false,
             globalOptions.verbosity,
             Verbosity.QUIET
