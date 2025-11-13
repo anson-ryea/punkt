@@ -1,6 +1,9 @@
 package com.an5on.states.local
 
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 /**
  * A transaction that deletes the file or directory at the local path corresponding to the active path.
@@ -16,5 +19,16 @@ class LocalTransactionDelete(
 ) : LocalTransaction() {
     override val type = LocalTransactionType.REMOVE
 
-    override fun run() = LocalState.delete(activePath)
+    /**
+     * Deletes the file or directory at the local path.
+     */
+    override fun run() {
+        assert(activePath.exists())
+
+        if (activePath.isDirectory()) {
+            activePath.toFile().deleteRecursively()
+        } else {
+            Files.delete(activePath)
+        }
+    }
 }
