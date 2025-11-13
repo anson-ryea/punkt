@@ -12,9 +12,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.file.PathUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
-import java.nio.file.FileSystems
 import java.nio.file.Path
-import java.nio.file.PathMatcher
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
@@ -64,18 +62,6 @@ object FileUtils {
     fun Collection<Path>.toStringInPathStyle(pathStyle: PathStyle): String =
         this.sorted()
             .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
-
-    fun buildPathMatchers(patterns: Set<String>, isForLocal: Boolean = false): List<PathMatcher> {
-        val prefixLocal = if (isForLocal) configuration.global.localStatePath.pathString else ""
-        return patterns.map { pattern ->
-            val normalizedPattern = if (pattern.contains('/') || pattern.contains('\\') || pattern.startsWith("**")) {
-                prefixLocal + pattern
-            } else {
-                "$prefixLocal**/$pattern"
-            }.expandTildeWithHomePathname()
-            FileSystems.getDefault().getPathMatcher("glob:$normalizedPattern")
-        }
-    }
 
     /**
      * Regex pattern to match dot files, adjusted for the operating system.
@@ -228,21 +214,21 @@ object FileUtils {
      *
      * @return true if the contents are equal, false otherwise
      */
-    fun Path.fileContentEqualsActive(): Boolean {
-        assert(this.exists())
-
-        val activePath = this.toActive()
-        assert(activePath.exists())
-
-        return PathUtils.fileContentEquals(activePath, this)
-    }
+    fun Path.contentEqualsActive() = this.toFile().contentEqualsActive()
 
     /**
      * Checks if the content of this file equals the content of its active counterpart.
      *
      * @return true if the contents are equal, false otherwise
      */
-    fun File.contentEqualsActive() = this.toPath().fileContentEqualsActive()
+    fun File.contentEqualsActive(): Boolean {
+        assert(this.exists())
+
+        val activeFile = this.toActive()
+        assert(activeFile.exists())
+
+        return FileUtils.contentEquals(activeFile, this)
+    }
 
     /**
      * Expands this file or directory into a set of files and directories based on the filter.

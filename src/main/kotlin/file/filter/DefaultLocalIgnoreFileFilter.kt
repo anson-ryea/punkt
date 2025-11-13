@@ -1,19 +1,14 @@
 package com.an5on.file.filter
 
-import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.file.FileUtils.buildPathMatchers
+import com.an5on.file.DefaultLocalIgnore
 import org.apache.commons.io.filefilter.IOFileFilter
 import org.apache.commons.io.filefilter.PathMatcherFileFilter
 import org.apache.commons.io.filefilter.TrueFileFilter
 import java.io.File
 
 object DefaultLocalIgnoreFileFilter : IOFileFilter {
-    private val defaultPathMatchers by lazy {
-        buildPathMatchers(
-            configuration.global.ignoredLocalFiles,
-            true
-        )
-    }
+    private val defaultPathMatchers
+        get() = DefaultLocalIgnore.ignorePathMatchers
 
     override fun accept(file: File?): Boolean = defaultPathMatchers.fold(TrueFileFilter.INSTANCE) { acc, pathMatcher ->
         acc.and(PathMatcherFileFilter(pathMatcher).negate())

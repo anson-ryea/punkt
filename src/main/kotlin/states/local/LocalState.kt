@@ -5,10 +5,8 @@ import com.an5on.command.Echos
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.file.FileUtils.toLocal
 import com.an5on.type.Verbosity
-import org.apache.commons.io.FileUtils
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 
@@ -62,23 +60,7 @@ object LocalState {
     }
 
     /**
-     * Copies a file from the active path to the corresponding local path.
-     *
-     * @param activePath the absolute path of the active file to copy
-     */
-    fun copyFileFromActiveToLocal(activePath: Path) {
-        assert(activePath.isAbsolute && activePath.exists())
-
-        val activeFile = activePath.toFile()
-        val localFile = activeFile.toLocal()
-
-        FileUtils.copyFile(activeFile, localFile, StandardCopyOption.REPLACE_EXISTING)
-    }
-
-    /**
      * Creates the necessary directories for the local path corresponding to the active path.
-     *
-     * @param activePath the active path for which to create local directories
      */
     fun makeDirs(activePath: Path) {
         val localPath = activePath.toLocal()
@@ -87,21 +69,6 @@ object LocalState {
             Files.createDirectories(localPath)
         } else if (!localPath.parent.exists()) {
             Files.createDirectories(localPath.parent)
-        }
-    }
-
-    /**
-     * Deletes the file or directory at the local path.
-     *
-     * @param localPath the local path to delete
-     */
-    fun delete(localPath: Path) {
-        assert(localPath.exists())
-
-        if (localPath.isDirectory()) {
-            localPath.toFile().deleteRecursively()
-        } else {
-            Files.delete(localPath)
         }
     }
 }

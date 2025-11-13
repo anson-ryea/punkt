@@ -37,6 +37,7 @@ fun main(args: Array<String>) {
         List(),
         Diff(),
         Git(),
-        Shell()
+        Shell(),
+        Ignored
     ).main(args)
 }

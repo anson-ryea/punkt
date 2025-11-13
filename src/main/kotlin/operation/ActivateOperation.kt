@@ -1,6 +1,5 @@
 package com.an5on.operation
 
-import arrow.core.raise.Raise
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.an5on.command.CommandUtils.punktYesNoPrompt
@@ -10,6 +9,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
+import com.an5on.file.FileUtils.existsInActive
 import com.an5on.file.FileUtils.existsInLocal
 import com.an5on.file.FileUtils.expand
 import com.an5on.file.FileUtils.expandToLocal
@@ -72,10 +72,15 @@ class ActivateOperation(
                 LocalError.LocalPathNotFound(activePath)
             }
 
-            activePath.expandToLocal(filter.and(ActiveEqualsLocalFileFilter.negate()), filter)
+            activePath.expandToLocal(
+                filter.and(ActiveEqualsLocalFileFilter.negate()),
+                filter
+            ).filterNot {
+                it.isDirectory() && it.existsInActive()
+            }
         }.toSet()
 
-        commit(expandedLocalPaths, globalOptions, echos, terminal)
+        commit(expandedLocalPaths, globalOptions, echos, terminal).bind()
     }
 
     override fun operateWithExistingLocal() = either {
@@ -93,19 +98,19 @@ class ActivateOperation(
             configuration.global.localStatePath.expand(
                 filter.and(ActiveEqualsLocalFileFilter.negate()),
                 filter
-            )
+            ).filterNot {
+                it.isDirectory() && it.existsInActive()
+            }
 
-        println(existingLocalPaths)
-
-        commit(existingLocalPaths, globalOptions, echos, terminal)
+        commit(existingLocalPaths, globalOptions, echos, terminal).bind()
     }
 
-    private fun Raise<PunktError>.commit(
+    private fun commit(
         localPaths: Collection<Path>,
         globalOptions: GlobalOptions,
         echos: Echos,
         terminal: Terminal
-    ) {
+    ) = either {
         ActiveState.pendingTransactions.addAll(
             localPaths.map { localPath ->
                 if (localPath.isDirectory()) {
@@ -116,7 +121,7 @@ class ActivateOperation(
             }
         )
 
-        if (localPaths.isEmpty()) return
+        if (localPaths.isEmpty()) return@either
 
         ActiveState.echoPendingTransactions(globalOptions.verbosity, echos)
 

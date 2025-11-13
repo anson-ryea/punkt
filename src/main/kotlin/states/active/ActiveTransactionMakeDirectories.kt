@@ -1,7 +1,10 @@
 package com.an5on.states.active
 
-import com.an5on.states.active.ActiveState.makeDirs
+import com.an5on.file.FileUtils.toActive
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 /**
  * A transaction that creates the necessary directories for the active path corresponding to the local path.
@@ -17,5 +20,17 @@ class ActiveTransactionMakeDirectories(
 ) : ActiveTransaction() {
     override val type = ActiveTransactionType.MKDIRS
 
-    override fun run() = makeDirs(localPath)
+    /**
+     * Creates the necessary directories for the active path corresponding to the local path.
+     *
+     */
+    override fun run() {
+        val activePath = localPath.toActive()
+
+        if (activePath.isDirectory() && !activePath.exists()) {
+            Files.createDirectories(activePath)
+        } else if (!activePath.parent.exists()) {
+            Files.createDirectories(activePath.parent)
+        }
+    }
 }
