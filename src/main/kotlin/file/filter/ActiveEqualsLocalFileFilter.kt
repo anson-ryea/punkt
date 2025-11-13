@@ -28,7 +28,7 @@ object ActiveEqualsLocalFileFilter : IOFileFilter {
      */
     override fun accept(file: File?): Boolean {
         if (file == null || file.isDirectory) {
-            throw IllegalArgumentException("File must not be null or a directory")
+            throw IllegalArgumentException("ActiveEqualsLocalFileFilter only accepts non-directory files.")
         }
 
         return if (file.isLocal()) {

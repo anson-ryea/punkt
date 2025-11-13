@@ -66,7 +66,7 @@ graalvmNative {
             fallback.set(true)
             buildArgs.addAll(
                 "--no-fallback",
-                "--enable-url-protocols=https",
+                "--enable-url-protocols=http,https",
                 "--enable-native-access=ALL-UNNAMED"
             )
         }

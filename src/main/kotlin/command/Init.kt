@@ -1,13 +1,11 @@
 package com.an5on.command
 
-import arrow.core.raise.fold
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.InitOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
-import com.an5on.git.CloneOperation.clone
-import com.an5on.git.InitOperation.init
-import com.an5on.git.RepoPattern.commonPatterns
+import com.an5on.git.CloneOperation
+import com.an5on.git.InitOperation
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.parameters.arguments.argument
@@ -40,7 +38,7 @@ class Init : PunktCommand() {
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
-    ${commonPatterns.joinToString("\n") { "- ${it.pattern}" }}
+
     
     Examples:
         punkt init
@@ -63,16 +61,26 @@ class Init : PunktCommand() {
             handleError(LocalError.LocalAlreadyInitialised())
         }
 
-        fold(
-            {
-                if (repo == null) {
-                    init(globalOptions.useBundledGit)
-                } else {
-                    clone(repo!!, initOptions, globalOptions.useBundledGit)
+        if (repo.isNullOrBlank()) {
+            InitOperation(
+                globalOptions.useBundledGit
+            ).run().fold(
+                { handleError(it) },
+                {
+                    echoSuccess(verbosityOption = globalOptions.verbosity)
                 }
-            },
-            { handleError(it) }, {
-                echoSuccess(verbosityOption = globalOptions.verbosity)
-            })
+            )
+        } else {
+            CloneOperation(
+                globalOptions.useBundledGit,
+                remoteRepository = repo!!,
+                initOptions = initOptions,
+            ).run().fold(
+                { handleError(it) },
+                {
+                    echoSuccess(verbosityOption = globalOptions.verbosity)
+                }
+            )
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.an5on.error
 
-import com.an5on.git.bundled.BundledGitCredentialsProviderType
+import com.an5on.git.CredentialsProviderForBundledType
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -18,7 +18,7 @@ sealed interface GitError : PunktError {
     }
 
     data class BundledCredentialsNotFound(
-        val methods: Collection<BundledGitCredentialsProviderType>,
+        val methods: Collection<CredentialsProviderForBundledType>,
         override val cause: Throwable? = null
     ) : GitError {
         override val code: String = "GIT_BUNDLED_CREDENTIALS_NOT_FOUND"
