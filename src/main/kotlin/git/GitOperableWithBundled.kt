@@ -27,15 +27,15 @@ interface GitOperableWithBundled : GitOperable {
         fun buildCredentialsProvider(): Either<GitError, CredentialsProvider> = either {
             for (method in ActiveConfiguration.configuration.git.builtInCredentialsPreference) {
                 val provider = when (method) {
-                    BundledGitCredentialsProviderType.GCM -> {
+                    CredentialsProviderForBundledType.GCM -> {
                         buildCredentialsProviderFromGitCredentialManager().getOrNull()
                     }
 
-                    BundledGitCredentialsProviderType.ENV -> {
+                    CredentialsProviderForBundledType.ENV -> {
                         buildCredentialsProviderFromEnvironment()
                     }
 
-                    BundledGitCredentialsProviderType.GH_CLI -> {
+                    CredentialsProviderForBundledType.GH_CLI -> {
                         buildCredentialsProviderFromGhCli().getOrNull()
                     }
                 }

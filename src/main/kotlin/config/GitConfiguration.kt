@@ -1,6 +1,6 @@
 package com.an5on.config
 
-import com.an5on.git.BundledGitCredentialsProviderType
+import com.an5on.git.CredentialsProviderForBundledType
 import com.an5on.system.SystemUtils
 import com.an5on.type.BooleanWithAuto
 import com.an5on.type.GitOnLocalChange
@@ -16,10 +16,10 @@ import java.nio.file.Path
 @Serializable
 data class GitConfiguration(
     val systemGitCommand: String = "git",
-    val builtInCredentialsPreference: Set<BundledGitCredentialsProviderType> = setOf(
-        BundledGitCredentialsProviderType.GCM,
-        BundledGitCredentialsProviderType.GH_CLI,
-        BundledGitCredentialsProviderType.ENV,
+    val builtInCredentialsPreference: Set<CredentialsProviderForBundledType> = setOf(
+        CredentialsProviderForBundledType.GCM,
+        CredentialsProviderForBundledType.GH_CLI,
+        CredentialsProviderForBundledType.ENV,
     ),
     val useBundledGit: BooleanWithAuto = BooleanWithAuto.AUTO,
     val bundledGitName: String = SystemUtils.username,
