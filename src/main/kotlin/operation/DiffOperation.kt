@@ -15,6 +15,7 @@ import com.an5on.file.FileUtils.toActive
 import com.an5on.file.filter.*
 import com.an5on.type.Verbosity
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
+import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.terminal.Terminal
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
@@ -54,9 +55,7 @@ class DiffOperation(
     /**
      * Computes and displays diffs for the specified set of active paths.
      *
-     * @param activePaths the set of active paths to diff
-     * @param options the diff options
-     * @param echos the echo functions for output
+     * @param paths the set of active paths to diff
      */
     override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
         val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
@@ -101,8 +100,8 @@ class DiffOperation(
         )
     }
 
-    private fun generateUnifiedDiffStringFromFiles(localPaths: Collection<Path>): String {
-        return localPaths.mapNotNull { localPath ->
+    private fun generateUnifiedDiffStringFromFiles(localPaths: Collection<Path>) =
+        localPaths.mapNotNull { localPath ->
             val activePath = localPath.toActive()
 
             assert(activePath.exists())
@@ -125,8 +124,15 @@ class DiffOperation(
                     localFileAllLines,
                     patch,
                     patchContextSize
-                ).joinToString("\n")
+                ).joinToString("\n") { coloriseDiffLine(it) }
             }
         }.joinToString("\n")
-    }
+
+    private fun coloriseDiffLine(line: String) =
+        when {
+            line.startsWith("+") -> TextColors.green(line)
+            line.startsWith("-") -> TextColors.red(line)
+            line.startsWith("@@") -> TextColors.cyan(line)
+            else -> line
+        }
 }
