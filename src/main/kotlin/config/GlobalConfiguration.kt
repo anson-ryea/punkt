@@ -22,11 +22,11 @@ import java.nio.file.Path
 @Serializable
 data class GlobalConfiguration(
     val localStatePath: Path = SystemUtils.homePath.resolve(
-        if (SystemUtils.osType == OsType.WINDOWS) {
-            "AppData\\Local\\punkt"
-        } else {
+//        if (SystemUtils.osType == OsType.WINDOWS) {
+//            "AppData\\Roaming\\punkt"
+//        } else {
             ".local/share/punkt"
-        }
+//        }
     ),
     val activeStatePath: Path = SystemUtils.homePath,
     val trackerPath: Path = SystemUtils.homePath.resolve(
@@ -92,7 +92,7 @@ data class GlobalConfiguration(
         "nohup.out"
     ),
     val ignoredLocalFiles: Set<String> = setOf(
-        "**/.*",
-        "**/.*/**"
+        ".*",
+        ".*/**"
     )
 )

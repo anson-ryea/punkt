@@ -23,9 +23,12 @@ object SystemUtils {
     }.resolve("punkt/punkt.json")
 
     val logPath: Path = when (osType) {
-        OsType.WINDOWS -> System.getenv("LOCALAPPDATA")?.let { Path(it) } ?: homePath.resolve("\\AppData\\Local\\punkt\\logs")
+        OsType.WINDOWS -> System.getenv("LOCALAPPDATA")?.let { Path(it) }
+            ?: homePath.resolve("\\AppData\\Local\\punkt\\logs")
+
         OsType.DARWIN -> homePath.resolve("Library/Logs/punkt")
-        OsType.LINUX -> System.getenv("XDG_STATE_HOME")?.let { Path(it) }?.resolve("punkt/logs") ?: homePath.resolve("/.local/state/punkt/logs")
+        OsType.LINUX -> System.getenv("XDG_STATE_HOME")?.let { Path(it) }?.resolve("punkt/logs")
+            ?: homePath.resolve("/.local/state/punkt/logs")
     }
 
     val username: String = System.getProperty("user.name")
