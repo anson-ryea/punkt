@@ -59,6 +59,7 @@ class Init : PunktCommand() {
     override fun run() {
         if (LocalState.exists()) {
             handleError(LocalError.LocalAlreadyInitialised())
+            return
         }
 
         if (repo.isNullOrBlank()) {
