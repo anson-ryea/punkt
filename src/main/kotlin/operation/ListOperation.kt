@@ -48,8 +48,6 @@ class ListOperation(
      * Lists the specified set of active paths.
      *
      * @param activePaths the set of active paths to list
-     * @param options the list options
-     * @param echo the echo functions for output
      */
     override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
         val filter = RegexBasedOnActiveFileFilter(commonOptions.include)

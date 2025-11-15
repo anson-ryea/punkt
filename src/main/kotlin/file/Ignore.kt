@@ -12,14 +12,18 @@ interface Ignore {
         get() = buildPathMatchersFromPatterns(ignorePatterns)
 
     fun buildPathMatchersFromPatterns(patterns: Set<String>, isForLocal: Boolean = false): Set<PathMatcher> {
-        val prefixLocal = if (isForLocal) configuration.global.localStatePath.pathString else ""
+        val normalisedPrefixLocal = if (isForLocal) configuration.global.localStatePath.pathString.replace('\\', '/') else ""
+
         return patterns.map { pattern ->
-            val normalizedPattern = if (pattern.contains('/') || pattern.contains('\\') || pattern.startsWith("**")) {
-                prefixLocal + pattern
+            val normalisedPattern = pattern.replace('\\', '/')
+
+            val fullPattern = if (normalisedPattern.contains('/') || pattern.startsWith("**")) {
+                normalisedPrefixLocal + normalisedPattern
             } else {
-                "$prefixLocal**/$pattern"
+                "$normalisedPrefixLocal**$normalisedPattern"
             }.expandTildeWithHomePathname()
-            FileSystems.getDefault().getPathMatcher("glob:$normalizedPattern")
+
+            FileSystems.getDefault().getPathMatcher("glob:$fullPattern")
         }.toSet()
     }
 }
