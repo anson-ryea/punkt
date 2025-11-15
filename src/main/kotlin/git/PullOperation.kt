@@ -10,6 +10,7 @@ import com.an5on.git.GitOperableWithBundled.Companion.sshSessionFactory
 import com.an5on.type.BooleanWithAuto
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.GitAPIException
+import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.SubmoduleConfig
 import org.eclipse.jgit.transport.SshTransport
 import java.nio.file.Path
@@ -33,9 +34,10 @@ class PullOperation(
         }
 
         val status = localRepository.status().call()
+        val hasHead = localRepository.repository.resolve(Constants.HEAD) != null
         var isStashed = false
 
-        if (autoStash && !status.isClean) {
+        if (autoStash && !status.isClean && hasHead) {
             val rev = localRepository.stashCreate()
                 .setIncludeUntracked(true)
                 .call()
@@ -71,6 +73,14 @@ class PullOperation(
     }
 
     override fun operateWithSystem(): Either<GitError, Int> = either {
+        val hasRemote = executeSystemGitToCodeAndString(listOf("remote")).bind().second
+            .lines()
+            .any { it.isNotBlank() }
+
+        ensure(hasRemote) {
+            GitError.RemoteNotSet(repositoryPath)
+        }
+
         val args = mutableListOf("pull").apply {
             rebase.takeIf { it }?.let { add("--rebase") }
             autoStash.takeIf { it }?.let { add("--autostash") }
