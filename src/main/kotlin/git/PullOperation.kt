@@ -54,7 +54,6 @@ class PullOperation(
                     }
                 )
 
-
                 setTransportConfigCallback { transport ->
                     if (transport is SshTransport) {
                         transport.sshSessionFactory = sshSessionFactory
@@ -66,8 +65,12 @@ class PullOperation(
             raise(GitError.BundledGitOperationFailed("Pull", e))
         } finally {
             if (isStashed) {
-                localRepository.stashApply().call()
-                localRepository.stashDrop().setStashRef(0).call()
+                try {
+                    localRepository.stashApply().call()
+                    localRepository.stashDrop().setStashRef(0).call()
+                } catch (e: GitAPIException) {
+                    raise(GitError.BundledGitOperationFailed("Pull", e))
+                }
             }
         }
     }
