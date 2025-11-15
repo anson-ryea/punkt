@@ -73,7 +73,7 @@ class PullOperation(
     }
 
     override fun operateWithSystem(): Either<GitError, Int> = either {
-        val hasRemote = executeSystemGitToCodeAndString(listOf("remote")).bind().second
+        val hasRemote = executeSystemGitToCodeAndString(listOf("remote"), repositoryPath).bind().second
             .lines()
             .any { it.isNotBlank() }
 
@@ -87,6 +87,6 @@ class PullOperation(
             recurseSubmodules.takeIf { it }?.let { add("--recurse-submodules=on-demand") }
         }
 
-        executeSystemGit(args).bind()
+        executeSystemGit(args, repositoryPath).bind()
     }
 }
