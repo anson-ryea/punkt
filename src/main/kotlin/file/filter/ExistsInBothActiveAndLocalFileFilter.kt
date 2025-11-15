@@ -7,22 +7,24 @@ import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 
 /**
- * [IOFileFilter] that accepts files that exist in both the active and local states.
+ * An [IOFileFilter] that accepts files and directories if they exist in both the active and local states.
  *
- * This filter determines acceptance based on whether the file is in the local state or active state:
- * - For local files: Accepts if the corresponding file exists in the active state.
- * - For active files: Accepts if the corresponding file exists in the local state.
+ * This filter checks for the presence of a corresponding entry in the other state:
+ * - If the given path is in the local state, it is accepted if a corresponding path exists in the active state.
+ * - If the given path is in the active state, it is accepted if a corresponding path exists in the local state.
+ *
+ * This filter works for both files and directories.
  *
  * @see IOFileFilter
- * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 object ExistsInBothActiveAndLocalFileFilter : IOFileFilter {
     /**
-     * Tests whether the specified file should be accepted.
+     * Checks if a given file or directory exists in both its active and local states.
      *
-     * @param file the file to test
-     * @return true if the file is accepted, false otherwise
+     * @param file The file or directory to check. Can be null, in which case `false` is returned.
+     * @return `true` if the item exists in both states, `false` otherwise.
      */
     override fun accept(file: File?): Boolean {
         if (file == null) {
@@ -37,11 +39,13 @@ object ExistsInBothActiveAndLocalFileFilter : IOFileFilter {
     }
 
     /**
-     * Tests whether the specified file should be accepted based on directory and name.
+     * Checks if a given file or directory exists in both its active and local states, specified by its parent directory and name.
      *
-     * @param dir the directory in which the file was found
-     * @param name the name of the file
-     * @return true if the file is accepted, false otherwise
+     * This delegates to `accept(File)`.
+     *
+     * @param dir The parent directory of the item.
+     * @param name The name of the file or directory.
+     * @return `true` if the item is accepted, `false` otherwise.
      */
     override fun accept(dir: File?, name: String?): Boolean {
         return if (dir != null && name != null) {

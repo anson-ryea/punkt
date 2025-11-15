@@ -5,34 +5,48 @@ import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 
 /**
- * [IOFileFilter] that accepts files based on whether their active path matches a given regular expression.
+ * An [IOFileFilter] that accepts files whose active path fully matches a supplied regular expression.
  *
- * This filter converts the file to its active equivalent and checks if the path matches the provided [regex].
+ * The "active" path is obtained by transforming the given file to its active-state equivalent via
+ * [toActive], then taking its platform path string (i.e. [File.path]). Matching uses [Regex.matches],
+ * which requires the entire active path to match the pattern. If you want a substring/contains
+ * match, wrap your pattern with `.*` (e.g. `".* /docs/.*".toRegex()`) or construct the [Regex]
+ * with an appropriate pattern up front.
  *
- * @property regex the regular expression to match against the active file path
+ * Notes:
+ * - Matching is case-sensitive by default. Supply [RegexOption.IGNORE_CASE] when constructing
+ *   [regex] if you need case-insensitive behaviour.
+ * - Directories are treated the same as files; the decision is based solely on the active path string.
+ * - A `null` file is not accepted.
+ *
+ * @property regex The regular expression tested against the active path. It is applied as a full match
+ * (via [Regex.matches]); ensure your pattern includes anchors or wildcards as needed.
  * @see IOFileFilter
- * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 class RegexBasedOnActiveFileFilter(
     val regex: Regex,
 ) : IOFileFilter {
     /**
-     * Tests whether the specified file should be accepted.
+     * Determines whether the given file is accepted by testing its active path against [regex].
      *
-     * @param file the file to test
-     * @return true if the file's active path matches the regex, false otherwise
+     * Uses a full-string match; see class KDoc for details.
+     *
+     * @param file The file to test.
+     * @return `true` if the file's active path fully matches [regex], otherwise `false`.
      */
     override fun accept(file: File?): Boolean {
         return file?.toActive()?.path?.matches(regex) ?: false
     }
 
     /**
-     * Tests whether the specified file should be accepted based on directory and name.
+     * Determines acceptance by constructing a [File] from the provided parent directory and name,
+     * then delegating to [accept(file)].
      *
-     * @param dir the directory in which the file was found
-     * @param name the name of the file
-     * @return true if the file's active path matches the regex, false otherwise
+     * @param dir The parent directory of the file.
+     * @param name The file name.
+     * @return `true` if the constructed file's active path fully matches [regex], otherwise `false`.
      */
     override fun accept(dir: File?, name: String?): Boolean {
         return if (dir != null && name != null) {

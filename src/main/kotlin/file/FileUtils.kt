@@ -19,20 +19,16 @@ import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
 
 /**
- * Utility functions for file operations.
+ * A utility object for file operations.
  *
- * This object provides helper methods for common file-related tasks.
- *
- * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 object FileUtils {
     /**
-     * Replaces the tilde (~) in the pathname with the absolute home directory path.
+     * Replaces the tilde (`~`) in this pathname with the absolute home directory path.
      *
-     * This function is useful for expanding user home directory references in pathnames.
-     *
-     * @return the pathname with ~ replaced by the absolute home directory path
+     * @return the pathname with `~` replaced by the absolute home directory path.
      */
     fun String.expandTildeWithHomePathname(): String =
         replaceFirst("~", homePath.pathString)
@@ -40,11 +36,17 @@ object FileUtils {
     /**
      * Computes the Blake3 hash of the given file and returns it as a hexadecimal string.
      *
-     * @param file the file to hash
-     * @return the Blake3 hash of the file's contents as a hex string
+     * @param file the file to hash.
+     * @return the Blake3 hash of the file's contents as a hexadecimal string.
      */
     fun getBlake3HashHexString(file: File) = Blake3.hash(file.readBytes()).toHexString()
 
+    /**
+     * Converts this path to a string representation in the specified path style.
+     *
+     * @param pathStyle the [PathStyle] to use for formatting.
+     * @return the formatted path string.
+     */
     fun Path.toStringInPathStyle(pathStyle: PathStyle): String = when (pathStyle) {
         PathStyle.ABSOLUTE -> this.toActive().pathString
 
@@ -55,12 +57,21 @@ object FileUtils {
         PathStyle.LOCAL_RELATIVE -> this.toLocal().relativeTo(configuration.global.localStatePath).pathString
     }
 
+    /**
+     * Converts this collection of paths to a sorted, newline-separated string in the specified path style.
+     *
+     * @param pathStyle the [PathStyle] to use for formatting.
+     * @return the formatted string of paths, one per line.
+     */
     fun Collection<Path>.toStringInPathStyle(pathStyle: PathStyle): String =
         this.sorted()
             .joinToString(separator = "\n") { it.toStringInPathStyle(pathStyle) }
 
     /**
-     * Regex pattern to match dot files, adjusted for the operating system.
+     * A regular expression pattern to match dot files, adjusted for the operating system.
+     *
+     * This pattern identifies files and directories that start with a dot (`.`), handling
+     * path separators appropriately for Windows (`\`) and Unix-like systems (`/`).
      */
     val dotPrefixRegex = when (osType) {
         OsType.WINDOWS -> Regex("^\\.(?!\\\\)|(?<=\\\\)\\.")
@@ -68,11 +79,14 @@ object FileUtils {
     }
 
     /**
-     * Converts this path to its corresponding local path.
+     * Converts this path to its corresponding local state path.
      *
-     * Replaces dot patterns with dot replacement strings and resolves relative to the local directory.
+     * This transformation:
+     * - Leaves the path unchanged if it is already local.
+     * - Replaces dot prefixes with the configured dot replacement prefix.
+     * - Resolves the path relative to the local state directory.
      *
-     * @return the local path equivalent
+     * @return the local state path equivalent.
      */
     fun Path.toLocal(): Path {
         return when {
@@ -95,44 +109,46 @@ object FileUtils {
     }
 
     /**
-     * Converts this file to its corresponding local file.
+     * Converts this file to its corresponding local state file.
      *
-     * @return the local file equivalent
+     * @return the local state file equivalent.
      */
     fun File.toLocal(): File = this.toPath().toLocal().toFile()
 
     /**
-     * Checks if this path is within the local directory.
+     * Checks if this path is within the local state directory.
      *
-     * @return true if the path is local, false otherwise
+     * @return `true` if the path is within the local state directory, `false` otherwise.
      */
     fun Path.isLocal() = this.startsWith(configuration.global.localStatePath)
 
     /**
-     * Checks if this file is within the local directory.
+     * Checks if this file is within the local state directory.
      *
-     * @return true if the file is local, false otherwise
+     * @return `true` if the file is within the local state directory, `false` otherwise.
      */
     fun File.isLocal() = this.toPath().isLocal()
 
     /**
      * Checks if this path exists in the local state.
      *
-     * @return true if the local path exists, false otherwise
+     * @return `true` if the corresponding local path exists, `false` otherwise.
      */
     fun Path.existsInLocal() = this.toLocal().exists()
 
     /**
      * Checks if this file exists in the local state.
      *
-     * @return true if the local file exists, false otherwise
+     * @return `true` if the corresponding local file exists, `false` otherwise.
      */
     fun File.existsInLocal() = this.toPath().existsInLocal()
 
     /**
-     * Checks if the content of this path equals the content of its local counterpart.
+     * Checks if the content of this path equals the content of its local state counterpart.
      *
-     * @return true if the contents are equal, false otherwise
+     * Both paths must exist.
+     *
+     * @return `true` if the contents are equal, `false` otherwise.
      */
     fun Path.fileContentEqualsLocal(): Boolean {
         assert(this.exists())
@@ -145,20 +161,26 @@ object FileUtils {
     }
 
     /**
-     * Checks if the content of this file equals the content of its local counterpart.
+     * Checks if the content of this file equals the content of its local state counterpart.
      *
-     * @return true if the contents are equal, false otherwise
+     * @return `true` if the contents are equal, `false` otherwise.
      */
     fun File.contentEqualsLocal() = this.toPath().fileContentEqualsLocal()
 
+    /**
+     * A regular expression pattern matching the configured dot replacement prefix.
+     */
     private val dotReplacementPrefixRegex = Regex(configuration.global.dotReplacementPrefix)
 
     /**
-     * Converts this path to its corresponding active path.
+     * Converts this path to its corresponding active state path.
      *
-     * Replaces dot replacement strings with dots and resolves relative to the home directory.
+     * This transformation:
+     * - Leaves the path unchanged if it is not a local path.
+     * - Replaces dot replacement prefixes with actual dots.
+     * - Resolves the path relative to the active state directory.
      *
-     * @return the active path equivalent
+     * @return the active state path equivalent.
      */
     fun Path.toActive(): Path {
         return when {
@@ -185,37 +207,39 @@ object FileUtils {
     }
 
     /**
-     * Converts this file to its corresponding active file.
+     * Converts this file to its corresponding active state file.
      *
-     * @return the active file equivalent
+     * @return the active state file equivalent.
      */
     fun File.toActive(): File = this.toPath().toActive().toFile()
 
     /**
      * Checks if this path exists in the active state.
      *
-     * @return true if the active path exists, false otherwise
+     * @return `true` if the corresponding active path exists, `false` otherwise.
      */
     fun Path.existsInActive() = this.toActive().exists()
 
     /**
      * Checks if this file exists in the active state.
      *
-     * @return true if the active file exists, false otherwise
+     * @return `true` if the corresponding active file exists, `false` otherwise.
      */
     fun File.existsInActive() = this.toPath().existsInActive()
 
     /**
-     * Checks if the content of this path equals the content of its active counterpart.
+     * Checks if the content of this path equals the content of its active state counterpart.
      *
-     * @return true if the contents are equal, false otherwise
+     * @return `true` if the contents are equal, `false` otherwise.
      */
     fun Path.contentEqualsActive() = this.toFile().contentEqualsActive()
 
     /**
-     * Checks if the content of this file equals the content of its active counterpart.
+     * Checks if the content of this file equals the content of its active state counterpart.
      *
-     * @return true if the contents are equal, false otherwise
+     * Both files must exist.
+     *
+     * @return `true` if the contents are equal, `false` otherwise.
      */
     fun File.contentEqualsActive(): Boolean {
         assert(this.exists())
@@ -227,12 +251,15 @@ object FileUtils {
     }
 
     /**
-     * Expands this file or directory into a set of files and directories based on the filter.
+     * Expands this file or directory into a set of files and directories based on the specified filters.
      *
-     * @param recursive whether to expand recursively
-     * @param fileFilter the filter to apply
-     * @param filesOnly whether to include only files
-     * @return the set of expanded files and directories
+     * If this is a file, returns the file itself if it matches the filter.
+     * If this is a directory, recursively lists all matching files and directories.
+     *
+     * @param fileFilter the filter to apply to files.
+     * @param dirFilter the filter to apply to directories; defaults to [fileFilter].
+     * @param filesOnly if `true`, includes only files in the result; otherwise includes both files and directories.
+     * @return the set of expanded files and directories.
      */
     fun File.expand(fileFilter: IOFileFilter, dirFilter: IOFileFilter? = fileFilter, filesOnly: Boolean = false) =
         if (!this.isDirectory()) {
@@ -248,12 +275,12 @@ object FileUtils {
         }
 
     /**
-     * Expands this path into a set of paths based on the filter.
+     * Expands this path into a set of paths based on the specified filters.
      *
-     * @param recursive whether to expand recursively
-     * @param fileFilter the filter to apply
-     * @param filesOnly whether to include only paths
-     * @return the set of expanded paths
+     * @param fileFilter the filter to apply to files.
+     * @param dirFilter the filter to apply to directories; defaults to [fileFilter].
+     * @param filesOnly if `true`, includes only file paths in the result.
+     * @return the set of expanded paths.
      */
     fun Path.expand(
         fileFilter: IOFileFilter,
@@ -263,12 +290,12 @@ object FileUtils {
         this.toFile().expand(fileFilter, dirFilter, filesOnly).map { it.toPath() }.toSet()
 
     /**
-     * Expands this file or directory and converts the results to local paths.
+     * Expands this file or directory and converts the results to local state paths.
      *
-     * @param recursive whether to expand recursively
-     * @param fileFilter the filter to apply
-     * @param filesOnly whether to include only files
-     * @return the set of expanded local paths
+     * @param fileFilter the filter to apply to files.
+     * @param dirFilter the filter to apply to directories; defaults to [fileFilter].
+     * @param filesOnly if `true`, includes only files in the result.
+     * @return the set of expanded local state paths.
      */
     fun File.expandToLocal(
         fileFilter: IOFileFilter,
@@ -278,12 +305,12 @@ object FileUtils {
         this.expand(fileFilter, dirFilter, filesOnly).map { it.toLocal() }.toSet()
 
     /**
-     * Expands this path and converts the results to local paths.
+     * Expands this path and converts the results to local state paths.
      *
-     * @param recursive whether to expand recursively
-     * @param fileFilter the filter to apply
-     * @param filesOnly whether to include only paths
-     * @return the set of expanded local paths
+     * @param fileFilter the filter to apply to files.
+     * @param dirFilter the filter to apply to directories; defaults to [fileFilter].
+     * @param filesOnly if `true`, includes only file paths in the result.
+     * @return the set of expanded local state paths.
      */
     fun Path.expandToLocal(
         fileFilter: IOFileFilter,
@@ -293,12 +320,14 @@ object FileUtils {
         this.toFile().expand(fileFilter, dirFilter, filesOnly).map { it.toPath().toLocal() }.toSet()
 
     /**
-     * Expands this file or directory and converts the results to active paths.
+     * Expands this file or directory and converts the results to active state paths.
      *
-     * @param recursive whether to expand recursively
-     * @param fileFilter the filter to apply
-     * @param filesOnly whether to include only files
-     * @return the set of expanded active paths
+     * The home directory path is excluded from the results.
+     *
+     * @param fileFilter the filter to apply to files.
+     * @param dirFilter the filter to apply to directories; defaults to [fileFilter].
+     * @param filesOnly if `true`, includes only files in the result.
+     * @return the set of expanded active state paths.
      */
     fun File.expandToActive(
         fileFilter: IOFileFilter,
@@ -311,12 +340,14 @@ object FileUtils {
             .toSet()
 
     /**
-     * Expands this path and converts the results to active paths.
+     * Expands this path and converts the results to active state paths.
      *
-     * @param recursive whether to expand recursively
-     * @param fileFilter the filter to apply
-     * @param filesOnly whether to include only paths
-     * @return the set of expanded active paths
+     * The home directory path is excluded from the results.
+     *
+     * @param fileFilter the filter to apply to files.
+     * @param dirFilter the filter to apply to directories; defaults to [fileFilter].
+     * @param filesOnly if `true`, includes only file paths in the result.
+     * @return the set of expanded active state paths.
      */
     fun Path.expandToActive(
         fileFilter: IOFileFilter,
@@ -329,7 +360,10 @@ object FileUtils {
             .toSet()
 
     /**
-     * A set of active paths corresponding to all existing local paths.
+     * A set of active state paths corresponding to all existing local state paths.
+     *
+     * This property expands the local state directory and converts all discovered paths to their
+     * active state equivalents, filtered by [DefaultLocalIgnoreFileFilter].
      */
     val existingLocalPathsToActivePaths =
         configuration.global.localStatePath

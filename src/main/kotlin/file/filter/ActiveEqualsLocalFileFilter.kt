@@ -7,24 +7,26 @@ import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
 
 /**
- * [IOFileFilter] that accepts files where the file content of both the active and local states are equal.
+ * An [IOFileFilter] that accepts files if their content is identical in both the active and local states.
  *
- * This filter determines acceptance based on whether the file is in the local state or active state:
- * - For local files: Accepts directories if the corresponding active directory exists,
- *   and accepts files if their content equals the active content.
- * - For active files: Accepts directories if the corresponding local directory exists,
- *   and accepts files if their content equals the local content.
+ * This filter is designed to work only with files, not directories. It determines acceptance by comparing
+ * the content of a given file with its counterpart in the other state:
+ * - If the file is in the local state, it is accepted if its content matches the corresponding active file.
+ * - If the file is in the active state, it is accepted if its content matches the corresponding local file.
  *
- *   @see IOFileFilter
- *   @author Anson Ng <hej@an5on.com>
- *   @since 0.1.0
+ * An [IllegalArgumentException] is thrown if a directory is passed to the `accept` method.
+ *
+ * @see IOFileFilter
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 object ActiveEqualsLocalFileFilter : IOFileFilter {
     /**
-     * Tests whether the specified file should be accepted.
+     * Checks if a file's content is the same in both its active and local states.
      *
-     * @param file the file to test
-     * @return true if the file is accepted, false otherwise
+     * @param file the file to check. Must not be null or a directory.
+     * @return `true` if the file's content is identical in both states, `false` otherwise.
+     * @throws IllegalArgumentException if the file is null or a directory.
      */
     override fun accept(file: File?): Boolean {
         if (file == null || file.isDirectory) {
@@ -39,11 +41,13 @@ object ActiveEqualsLocalFileFilter : IOFileFilter {
     }
 
     /**
-     * Tests whether the specified file should be accepted based on directory and name.
+     * Checks if a file's content is the same in both its active and local states, specified by its parent directory and name.
      *
-     * @param dir the directory in which the file was found
-     * @param name the name of the file
-     * @return true if the file is accepted, false otherwise
+     * This delegates to `accept(File)`.
+     *
+     * @param dir the parent directory of the file.
+     * @param name the name of the file.
+     * @return `true` if the file is accepted, `false` otherwise.
      */
     override fun accept(dir: File?, name: String?): Boolean {
         return if (dir != null && name != null) {
