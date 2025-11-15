@@ -10,9 +10,9 @@ abstract class GitOperableWithSystemAndBundled(
 ) : GitOperableWithBundled, GitOperableWithSystem {
     override fun operate() = either<GitError, Unit> {
         if (useBundledGit) {
-            operateWithBundled()
+            operateWithBundled().bind()
         } else {
-            operateWithSystem()
+            operateWithSystem().bind()
         }
     }
 

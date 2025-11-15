@@ -38,6 +38,7 @@ fun main(args: Array<String>) {
         Diff(),
         Git(),
         Shell(),
+        Update,
         Ignored,
         LocalPath,
         ActivePath
