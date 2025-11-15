@@ -1,8 +1,11 @@
 package com.an5on.type
 
-import kotlinx.serialization.Serializable
-
-@Serializable
+/**
+ * An enumeration representing Git operations to be taken on local state changes.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 enum class GitOnLocalChange {
     NONE,
     ADD,

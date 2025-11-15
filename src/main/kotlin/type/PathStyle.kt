@@ -1,10 +1,10 @@
 package com.an5on.type
 
 /**
- * Represents the styles for displaying paths in list operations.
+ * An enumeration representing the styles for displaying paths in list operations.
  *
- * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 enum class PathStyle {
     /**
