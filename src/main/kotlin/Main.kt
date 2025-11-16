@@ -9,12 +9,18 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.io.path.pathString
 
 /**
- * Serves as the entry point for Punkt.
- * It initialises the [Command] class and adds subcommands to it.
+ * The main entry point for the `punkt` application.
  *
- * @param args Command-line arguments passed to Punkt.
- * @return [Unit]
- * @author Anson Ng
+ * This function is responsible for:
+ * 1.  Configuring the logging directory by setting the `log.dir` system property.
+ * 2.  Establishing a global uncaught exception handler to ensure all fatal errors are logged.
+ * 3.  Constructing the command-line interface by initialising a root `Command` and attaching all the available
+ *     subcommands (e.g., `Init`, `Sync`, `Activate`).
+ * 4.  Parsing the command-line arguments and dispatching execution to the appropriate subcommand.
+ *
+ * @param args The command-line arguments passed to the application.
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 fun main(args: Array<String>) {
     System.setProperty("log.dir", logPath.pathString)
@@ -30,13 +36,17 @@ fun main(args: Array<String>) {
     }
 
     Command().subcommands(
-        Init(),
-        Sync(),
-        Unsync(),
-        Activate(),
-        List(),
-        Diff(),
-        Git(),
-        Shell()
+        Init,
+        Sync,
+        Unsync,
+        Activate,
+        List,
+        Diff,
+        Git,
+        Shell,
+        Update,
+        Ignored,
+        LocalPath,
+        ActivePath
     ).main(args)
 }

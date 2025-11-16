@@ -3,52 +3,42 @@ package com.an5on.states.active
 import java.nio.file.Path
 
 /**
- * Represents a transaction to be performed on the active state.
+ * Represents a single, atomic file operation to be performed within the "active" state.
  *
- * This abstract class defines the structure for transactions that modify the active state of files.
+ * This class acts as a command pattern, encapsulating all the information needed to execute
+ * a specific change, such as creating, updating, or deleting a file. Transactions are designed
+ * to be collected and then executed in a batch.
  *
- * @property type the type of the transaction
- * @property localPath the local path associated with the transaction
- * @author Anson Ng <hej@an5on.com>
+ * Equality is based on the transaction [type] and the target [localPath].
+ *
+ * @property type The [ActiveTransactionType] that defines the nature of the operation (e.g., COPY, DELETE).
+ * @property localPath The path in the local state that this transaction targets. The corresponding active path is derived from this.
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
-abstract class ActiveTransaction {
+abstract class ActiveTransaction(
+    open val type: ActiveTransactionType,
+    open val localPath: Path
+) {
     /**
-     * The type of the transaction.
-     */
-    abstract val type: ActiveTransactionType
-
-    /**
-     * The local path associated with the transaction.
-     */
-    abstract val localPath: Path
-
-    /**
-     * Executes the transaction.
+     * Executes the transaction, performing the file system operation.
+     *
+     * This method should contain the logic to apply the change represented by this transaction.
      */
     abstract fun run()
 
-    /**
-     * Checks if this transaction is equal to another object.
-     *
-     * Two transactions are equal if they have the same type and local path.
-     *
-     * @param other the object to compare with
-     * @return true if the objects are equal, false otherwise
-     */
-    override fun equals(other: Any?): Boolean = if (other is ActiveTransaction) {
-        this.type == other.type && this.localPath == other.localPath
-    } else {
-        false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ActiveTransaction
+
+        if (type != other.type) return false
+        if (localPath != other.localPath) return false
+
+        return true
     }
 
-    /**
-     * Returns the hash code for this transaction.
-     *
-     * The hash code is computed based on the type and local path.
-     *
-     * @return the hash code value
-     */
     override fun hashCode(): Int {
         var result = type.hashCode()
         result = 31 * result + localPath.hashCode()

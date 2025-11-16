@@ -1,0 +1,53 @@
+name: JVM Test - IntelliJ Agent
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up JDK 24
+        uses: actions/setup-java@v5
+        with:
+          java-version: '24'
+          distribution: 'graalvm'
+          cache: 'gradle'
+
+      - name: Validate Gradle Wrapper
+        run: ./gradlew --version
+
+      - name: Run Tests
+        run: ./gradlew koverBinaryReport
+
+      - name: Create coverage-data directory and copy contents
+        run: |
+          mkdir -p .qodana/code-coverage
+          cp -R build/reports/kover/* .qodana/code-coverage
+
+      - name: Archive coverage data
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-coverage-data
+          path: .qodana/code-coverage
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@main
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_1749062704 }}
+        with:
+          args: "--linter,jetbrains/qodana-jvm:latest"
+          pr-mode: false

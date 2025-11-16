@@ -1,13 +1,11 @@
 package com.an5on.command
 
-import arrow.core.raise.fold
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.InitOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
-import com.an5on.git.CloneOperation.clone
-import com.an5on.git.InitOperation.init
-import com.an5on.git.RepoPattern.commonPatterns
+import com.an5on.git.CloneOperation
+import com.an5on.git.InitOperation
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.parameters.arguments.argument
@@ -15,17 +13,25 @@ import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
 /**
- * Initialises a Punkt local repository for storing the clones of the synced dotfiles.
+ * A command to initialise a `punkt` local repository for storing dotfiles.
  *
- * @property repo The URL of the remote Punkt repository to clone. If not provided, an empty local repository at local state path.
- * Currently, [repo] supports the formats specified in [commonPatterns].
- * @property globalOptions The global options for the command, provided by [com.an5on.command.options.GlobalOptions].
- * @property initOptions The options specific to the init command, provided by [InitOptions].
- * @see commonPatterns
+ * This command sets up the local repository, which is the foundation for managing your dotfiles with `punkt`.
+ * It can either create a new, empty repository or clone an existing one from a remote source.
+ *
+ * ### Usage
+ * - To create a new empty repository: `punkt init`
+ * - To clone from a remote repository: `punkt init <repository_url>`
+ *
+ * The command will fail if a `punkt` repository has already been initialised.
+ *
+ * @property repo The optional URL of the remote repository to clone. If not provided, an empty local repository is created.
+ * The command supports various URL formats and shortcuts.
+ * @property globalOptions The global options for the command, such as verbosity.
+ * @property initOptions The options specific to the init command, such as connection type (SSH) and clone depth.
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-class Init : PunktCommand() {
+object Init : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val initOptions by InitOptions()
     private val repo: String? by argument(
@@ -40,7 +46,7 @@ class Init : PunktCommand() {
     
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
-    ${commonPatterns.joinToString("\n") { "- ${it.pattern}" }}
+
     
     Examples:
         punkt init
@@ -61,18 +67,29 @@ class Init : PunktCommand() {
     override fun run() {
         if (LocalState.exists()) {
             handleError(LocalError.LocalAlreadyInitialised())
+            return
         }
 
-        fold(
-            {
-                if (repo == null) {
-                    init(globalOptions.useBundledGit)
-                } else {
-                    clone(repo!!, initOptions, globalOptions.useBundledGit)
+        if (repo.isNullOrBlank()) {
+            InitOperation(
+                globalOptions.useBundledGit
+            ).run().fold(
+                { handleError(it) },
+                {
+                    echoSuccess(verbosityOption = globalOptions.verbosity)
                 }
-            },
-            { handleError(it) }, {
-                echoSuccess(verbosityOption = globalOptions.verbosity)
-            })
+            )
+        } else {
+            CloneOperation(
+                globalOptions.useBundledGit,
+                remoteRepository = repo!!,
+                initOptions = initOptions,
+            ).run().fold(
+                { handleError(it) },
+                {
+                    echoSuccess(verbosityOption = globalOptions.verbosity)
+                }
+            )
+        }
     }
 }

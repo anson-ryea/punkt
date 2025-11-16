@@ -13,13 +13,18 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
 
 /**
- * Unsynchronize files by removing them from the local state.
+ * A command to remove files and directories from the `punkt` local repository, effectively "unsyncing" them.
  *
- * @property targets the list of target paths to unsync
- * @author Anson Ng <hej@an5on.com>
+ * This command deletes the specified targets from the local state, which means `punkt` will no longer track them.
+ * This does not affect the original files in the active state (the user's filesystem). It is the counterpart
+ * to the `sync` command and is used when you want to stop managing a file with `punkt`.
+ *
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ * @property globalOptions The global options for the command, such as verbosity.
+ * @property targets The list of target paths in the active state to remove from the local repository.
  */
-class Unsync : PunktCommand() {
+object Unsync : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val targets by argument().convert {
         it.expandTildeWithHomePathname()
@@ -38,7 +43,7 @@ class Unsync : PunktCommand() {
             CommonOptions(),
             echos,
             terminal
-        ).operate().fold(
+        ).run().fold(
             { handleError(it) },
             {
                 echoSuccess(verbosityOption = globalOptions.verbosity)

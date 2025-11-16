@@ -1,37 +1,40 @@
 package com.an5on.states.local
 
-import com.an5on.command.CommandUtils.indented
 import com.an5on.command.Echos
+import com.an5on.command.PunktCommand.Companion.indented
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.states.local.LocalState.pendingTransactions
 import com.an5on.type.Verbosity
-import org.apache.commons.io.FileUtils
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
 import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
 
 /**
- * Manages the local state of files in the Punkt system.
+ * Manages the local state of files within the Punkt system.
  *
- * This object handles operations related to the local state, such as committing transactions and manipulating files.
+ * This object is responsible for handling operations concerning the local state,
+ * which includes committing transactions and manipulating files in the local repository.
  *
- * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 object LocalState {
-    /** Checks if the local Punkt repository already exists.
+    /**
+     * Checks if the local Punkt repository already exists.
      *
      * @return `true` if the local Punkt repository exists, `false` otherwise.
      */
     fun exists() = configuration.global.localStatePath.exists()
 
     /**
-     * A set of pending transactions to be committed.
+     * A mutable set of pending [LocalTransaction] instances that are ready to be committed.
      */
     val pendingTransactions = mutableSetOf<LocalTransaction>()
 
+    /**
+     * Echoes the pending transactions to the console based on the specified verbosity level.
+     *
+     * @param verbosity The verbosity level that determines whether the messages are displayed.
+     * @param echos The [Echos] instance used for outputting messages.
+     */
     fun echoPendingTransactions(verbosity: Verbosity, echos: Echos) {
         echos.echoWithVerbosity(
             "The following operations will be performed:".indented(),
@@ -53,55 +56,11 @@ object LocalState {
     }
 
     /**
-     * Executes all pending transactions.
+     * Executes all pending transactions in the [pendingTransactions] set.
      */
     fun commit() {
         pendingTransactions.forEach {
             it.run()
-        }
-    }
-
-    /**
-     * Copies a file from the active path to the corresponding local path.
-     *
-     * @param activePath the absolute path of the active file to copy
-     */
-    fun copyFileFromActiveToLocal(activePath: Path) {
-        assert(activePath.isAbsolute && activePath.exists())
-
-        val activeFile = activePath.toFile()
-        val localFile = activeFile.toLocal()
-
-        FileUtils.copyFile(activeFile, localFile, StandardCopyOption.REPLACE_EXISTING)
-    }
-
-    /**
-     * Creates the necessary directories for the local path corresponding to the active path.
-     *
-     * @param activePath the active path for which to create local directories
-     */
-    fun makeDirs(activePath: Path) {
-        val localPath = activePath.toLocal()
-
-        if (activePath.isDirectory() && !localPath.exists()) {
-            Files.createDirectories(localPath)
-        } else if (!localPath.parent.exists()) {
-            Files.createDirectories(localPath.parent)
-        }
-    }
-
-    /**
-     * Deletes the file or directory at the local path.
-     *
-     * @param localPath the local path to delete
-     */
-    fun delete(localPath: Path) {
-        assert(localPath.exists())
-
-        if (localPath.isDirectory()) {
-            localPath.toFile().deleteRecursively()
-        } else {
-            Files.delete(localPath)
         }
     }
 }

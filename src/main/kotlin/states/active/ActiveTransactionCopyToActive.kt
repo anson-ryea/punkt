@@ -1,7 +1,9 @@
 package com.an5on.states.active
 
-import com.an5on.states.active.ActiveState.copyFromLocalToActive
+import com.an5on.file.FileUtils.toActive
+import org.apache.commons.io.FileUtils
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 /**
  * A transaction that copies a file from the local path to the active path.
@@ -13,9 +15,20 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 class ActiveTransactionCopyToActive(
-    override val localPath: Path,
-) : ActiveTransaction() {
-    override val type = ActiveTransactionType.COPY_TO_ACTIVE
+    localPath: Path,
+) : ActiveTransaction(
+    ActiveTransactionType.COPY_TO_ACTIVE,
+    localPath
+) {
+    /**
+     * Copies a file from the local path to the corresponding active path.
+     */
+    override fun run() {
+        assert(localPath.isAbsolute && localPath.exists())
 
-    override fun run() = copyFromLocalToActive(localPath)
+        val localFile = localPath.toFile()
+        val activeFile = localFile.toActive()
+
+        FileUtils.copyFile(localFile, activeFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
 }

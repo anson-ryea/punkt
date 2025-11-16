@@ -10,6 +10,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.21"
     id("org.graalvm.buildtools.native") version "0.11.1"
     id("org.jetbrains.dokka") version "2.0.0"
+    id("org.jetbrains.kotlinx.kover") version "0.9.3"
     id("com.github.gmazzo.buildconfig") version "5.7.0"
 }
 
@@ -23,6 +24,7 @@ dependencies {
     implementation(platform("io.arrow-kt:arrow-stack:2.1.0"))
     implementation("io.arrow-kt:arrow-core")
     implementation("commons-io:commons-io:2.20.0")
+    implementation("org.apache.commons:commons-text:1.14.0")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.25.2"))
     implementation("org.apache.logging.log4j:log4j-api")
@@ -65,7 +67,7 @@ graalvmNative {
             fallback.set(true)
             buildArgs.addAll(
                 "--no-fallback",
-                "--enable-url-protocols=https",
+                "--enable-url-protocols=http,https",
                 "--enable-native-access=ALL-UNNAMED"
             )
         }
@@ -85,4 +87,15 @@ java {
 
 buildConfig {
     buildConfigField("APP_VERSION", provider { version.toString() })
+}
+
+kover {
+    reports {
+        total {
+            binary {
+                onCheck = true
+                file = file("./build/reports/kover/report.ic")
+            }
+        }
+    }
 }

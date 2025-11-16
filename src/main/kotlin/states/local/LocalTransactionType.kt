@@ -1,24 +1,32 @@
 package com.an5on.states.local
 
 /**
- * Represents the types of transactions that can be performed on the local state.
+ * Defines the set of possible operations that can be applied to the local state as part of a [LocalTransaction].
  *
- * @author Anson Ng <hej@an5on.com>
+ * Each type corresponds to a specific action, such as adding, removing, or preserving files and directories within
+ * the local `.punkt` repository.
+ *
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 enum class LocalTransactionType {
     /**
-     * Transaction type for copying a file from the active path to the local path.
+     * An operation to copy a file from the active working directory to the local state.
+     * This is typically used when a new file is added or an existing file is modified.
      */
     COPY_TO_LOCAL,
 
     /**
-     * Transaction type for creating the necessary directories in the local state.
+     * An operation to preserve an empty directory in the local state.
+     * This is necessary because version control systems like Git do not track empty directories, so a marker file
+     * is created to ensure the directory is maintained.
      */
-    MKDIRS,
+    KEEP_DIRECTORY,
 
     /**
-     * Transaction type for removing a file or directory from the local state.
+     * An operation to delete a file or directory from the local state.
+     * This is used when a file or directory is removed from the active working area and needs to be mirrored in the
+     * local repository.
      */
-    REMOVE
+    REMOVE,
 }

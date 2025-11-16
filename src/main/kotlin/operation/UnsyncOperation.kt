@@ -3,29 +3,39 @@ package com.an5on.operation
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.indented
-import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
+import com.an5on.command.PunktCommand.Companion.punktYesNoPrompt
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.LocalError
 import com.an5on.error.PunktError
-import com.an5on.operation.OperationUtils.executeGitOnLocalChange
+import com.an5on.file.FileUtils.existsInLocal
+import com.an5on.file.FileUtils.toLocal
+import com.an5on.file.FileUtils.toStringInPathStyle
+import com.an5on.operation.Operable.Companion.executeGitOnLocalChange
 import com.an5on.states.local.LocalState
 import com.an5on.states.local.LocalTransactionDelete
-import com.an5on.states.local.LocalUtils.existsInLocal
-import com.an5on.states.local.LocalUtils.toLocal
 import com.an5on.type.Interactivity
 import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
-import kotlin.io.path.pathString
 
 /**
- * Handles the unsync operation to remove files from the local state.
+ * An operation to remove files from the `punkt` local repository, effectively "unsyncing" them.
  *
- * This object provides operations to unsync paths by deleting them from the local state.
+ * This class orchestrates the `unsync` command's core logic. It handles:
+ * - Verifying that the specified files exist in the local repository.
+ * - Creating a set of pending delete transactions.
+ * - Displaying the proposed deletions to the user and, if configured, prompting for confirmation.
+ * - Committing the transactions to remove the files from the local state.
+ * - Triggering post-unsync Git operations like `add` and `commit` to record the removal.
  *
+ * @param activePaths The set of paths in the active state to remove from the local repository.
+ * @param globalOptions The global command-line options, influencing verbosity, interactivity, and Git actions.
+ * @param commonOptions The common options for filtering and recursion.
+ * @param echos A set of functions for displaying styled console output.
+ * @param terminal The terminal instance for user interaction, such as confirmation prompts.
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
@@ -37,10 +47,17 @@ class UnsyncOperation(
     private val terminal: Terminal,
 ) : Operable {
     /**
-     * Unsynchronizes the specified active paths by removing them from the local state.
+     * Executes the unsync operation.
      *
-     * @param activePaths the set of active paths to unsync
-     * @param echos the echo functions for output
+     * This method performs the following steps:
+     * 1.  Ensures the local repository exists.
+     * 2.  Verifies that each target path exists in the local repository.
+     * 3.  Creates a `LocalTransactionDelete` for each target.
+     * 4.  Displays the pending transactions to the user.
+     * 5.  If interactivity is enabled, prompts the user for confirmation.
+     * 6.  If confirmed, commits the transactions, deleting the files from the local state.
+     *
+     * @return An [Either] containing a [PunktError] on failure (e.g., if a path is not found or the operation is cancelled) or [Unit] on success.
      */
     override fun operate() = either {
         ensure(LocalState.exists()) {
@@ -53,7 +70,7 @@ class UnsyncOperation(
             }
 
             echos.echoStage(
-                "Unsyncing: ${activePath.pathString}",
+                "Unsyncing: ${activePath.toStringInPathStyle(globalOptions.pathStyle)}",
                 globalOptions.verbosity,
                 Verbosity.NORMAL
             )
@@ -69,22 +86,7 @@ class UnsyncOperation(
             return Either.Right(Unit)
         }
 
-        echos.echoWithVerbosity(
-            "The following operations will be performed:".indented(),
-            true,
-            false,
-            globalOptions.verbosity,
-            Verbosity.FULL
-        )
-        LocalState.pendingTransactions.forEach { transaction ->
-            echos.echoWithVerbosity(
-                "${transaction.type} - ${transaction.activePath}".indented(),
-                true,
-                false,
-                globalOptions.verbosity,
-                Verbosity.FULL
-            )
-        }
+        LocalState.echoPendingTransactions(globalOptions.verbosity, echos)
 
         if (globalOptions.interactivity == Interactivity.ALWAYS) {
             if (punktYesNoPrompt(
@@ -99,7 +101,22 @@ class UnsyncOperation(
         }
 
         LocalState.commit()
+    }
 
-        executeGitOnLocalChange(globalOptions)
+    /**
+     * A hook that runs after a successful unsync operation to perform Git-related actions.
+     *
+     * Based on the `gitOnLocalChange` configuration, this method will automatically stage (`git add`) the deletions,
+     * commit, and/or push the changes made to the local repository.
+     *
+     * @return An [Either] containing a [PunktError] if the Git operation fails, or [Unit] on success.
+     */
+    override fun runAfter() = either {
+        echos.echoStage(
+            "Executing Git operations: ${configuration.git.gitOnLocalChange}",
+            globalOptions.verbosity,
+            Verbosity.NORMAL
+        )
+        executeGitOnLocalChange(globalOptions, this@UnsyncOperation).bind()
     }
 }

@@ -1,21 +1,41 @@
 package com.an5on.states.local
 
-import com.an5on.states.local.LocalState.copyFileFromActiveToLocal
+import com.an5on.file.FileUtils.toLocal
+import org.apache.commons.io.FileUtils
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
+import kotlin.io.path.exists
 
 /**
- * A transaction that copies a file from the active path to the local path.
+ * Represents a transaction that copies a file from the active working directory to the local state.
  *
- * This transaction executes the copy operation when run.
+ * This class encapsulates the operation of copying a file to the local `.punkt` repository. When executed, it takes the
+ * specified [activePath], resolves its corresponding location in the local state, and performs the copy. If a file
+ * with the same name already exists at the destination, it will be replaced.
  *
- * @param activePath the active path of the file to copy
- * @author Anson Ng <hej@an5on.com>
+ * @property activePath The absolute [Path] of the file in the active directory to be copied.
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 class LocalTransactionCopyToLocal(
-    override val activePath: Path
-) : LocalTransaction() {
-    override val type = LocalTransactionType.COPY_TO_LOCAL
+    activePath: Path
+) : LocalTransaction(
+    LocalTransactionType.COPY_TO_LOCAL,
+    activePath
+) {
+    /**
+     * Executes the copy operation.
+     *
+     * This method copies the file from the [activePath] to its corresponding location in the local state.
+     * It asserts that the [activePath] is an absolute path and that the file exists before attempting the copy.
+     * The copy operation will replace any existing file at the destination.
+     */
+    override fun run() {
+        assert(activePath.isAbsolute && activePath.exists())
 
-    override fun run() = copyFileFromActiveToLocal(activePath)
+        val activeFile = activePath.toFile()
+        val localFile = activeFile.toLocal()
+
+        FileUtils.copyFile(activeFile, localFile, StandardCopyOption.REPLACE_EXISTING)
+    }
 }
