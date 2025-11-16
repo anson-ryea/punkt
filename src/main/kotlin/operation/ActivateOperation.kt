@@ -2,8 +2,8 @@ package com.an5on.operation
 
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
+import com.an5on.command.PunktCommand.Companion.punktYesNoPrompt
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration

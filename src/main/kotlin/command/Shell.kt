@@ -7,7 +7,21 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.pty4j.PtyProcessBuilder
 import kotlin.io.path.pathString
 
-class Shell : PunktCommand() {
+/**
+ * A command to launch an interactive shell session within the `punkt` local repository.
+ *
+ * This command opens a new pseudo-terminal (PTY) running the system's default shell (e.g., bash, PowerShell).
+ * The shell's working directory is set to the `punkt` local state path, allowing the user to directly
+ * interact with the files and the underlying Git repository managed by `punkt`.
+ *
+ * This is useful for running complex Git commands, manually editing files, or performing other tasks
+ * that are not directly exposed through other `punkt` commands. The shell session inherits the environment
+ * variables of the parent `punkt` process.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
+object Shell : PunktCommand() {
     override fun run() {
         val cmd = arrayOf(SystemUtils.shell)
 

@@ -3,9 +3,8 @@ package com.an5on.operation
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.an5on.command.CommandUtils.indented
-import com.an5on.command.CommandUtils.punktYesNoPrompt
 import com.an5on.command.Echos
+import com.an5on.command.PunktCommand.Companion.punktYesNoPrompt
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
@@ -70,22 +69,7 @@ class UnsyncOperation(
             return Either.Right(Unit)
         }
 
-        echos.echoWithVerbosity(
-            "The following operations will be performed:".indented(),
-            true,
-            false,
-            globalOptions.verbosity,
-            Verbosity.FULL
-        )
-        LocalState.pendingTransactions.forEach { transaction ->
-            echos.echoWithVerbosity(
-                "${transaction.type} - ${transaction.activePath}".indented(),
-                true,
-                false,
-                globalOptions.verbosity,
-                Verbosity.FULL
-            )
-        }
+        LocalState.echoPendingTransactions(globalOptions.verbosity, echos)
 
         if (globalOptions.interactivity == Interactivity.ALWAYS) {
             if (punktYesNoPrompt(

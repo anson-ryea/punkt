@@ -1,7 +1,7 @@
 package com.an5on.states.local
 
-import com.an5on.command.CommandUtils.indented
 import com.an5on.command.Echos
+import com.an5on.command.PunktCommand.Companion.indented
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.states.local.LocalState.pendingTransactions
 import com.an5on.type.Verbosity

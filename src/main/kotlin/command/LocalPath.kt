@@ -11,7 +11,19 @@ import com.github.ajalt.clikt.parameters.arguments.unique
 import com.github.ajalt.clikt.parameters.types.path
 import kotlin.io.path.pathString
 
+/**
+ * A command to display the absolute path in the local state corresponding to a given target path.
+ *
+ * If no targets are provided, it prints the path to the local state directory.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 object LocalPath : PunktCommand() {
+    /**
+     * The list of target paths to resolve to their local state paths.
+     * Tilde (`~`) is expanded to the user's home directory.
+     */
     val targets by argument().convert {
         it.expandTildeWithHomePathname()
     }.path(
