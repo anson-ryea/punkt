@@ -111,7 +111,6 @@ class ActiveUtilsTest {
         Files.walk(tempDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
         Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
     }
-
     @Test
     fun fileContentEqualsActiveTest(){
         val tempDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
