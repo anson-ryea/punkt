@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew --version
 
       - name: Run Tests
-        run: ./gradlew test
+        run: ./gradlew koverBinaryReport
 
       - name: Create coverage-data directory and copy contents
         run: |

@@ -48,7 +48,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    finalizedBy(tasks.koverVerify, tasks.koverBinaryReport) // you will find the report in build/kover/bin-reports
 }
 
 application {
@@ -88,4 +87,15 @@ java {
 
 buildConfig {
     buildConfigField("APP_VERSION", provider { version.toString() })
+}
+
+kover {
+    reports {
+        total {
+            binary {
+                onCheck = true
+                file = file("./build/reports/kover/report.ic")
+            }
+        }
+    }
 }
