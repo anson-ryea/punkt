@@ -155,7 +155,7 @@ class SyncOperation(
      *
      * @return An [Either] containing a [PunktError] if the Git operation fails, or [Unit] on success.
      */
-    override fun runAfter() = either<PunktError, Unit> {
+    override fun runAfter() = either {
         echos.echoStage(
             "Executing Git operations: ${configuration.git.gitOnLocalChange}",
             globalOptions.verbosity,

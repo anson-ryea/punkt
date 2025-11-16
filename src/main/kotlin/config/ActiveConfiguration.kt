@@ -17,7 +17,7 @@ object ActiveConfiguration {
     /**
      * The globally accessible [Configuration] instance, loaded from the JSON configuration file.
      */
-    val configuration = loadJsonConfig()
+    var configuration = loadJsonConfig()
 
     /**
      * Loads the application configuration from the default configuration path.
@@ -31,5 +31,9 @@ object ActiveConfiguration {
     private fun loadJsonConfig(): Configuration {
         val configContent = SystemUtils.configPath.toFile().takeIf { it.exists() }?.readText() ?: "{}"
         return Json.decodeFromString<Configuration>(configContent)
+    }
+
+    fun activateConfigFile() {
+        configuration = loadJsonConfig()
     }
 }
