@@ -48,6 +48,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.koverVerify, tasks.koverBinaryReport) // you will find the report in build/kover/bin-reports
 }
 
 application {
