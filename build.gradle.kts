@@ -10,6 +10,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.21"
     id("org.graalvm.buildtools.native") version "0.11.1"
     id("org.jetbrains.dokka") version "2.0.0"
+    id("org.jetbrains.kotlinx.kover") version "0.9.3"
     id("com.github.gmazzo.buildconfig") version "5.7.0"
 }
 
