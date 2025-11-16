@@ -1,5 +1,6 @@
 package com.an5on.operation
 
+import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.an5on.command.Echos
@@ -22,10 +23,18 @@ import com.github.ajalt.mordant.terminal.Terminal
 import java.nio.file.Path
 
 /**
- * Handles the list operation for displaying files in the local state.
+ * An operation to list files and directories managed within the `punkt` local repository.
  *
- * This object provides operations to list paths, either by listing existing local files or specific paths.
+ * This class orchestrates the `list` command's core logic. It provides a view of the files stored in the local
+ * state, which serves as the source for activated dotfiles. It can list all tracked files or a specific subset
+ * based on the provided paths and filtering options. This is useful for inspecting the contents of the `punkt`
+ * repository without navigating the filesystem directly.
  *
+ * @param activePaths An optional set of paths in the active state to list. If null, all tracked files are listed.
+ * @param globalOptions The global command-line options, influencing output style.
+ * @param commonOptions The common options for filtering by inclusion/exclusion patterns.
+ * @param echos A set of functions for displaying styled console output.
+ * @param terminal The terminal instance for user interaction.
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
@@ -45,11 +54,18 @@ class ListOperation(
 ) {
 
     /**
-     * Lists the specified set of active paths.
+     * Lists the local repository files corresponding to a specified set of paths from the active state.
      *
-     * @param activePaths the set of active paths to list
+     * This method is called when the `list` command is given specific path arguments. It performs the following:
+     * 1.  Ensures that each provided active path exists within the local repository.
+     * 2.  Applies include/exclude filters from the command options.
+     * 3.  Expands the given paths to a full list of corresponding files in the local state.
+     * 4.  Prints the resulting list of paths to the console, formatted according to the global path style settings.
+     *
+     * @param paths The set of paths in the active state to list from the local repository.
+     * @return An [Either] containing a [PunktError] on failure (e.g., if a path is not found) or [Unit] on success.
      */
-    override fun operateWithPaths(paths: Set<Path>) = either<PunktError, Unit> {
+    override fun operateWithPaths(paths: Set<Path>): Either<PunktError, Unit> = either {
         val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultActiveIgnoreFileFilter)
@@ -72,7 +88,17 @@ class ListOperation(
         )
     }
 
-    override fun operateWithExistingLocal() = either<PunktError, Unit> {
+    /**
+     * Lists all files and directories currently tracked in the local repository.
+     *
+     * This method is called when the `list` command is run without any specific path arguments. It performs the following:
+     * 1.  Applies include/exclude filters from the command options.
+     * 2.  Traverses the entire local repository to gather a list of all tracked files.
+     * 3.  Prints the resulting list to the console, formatted according to the global path style settings.
+     *
+     * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
+     */
+    override fun operateWithExistingLocal(): Either<PunktError, Unit> = either {
         val filter = RegexBasedOnActiveFileFilter(commonOptions.include)
             .and(RegexBasedOnActiveFileFilter(commonOptions.exclude).negate())
             .and(DefaultLocalIgnoreFileFilter)
