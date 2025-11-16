@@ -29,11 +29,9 @@ jobs:
 
       - name: Validate Gradle Wrapper
         run: ./gradlew --version
-        working-directory: JVM/intellij-coverage-agent/gradle
 
       - name: Run Tests
         run: ./gradlew test
-        working-directory: JVM/intellij-coverage-agent/gradle
 
       - name: Create coverage-data directory and copy contents
         run: |
