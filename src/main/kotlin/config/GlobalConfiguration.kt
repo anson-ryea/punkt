@@ -9,15 +9,25 @@ import kotlinx.serialization.Serializable
 import java.nio.file.Path
 
 /**
- * Represents the general configuration settings for the Punkt application.
+ * Represents the global configuration settings for the Punkt application.
+ *
+ * This data class holds settings that apply across the entire application, such as default paths, verbosity levels,
+ * and patterns for ignored files. These settings are deserialized from a JSON configuration file.
  *
  * @property localStatePath The path to the local state directory where Punkt stores cloned dotfiles.
- * @property activeStatePath The path to the active state directory.
+ * @property activeStatePath The path to the active state directory, which is typically the user's home directory.
  * @property trackerPath The path to the tracker database directory where tracked file states are stored.
- * @property sshPath The path to the SSH directory for SSH key management.
- * @property dotReplacementPrefix The prefix used to replace dots in file names when storing them in the local state.
- * @author Anson Ng <hej@an5on.com>
+ * @property sshPath The path to the SSH directory, used for SSH key management.
+ * @property dotReplacementPrefix The prefix used to replace leading dots in file names when storing them locally.
+ * @property verbosity The default level of detail for command output.
+ * @property pathStyle The preferred style for displaying file paths (e.g., absolute or relative).
+ * @property interactivity The default mode for user interaction (e.g., always prompt or proceed automatically).
+ * @property ignoredActiveFilesForDarwin A set of file patterns to ignore on macOS systems.
+ * @property ignoredActiveFilesForWindows A set of file patterns to ignore on Windows systems.
+ * @property ignoredActiveFilesForLinux A set of file patterns to ignore on Linux systems.
+ * @property ignoredLocalFiles A set of file patterns to ignore within the local state directory.
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 @Serializable
 data class GlobalConfiguration(

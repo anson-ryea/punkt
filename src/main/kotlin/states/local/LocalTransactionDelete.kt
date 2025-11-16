@@ -15,10 +15,11 @@ import kotlin.io.path.isDirectory
  * @since 0.1.0
  */
 class LocalTransactionDelete(
-    override val activePath: Path
-) : LocalTransaction() {
-    override val type = LocalTransactionType.REMOVE
-
+    activePath: Path
+) : LocalTransaction(
+    LocalTransactionType.REMOVE,
+    activePath
+) {
     /**
      * Deletes the file or directory at the local path.
      */

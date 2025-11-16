@@ -10,14 +10,19 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.path
 
 /**
- * List files in the local state.
+ * A command to list files and directories managed within the `punkt` local repository.
  *
- * @property commonOptions the common options for include and exclude
- * @property paths the list of paths to list, or null to list all existing local files
- * @author Anson Ng <hej@an5on.com>
+ * This command provides a view of the files stored in the local state, which serves as the source for activated
+ * dotfiles. It can list all tracked files or a specific subset based on the provided paths and filtering options.
+ * This is useful for inspecting the contents of the `punkt` repository without navigating the filesystem directly.
+ *
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ * @property globalOptions The global options for the command, such as verbosity.
+ * @property commonOptions The common options for the command, such as filtering by inclusion/exclusion patterns.
+ * @property paths The specific file or directory paths to list. If empty, all files in the local state are listed.
  */
-class List : PunktCommand() {
+object List : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val paths by argument().convert {

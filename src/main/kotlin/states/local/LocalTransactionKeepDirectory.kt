@@ -7,19 +7,29 @@ import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 
 /**
- * A transaction that creates the necessary directories for the local path corresponding to the active path.
+ * Represents a transaction to preserve an empty directory in the local state.
  *
- * This transaction executes the directory creation operation when run.
+ * This transaction ensures that an empty directory from the active working area is mirrored in the local `.punkt`
+ * repository. It achieves this by creating a `.punktkeep` file within the corresponding local directory, a common
+ * convention to track directories that would otherwise be ignored by version control systems like Git.
  *
- * @param activePath the active path for which to create local directories
- * @author Anson Ng <hej@an5on.com>
+ * @property activePath The path of the empty directory in the active area to be preserved in the local state.
  * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
  */
 class LocalTransactionKeepDirectory(
-    override val activePath: Path,
-) : LocalTransaction() {
-    override val type = LocalTransactionType.KEEP_DIRECTORY
-
+    activePath: Path
+) : LocalTransaction(
+    LocalTransactionType.KEEP_DIRECTORY,
+    activePath
+) {
+    /**
+     * Executes the transaction to create the directory and its `.punktkeep` file in the local state.
+     *
+     * This method first asserts that the directory at [activePath] is empty. It then creates the corresponding
+     * directory in the local state, along with a `.punktkeep` file inside it, if the directory or the keep-file
+     * does not already exist.
+     */
     override fun run() {
         assert(activePath.toFile().list()!!.isEmpty())
 

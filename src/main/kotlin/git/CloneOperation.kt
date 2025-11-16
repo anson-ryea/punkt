@@ -14,6 +14,24 @@ import org.eclipse.jgit.transport.SshTransport
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
+/**
+ * A Git operation to clone a repository into a new directory.
+ *
+ * This class implements the `git clone` command. It can operate using either the bundled JGit library or the
+ * system's native Git executable. The operation clones a `remoteRepository` into the specified `repositoryPath`,
+ * with options for specifying a branch, clone depth, and connection protocol (HTTPS/SSH).
+ *
+ * It also includes logic to parse shorthand repository URLs into full HTTPS or SSH URLs.
+ *
+ * @param useBundledGitOption An option to determine whether to use the bundled JGit (`TRUE`), the system Git (`FALSE`),
+ * or to auto-detect (`AUTO`).
+ * @param repositoryPath The file system path where the repository will be cloned. Defaults to the `localStatePath`
+ * from the application's configuration.
+ * @param remoteRepository The URL or shorthand for the remote repository to clone.
+ * @param initOptions A set of options for the clone operation, such as branch, depth, and SSH flag.
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 class CloneOperation(
     useBundledGitOption: BooleanWithAuto,
     private val repositoryPath: Path = configuration.global.localStatePath,
@@ -24,6 +42,15 @@ class CloneOperation(
 ) {
     private val remoteRepositoryUrl = parseRepoUrl(remoteRepository, initOptions.ssh)
 
+    /**
+     * Clones a repository using the bundled JGit library.
+     *
+     * This implementation configures the clone command with the repository URL, target directory, and any
+     * specified options like branch and depth. It also sets up the appropriate credentials provider for HTTPS
+     * or configures the transport for SSH.
+     *
+     * @return An [Either] containing a [GitError] on failure or [Unit] on success.
+     */
     override fun operateWithBundled(): Either<GitError, Unit> = either {
 
         try {
@@ -49,6 +76,14 @@ class CloneOperation(
         }
     }
 
+    /**
+     * Clones a repository using the system's native `git` command.
+     *
+     * This implementation builds and executes a `git clone` command with the appropriate command-line arguments
+     * for the branch and depth, based on the properties of the class.
+     *
+     * @return An [Either] containing a [GitError] on failure or the process's exit code on success.
+     */
     override fun operateWithSystem(): Either<GitError, Int> = either {
         val args = mutableListOf("clone").apply {
             initOptions.branch?.let { add("--branch=$it") }
@@ -61,15 +96,22 @@ class CloneOperation(
     }
 
     /**
-     * Data class representing a repository URL pattern and its corresponding HTTPS and SSH URL templates.
+     * A data class representing a repository URL pattern and its corresponding HTTPS and SSH URL templates.
+     *
+     * This is used to convert shorthand repository identifiers (like `user/repo`) into full, cloneable Git URLs.
      *
      * @property pattern A [Regex] pattern to match against input repository strings.
      * @property httpsUrlTemplate A template string for constructing the HTTPS URL, with placeholders for regex capture groups.
      * @property sshUrlTemplate A template string for constructing the SSH URL, with placeholders for regex capture groups.
-     * @constructor Creates a [RepoPattern] data instance with an input repository string, the expanded HTTPS URL and SSH formatted String.
      */
-    private class RepoPattern(val pattern: Regex, val httpsUrlTemplate: String, val sshUrlTemplate: String)
+    private data class RepoPattern(val pattern: Regex, val httpsUrlTemplate: String, val sshUrlTemplate: String)
 
+    /**
+     * A list of predefined [RepoPattern]s used to parse shorthand repository URLs.
+     *
+     * The patterns are tried in order, and the first one that matches the input string is used to generate the
+     * final URL. This allows for flexible repository identifiers, such as `username`, `username/repo`, etc.
+     */
     private val commonPatterns = listOf(
         RepoPattern(
             Regex("([-0-9A-Za-z]+)"),
@@ -105,12 +147,14 @@ class CloneOperation(
 
     /**
      * Parses an input repository string and converts it to a valid Git repository URL in either HTTPS or SSH format.
-     * If the input string does not match any supported patterns, it is returned unchanged.
      *
-     * @param input The input repository string to parse.
-     * @param ssh A flag indicating whether to return the URL in SSH format. If false, returns in HTTPS format.
+     * This function iterates through the [commonPatterns] and applies them to the input string. If a match is found,
+     * it formats the corresponding URL template (HTTPS or SSH) with the captured groups. If no patterns match,
+     * the original input string is returned, assuming it is already a valid URL.
+     *
+     * @param input The input repository string to parse (e.g., "my-user/my-repo").
+     * @param ssh A flag indicating whether to return the URL in SSH format (`true`) or HTTPS format (`false`).
      * @return A valid Git repository URL in the specified format, or the original input string if no patterns matched.
-     * @see commonPatterns
      */
     fun parseRepoUrl(input: String, ssh: Boolean): String {
         commonPatterns.forEach {

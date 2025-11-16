@@ -7,7 +7,19 @@ import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.types.path
 import kotlin.io.path.pathString
 
+/**
+ * A command to display the absolute path in the active state corresponding to a given target path.
+ *
+ * If no targets are provided, it prints the path to the active state directory.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 object ActivePath : PunktCommand() {
+    /**
+     * The list of target paths to resolve to their active state paths.
+     * Tilde (`~`) is expanded to the user's home directory.
+     */
     val targets by argument().convert {
         it.expandTildeWithHomePathname()
     }.path(

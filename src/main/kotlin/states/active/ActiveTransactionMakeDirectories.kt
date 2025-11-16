@@ -16,13 +16,13 @@ import kotlin.io.path.isDirectory
  * @since 0.1.0
  */
 class ActiveTransactionMakeDirectories(
-    override val localPath: Path
-) : ActiveTransaction() {
-    override val type = ActiveTransactionType.MKDIRS
-
+    localPath: Path
+) : ActiveTransaction(
+    ActiveTransactionType.MKDIRS,
+    localPath
+) {
     /**
      * Creates the necessary directories for the active path corresponding to the local path.
-     *
      */
     override fun run() {
         val activePath = localPath.toActive()

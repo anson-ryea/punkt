@@ -15,6 +15,23 @@ import org.eclipse.jgit.lib.SubmoduleConfig
 import org.eclipse.jgit.transport.SshTransport
 import java.nio.file.Path
 
+/**
+ * A Git operation to fetch from and integrate with another repository or a local branch.
+ *
+ * This class implements the `git pull` command, which is a shorthand for `git fetch` followed by `git merge` or
+ * `git rebase`. It can operate using either the bundled JGit library or the system's native Git executable.
+ * The operation can be configured to automatically stash local changes, rebase instead of merge, and handle submodules.
+ *
+ * @param useBundledGitOption An option to determine whether to use the bundled JGit (`TRUE`), the system Git (`FALSE`),
+ * or to auto-detect (`AUTO`).
+ * @param repositoryPath The file system path to the Git repository. Defaults to the `localStatePath` from the
+ * application's configuration.
+ * @param autoStash If `true`, automatically creates a temporary stash entry before the operation begins, and applies it after.
+ * @param rebase If `true`, rebases the current branch on top of the upstream branch after fetching.
+ * @param recurseSubmodules If `true`, updates all active submodules to their corresponding commits in the superproject.
+ * @author Anson Ng <hej@an5on.com>
+ * @since 0.1.0
+ */
 class PullOperation(
     useBundledGitOption: BooleanWithAuto,
     private val repositoryPath: Path = configuration.global.localStatePath,
@@ -24,6 +41,17 @@ class PullOperation(
 ) : GitOperableWithSystemAndBundled(
     determineUseBundledGit(useBundledGitOption)
 ) {
+    /**
+     * Performs a `git pull` using the bundled JGit library.
+     *
+     * This implementation handles the following logic:
+     * 1.  Checks if a remote repository is configured.
+     * 2.  If `autoStash` is enabled and there are local changes, it creates a stash.
+     * 3.  Executes the pull command, configuring it with rebase, submodule, and credential settings.
+     * 4.  In a `finally` block, it ensures that any created stash is applied and dropped, even if the pull fails.
+     *
+     * @return An [Either] containing a [GitError] on failure or [Unit] on success.
+     */
     override fun operateWithBundled(): Either<GitError, Unit>  = either {
         val localRepository = Git.open(repositoryPath.toFile())
 
@@ -75,6 +103,14 @@ class PullOperation(
         }
     }
 
+    /**
+     * Performs a `git pull` using the system's native `git` command.
+     *
+     * This implementation builds and executes a `git pull` command with the appropriate command-line arguments
+     * for rebasing, auto-stashing, and handling submodules based on the properties of the class.
+     *
+     * @return An [Either] containing a [GitError] on failure or the process's exit code on success.
+     */
     override fun operateWithSystem(): Either<GitError, Int> = either {
         val hasRemote = executeSystemGitToCodeAndString(listOf("remote"), repositoryPath).bind().second
             .lines()

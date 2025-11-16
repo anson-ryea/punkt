@@ -15,10 +15,11 @@ import kotlin.io.path.exists
  * @since 0.1.0
  */
 class ActiveTransactionCopyToActive(
-    override val localPath: Path,
-) : ActiveTransaction() {
-    override val type = ActiveTransactionType.COPY_TO_ACTIVE
-
+    localPath: Path,
+) : ActiveTransaction(
+    ActiveTransactionType.COPY_TO_ACTIVE,
+    localPath
+) {
     /**
      * Copies a file from the local path to the corresponding active path.
      */
