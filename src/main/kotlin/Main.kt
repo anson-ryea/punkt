@@ -2,6 +2,7 @@ package com.an5on
 
 import com.an5on.command.*
 import com.an5on.command.List
+import com.an5on.hub.command.Hub
 import com.an5on.hub.command.Register
 import com.an5on.system.SystemUtils.logPath
 import com.github.ajalt.clikt.command.main
@@ -49,6 +50,8 @@ suspend fun main(args: Array<String>) {
         Ignored,
         LocalPath,
         ActivePath,
-        Register
+        Hub.subcommands(
+            Register
+        )
     ).main(args)
 }
