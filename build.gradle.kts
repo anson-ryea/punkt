@@ -1,9 +1,6 @@
 group = "com.an5on"
 version = "0.0.0"
 
-val kotlinVersion = "2.2.21"
-val cliktVersion = "5.0.3"
-
 plugins {
     application
     kotlin("jvm") version "2.2.21"
@@ -17,6 +14,10 @@ plugins {
 repositories {
     mavenCentral()
 }
+
+val kotlinVersion: String by project
+val cliktVersion: String by project
+val ktorVersion: String by project
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
@@ -43,6 +44,8 @@ dependencies {
     implementation("io.github.java-diff-utils:java-diff-utils:4.16")
     implementation("io.github.java-diff-utils:java-diff-utils-jgit:4.16")
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
+    implementation("io.ktor:ktor-client-core:${ktorVersion}")
+    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
     testImplementation(kotlin("test"))
 }
 
