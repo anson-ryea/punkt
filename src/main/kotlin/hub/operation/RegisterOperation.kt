@@ -27,7 +27,7 @@ class RegisterOperation(
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable {
-    override suspend fun operate(): Either<PunktError, Unit> = either {
+    override suspend fun runBefore(): Either<PunktError, Unit> = either {
         echos.echoStage(
             "Registering a new account on ${configuration.hub.serverUrl}",
             globalOptions.verbosity,
@@ -36,7 +36,9 @@ class RegisterOperation(
         ensure(registerOptions.username.isNotBlank() && registerOptions.email.isNotBlank() && registerOptions.password.isNotBlank()) {
             HubError.RegisterFailed("Username, email, and password must not be empty.")
         }
+    }
 
+    override suspend fun operate(): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(ContentNegotiation) {
@@ -51,9 +53,9 @@ class RegisterOperation(
                     contentType(ContentType.Application.Json)
                     setBody(
                         RegisterPayload(
-                            "audrey",
-                            "a@g.c",
-                            "audrey"
+                            registerOptions.username,
+                            registerOptions.email,
+                            registerOptions.password
                         )
                     )
                 }
