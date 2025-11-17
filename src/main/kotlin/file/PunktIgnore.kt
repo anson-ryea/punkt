@@ -35,7 +35,7 @@ object PunktIgnore : Ignore {
      * @param ignoreFilePath The [Path] to the ignore file to be parsed.
      * @return A [Set] of pattern strings. Returns an empty set if the file does not exist.
      */
-    private fun parse(ignoreFilePath: Path): Set<String> {
+    fun parse(ignoreFilePath: Path): Set<String> {
         val ignoreFile = ignoreFilePath.toFile()
 
         if (!ignoreFile.exists()) {
@@ -56,7 +56,7 @@ object PunktIgnore : Ignore {
      * Removes a comment (starting with '#') and trims leading/trailing whitespace from the string.
      * @return The cleaned string.
      */
-    private fun String.stripComment(): String {
+    fun String.stripComment(): String {
         val commentIndex = indexOf('#')
         return if (commentIndex >= 0) {
             take(commentIndex).trim()
