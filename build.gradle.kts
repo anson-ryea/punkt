@@ -46,6 +46,8 @@ dependencies {
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
     implementation("io.ktor:ktor-client-core:${ktorVersion}")
     implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+    implementation("io.ktor:ktor-client-content-negotiation:${ktorVersion}")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
     testImplementation(kotlin("test"))
 }
 
