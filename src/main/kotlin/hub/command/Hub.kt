@@ -8,6 +8,6 @@ import com.github.ajalt.clikt.command.SuspendingCliktCommand
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-object Hub : SuspendingCliktCommand(name = "hub") {
+object Hub : SuspendingCliktCommand() {
     override suspend fun run() = Unit
 }

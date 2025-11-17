@@ -21,7 +21,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
  * @since 0.1.0
  * @author Anson Ng <hej@an5on.com>
  */
-abstract class PunktCommand : SuspendingCliktCommand() {
+abstract class PunktCommand(name: String? = null) : SuspendingCliktCommand(name) {
     private val logger = KotlinLogging.logger {}
 
     /**

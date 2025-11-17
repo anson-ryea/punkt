@@ -10,7 +10,7 @@ import com.github.ajalt.clikt.parameters.options.versionOption
  * @author Anson Ng <hej@an5on.com>
  * @since 0.1.0
  */
-class Command : SuspendingCliktCommand(name = "punkt") {
+object Base : SuspendingCliktCommand(name = "punkt") {
     init {
         versionOption(APP_VERSION)
     }
