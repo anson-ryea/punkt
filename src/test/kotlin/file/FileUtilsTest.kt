@@ -5,13 +5,17 @@ import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.config.Configuration
 import com.an5on.config.GlobalConfiguration
 import com.an5on.file.FileUtils.contentEqualsActive
+import com.an5on.file.FileUtils.contentEqualsLocal
 import com.an5on.file.FileUtils.existsInActive
+import com.an5on.file.FileUtils.existsInLocal
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.file.FileUtils.isLocal
 import com.an5on.file.FileUtils.toActive
+import com.an5on.file.FileUtils.toLocal
 import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.system.SystemUtils.homePath
 import com.an5on.type.PathStyle
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
 import java.io.File
 import java.nio.file.Files
@@ -35,7 +39,7 @@ class FileUtilsTest {
         ActiveConfiguration.configuration = config
     }
 
-//    @Test
+    //    @Test
 //    fun test(){
 //        println(config.global.activeStatePath)
 //    }
@@ -164,17 +168,353 @@ class FileUtilsTest {
     }
 
     @Test
-    fun collectionPathToStringPathStyleWithListOfPathsForUnix(){
-        val subject = listOf(configuration.global.activeStatePath.resolve(".test/file/test1.txt"),
+    fun collectionPathToStringPathStyleWithListOfPathsForUnix() {
+        val subject = listOf(
+            configuration.global.activeStatePath.resolve(".test/file/test1.txt"),
             configuration.global.activeStatePath.resolve(".test/file/test2.txt"),
-            configuration.global.activeStatePath.resolve(".test/file/test3.txt"))
-        val result = Path(configuration.global.dotReplacementPrefix +"test/file/test1.txt").pathString + "\n" + Path(configuration.global.dotReplacementPrefix +"test/file/test2.txt").pathString + "\n" + Path(configuration.global.dotReplacementPrefix +"test/file/test3.txt").pathString
+            configuration.global.activeStatePath.resolve(".test/file/test3.txt")
+        )
+        val result = Path(configuration.global.dotReplacementPrefix + "test/file/test1.txt").pathString + "\n" + Path(
+            configuration.global.dotReplacementPrefix + "test/file/test2.txt"
+        ).pathString + "\n" + Path(configuration.global.dotReplacementPrefix + "test/file/test3.txt").pathString
 
         assertEquals(result, subject.toStringInPathStyle(PathStyle.LOCAL_RELATIVE))
+    }
 
         /*__________________________________________________________________________________________________________________________*/
 
         /*__________________________________________Tests For Local__________________________________________________________________*/
+
+        @Test
+        fun pathToLocalWithPathInHomeForWin() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test\\file.txt")
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt")
+
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathToLocalWithRelativePathForWin() {
+
+            val subject = Path(".test\\file.txt")
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt")
+
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathToLocalWithNotInHomePathForWin() {
+
+            val subject = Path("C:\\ProgramFiles\\.test\\file.txt")
+            val result = Path("C:\\ProgramFiles\\" + configuration.global.dotReplacementPrefix + "test\\file.txt")
+
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathToLocalWithLocalPathForWin() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test\\file.txt").toLocal()
+
+            assertEquals(subject, subject)
+        }
+
+        @Test
+        fun fileToLocalWithPathInHomeForWin() {
+
+            val subject = File(configuration.global.activeStatePath.resolve(".test\\file.txt").pathString)
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt").toFile()
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun fileToLocalWithNotInHomePathForWin() {
+
+            val subject = File(".test\\file.txt")
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt").toFile()
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun fileToLocalWithPathNotInForWin() {
+
+            val subject = File("C:\\ProgramFiles\\.test\\file.txt")
+            val result =
+                Path("C:\\ProgramFiles\\" + configuration.global.dotReplacementPrefix + "test\\file.txt").toFile()
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathIsLocalWithPathInHomeForWin() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test\\file.txt")
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathIsLocalWithRelativePathForWin() {
+
+            val subject = Path(".test\\file.txt")
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathIsLocalWithNotInHomePathForWin() {
+
+            val subject = Path("C:\\ProgramFiles\\.test\\file.txt")
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathIsLocalWithLocalPathForWin() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test\\file.txt").toLocal()
+
+            Assertions.assertTrue(subject.isLocal())
+        }
+
+        @Test
+        fun fileIsLocalWithLocalPathForWin() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test\\file.txt").toLocal().toFile()
+
+            Assertions.assertTrue(subject.isLocal())
+        }
+
+        @Test
+        fun fileIsLocalWithNonLocalPathForWin() {
+
+            val subject = Path(".test\\file.txt").toFile()
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathToLocalWithPathInHomeForUnix() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test/file.txt")
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt")
+
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathToLocalWithLocalPathForUnix() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test/file.txt").toLocal()
+
+            assertEquals(subject, subject)
+        }
+
+        @Test
+        fun pathToLocalWithRelativePathForUnix() {
+
+            val subject = Path(".test/file.txt")
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt")
+
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathToLocalWithNotInHomePathForUnix() {
+
+            val subject = Path("/ProgramFiles/.test/file.txt")
+            val result = Path("/ProgramFiles/" + configuration.global.dotReplacementPrefix + "test/file.txt")
+
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun fileToLocalWithPathInHomeForUnix() {
+
+            val subject = File(configuration.global.activeStatePath.resolve(".test/file.txt").pathString)
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt").toFile()
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun fileToLocalWithNotInHomePathForUnix() {
+
+            val subject = File(".test/file.txt")
+            val result =
+                configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt").toFile()
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun fileToLocalWithRelativePathForUnix() {
+
+            val subject = File("/ProgramFiles/.test/file.txt")
+            val result =
+                Path("/ProgramFiles/" + configuration.global.dotReplacementPrefix + "test/file.txt").toFile()
+            assertEquals(subject.toLocal(), result)
+        }
+
+        @Test
+        fun pathIsLocalWithPathInHomeForUnix() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test/file.txt")
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathIsLocalWithRelativePathForUnix() {
+
+            val subject = Path(".test/file.txt")
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathIsLocalWithNotInHomePathForUnix() {
+
+            val subject = Path("/ProgramFiles/.test/file.txt")
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun pathIsLocalWithLocalPathForUnix() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test/file.txt").toLocal()
+
+            Assertions.assertTrue(subject.isLocal())
+        }
+
+        @Test
+        fun fileIsLocalWithLocalPathForUnix() {
+
+            val subject = configuration.global.activeStatePath.resolve(".test/file.txt").toLocal().toFile()
+
+            Assertions.assertTrue(subject.isLocal())
+        }
+
+        @Test
+        fun fileIsLocalWithNonLocalPathForUnix() {
+
+            val subject = Path(".test/file.txt").toFile()
+
+            kotlin.test.assertFalse(subject.isLocal())
+        }
+
+        @Test
+        fun fileExistsInLocalTest(){
+            val localDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
+            assertTrue(localDir.isLocal())
+            val activeDir = config.global.activeStatePath.resolve(".testDir")
+//        println(tempDir)
+//        println(activeDir)
+//        println(activeDir.toLocal())
+
+            // Create sample test files
+            Files.createDirectories(localDir)
+            Files.createDirectories(activeDir)
+            // Create subdirectory for test files
+            val testFileDir = localDir.resolve("test")
+            Files.createDirectories(testFileDir) // Create the 'test' subdirect
+            // Now we can safely create the test file
+            val testFile = testFileDir.resolve("test.txt").toFile().apply {
+                writeText("Sample content") // Write to the test file
+            }
+            // Create the active file in the active directory
+            val activeFileDir = activeDir.resolve("test")
+            Files.createDirectories(activeFileDir) // Create the 'test' subdirectory for active file
+            val activeFile = activeFileDir.resolve("test.txt").toFile().apply {
+                writeText("Sample content") // Write to the active file
+            }
+            assertTrue(activeFile.existsInLocal())
+            assertTrue(testFile.existsInLocal())
+            // Clean up the temporary directories and files after tests
+            Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+            Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+        }
+
+        @Test
+        fun pathExistsInLocalTest() {
+            val localDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
+            assertTrue(localDir.isLocal())
+            val activeDir = config.global.activeStatePath.resolve(".testDir")
+            println(localDir)
+            println(activeDir)
+            println(activeDir.toLocal())
+
+            // Create sample test files
+            Files.createDirectories(localDir)
+            Files.createDirectories(activeDir)
+            // Create subdirectory for test files
+            val testFileDir = localDir.resolve("test")
+            Files.createDirectories(testFileDir) // Create the 'test' subdirect
+            // Now we can safely create the test file
+            val testFile = testFileDir.resolve("test.txt").toFile().apply {
+                writeText("Sample content") // Write to the test file
+            }
+            // Create the active file in the active directory
+            val activeFileDir = activeDir.resolve("test")
+            Files.createDirectories(activeFileDir) // Create the 'test' subdirectory for active file
+            val activeFile = activeFileDir.resolve("test.txt").toFile().apply {
+                writeText("Sample content") // Write to the active file
+            }
+
+            println(activeFile)
+            println(testFile.toLocal())
+            assertTrue(activeFile.toPath().existsInLocal())
+            assertTrue(testFile.toPath().existsInLocal())
+            // Clean up the temporary directories and files after tests
+            Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+            Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+
+        }
+
+        @Test
+        fun fileContentEqualsLocalTest(){
+            val localDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
+//        assertTrue(localDir.isLocal())
+            val activeDir = config.global.activeStatePath.resolve(".testDir")
+//        println(localDir)
+//        println(activeDir)
+//        println(activeDir.toLocal())
+
+            // Create sample test files
+            Files.createDirectories(localDir)
+            Files.createDirectories(activeDir)
+            // Create subdirectory for test files
+            val testFileDir = localDir.resolve("test")
+            Files.createDirectories(testFileDir) // Create the 'test' subdirect
+            // Now we can safely create the test file
+            val testFile = testFileDir.resolve("test.txt").toFile().apply {
+                writeText("Sample content") // Write to the test file
+            }
+            // Create the active file in the active directory
+            val activeFileDir = activeDir.resolve("test")
+            Files.createDirectories(activeFileDir) // Create the 'test' subdirectory for active file
+            val activeFile = activeFileDir.resolve("test.txt").toFile().apply {
+                writeText("Sample content") // Write to the active file
+            }
+            assertTrue(activeFile.contentEqualsLocal())
+
+            // Modify the active file to break equality
+            testFile.writeText("Different content")
+
+            // Now, check that the content equality fails
+            assertFalse(activeFile.contentEqualsLocal(), "Contents should not be equal after modification")
+
+            // Clean up the temporary directories and files after tests
+            Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+            Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+
+        }
         /*___________________________________________________________________________________________________________________________*/
 
         /*__________________________________________Tests For Active__________________________________________________________________*/
@@ -364,4 +704,3 @@ class FileUtilsTest {
         }
         /*___________________________________________________________________________________________________________________________*/
     }
-}
