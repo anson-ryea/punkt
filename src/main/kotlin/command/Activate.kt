@@ -33,7 +33,7 @@ object Activate : PunktCommand() {
         canBeSymlink = true
     ).multiple().unique().optional()
 
-    override fun run() {
+    override suspend fun run() {
         ActivateOperation(
             targets,
             globalOptions,

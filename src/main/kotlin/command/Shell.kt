@@ -22,7 +22,7 @@ import kotlin.io.path.pathString
  * @author Anson Ng <hej@an5on.com>
  */
 object Shell : PunktCommand() {
-    override fun run() {
+    override suspend fun run() {
         val cmd = arrayOf(SystemUtils.shell)
 
         val builder = PtyProcessBuilder(cmd)

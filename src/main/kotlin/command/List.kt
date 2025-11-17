@@ -1,5 +1,8 @@
 package com.an5on.command
 
+import com.an5on.command.List.commonOptions
+import com.an5on.command.List.globalOptions
+import com.an5on.command.List.paths
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
@@ -33,7 +36,7 @@ object List : PunktCommand() {
         canBeSymlink = true
     ).multiple().unique().optional()
 
-    override fun run() {
+    override suspend fun run() {
         ListOperation(
             paths,
             globalOptions,

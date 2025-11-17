@@ -1,5 +1,6 @@
 package com.an5on.command
 
+import com.an5on.command.Update.globalOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.git.PullOperation
@@ -20,7 +21,7 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 object Update : PunktCommand() {
     private val globalOptions by GlobalOptions()
 
-    override fun run() {
+    override suspend fun run() {
         if (!LocalState.exists()) {
             handleError(LocalError.LocalNotFound())
             return

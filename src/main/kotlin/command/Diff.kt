@@ -1,5 +1,8 @@
 package com.an5on.command
 
+import com.an5on.command.Diff.commonOptions
+import com.an5on.command.Diff.globalOptions
+import com.an5on.command.Diff.paths
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
@@ -36,7 +39,7 @@ object Diff : PunktCommand() {
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique().optional()
 
-    override fun run() {
+    override suspend fun run() {
         DiffOperation(
             paths,
             globalOptions,

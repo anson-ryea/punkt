@@ -28,7 +28,7 @@ object ActivePath : PunktCommand() {
         canBeSymlink = true
     ).multiple().unique().optional()
 
-    override fun run() {
+    override suspend fun run() {
         echo(
             if (targets != null && targets!!.isNotEmpty()) {
                 targets!!.joinToString(separator = "\n") { it.toActive().pathString }

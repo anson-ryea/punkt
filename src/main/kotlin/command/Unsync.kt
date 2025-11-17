@@ -1,5 +1,7 @@
 package com.an5on.command
 
+import com.an5on.command.Unsync.globalOptions
+import com.an5on.command.Unsync.targets
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
@@ -36,7 +38,7 @@ object Unsync : PunktCommand() {
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique()
 
-    override fun run() {
+    override suspend fun run() {
         UnsyncOperation(
             targets,
             globalOptions,

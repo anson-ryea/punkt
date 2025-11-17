@@ -1,5 +1,8 @@
 package com.an5on.command
 
+import com.an5on.command.Init.globalOptions
+import com.an5on.command.Init.initOptions
+import com.an5on.command.Init.repo
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.InitOptions
 import com.an5on.config.ActiveConfiguration.configuration
@@ -64,7 +67,7 @@ object Init : PunktCommand() {
      * Checks if Punkt is already initialized. If not, either initializes an empty local repository
      * or clones from the specified remote repository based on the provided arguments.
      */
-    override fun run() {
+    override suspend fun run() {
         if (LocalState.exists()) {
             handleError(LocalError.LocalAlreadyInitialised())
             return

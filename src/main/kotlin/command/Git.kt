@@ -21,7 +21,7 @@ object Git : PunktCommand() {
      */
     private val arguments by argument().multiple()
 
-    override fun run() {
+    override suspend fun run() {
         GenericOperationWithSystem(arguments)
             .operateWithSystem()
             .fold(
