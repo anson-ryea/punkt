@@ -7,10 +7,10 @@ import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
+import com.an5on.hub.command.options.RegisterOptions
 import com.an5on.hub.error.HubError
 import com.an5on.hub.type.RegisterPayload
 import com.an5on.type.Verbosity
-import com.github.ajalt.mordant.terminal.StringPrompt
 import com.github.ajalt.mordant.terminal.Terminal
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -23,6 +23,7 @@ import kotlinx.serialization.json.Json
 
 class RegisterOperation(
     val globalOptions: GlobalOptions,
+    val registerOptions: RegisterOptions,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable {
@@ -32,23 +33,7 @@ class RegisterOperation(
             globalOptions.verbosity,
             Verbosity.NORMAL
         )
-        val username = StringPrompt(
-            "Username",
-            terminal,
-            allowBlank = false
-        ).ask()
-        val email = StringPrompt(
-            "Email",
-            terminal,
-            allowBlank = false
-        ).ask()
-        val password = StringPrompt(
-            "Password",
-            terminal,
-            allowBlank = false
-        ).ask()
-
-        ensure(!username.isNullOrBlank() && !email.isNullOrBlank() && !password.isNullOrBlank()) {
+        ensure(registerOptions.username.isNotBlank() && registerOptions.email.isNotBlank() && registerOptions.password.isNotBlank()) {
             HubError.RegisterFailed("Username, email, and password must not be empty.")
         }
 
@@ -74,7 +59,7 @@ class RegisterOperation(
                 }
 
                 echos.echoSuccess(
-                    "Welcome to Punkt Hub! You can now log in with $email.",
+                    "Welcome to Punkt Hub! You can now log in with ${registerOptions.email}.",
                     globalOptions.verbosity,
                     Verbosity.NORMAL
                 )
