@@ -14,6 +14,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ActiveEqualsLocalFileFilterTest {
 
@@ -32,6 +34,10 @@ class ActiveEqualsLocalFileFilterTest {
 
     val localDir: Path = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
     val activeDir: Path = config.global.activeStatePath.resolve(".testDir")
+    val testFileDir = localDir.resolve("test")
+    val testFile = testFileDir.resolve("test.txt")
+    val activeFileDir = activeDir.resolve("test")
+    val activeFile = activeFileDir.resolve("test.txt")
 
     @BeforeEach
     fun setUp() {
@@ -40,16 +46,16 @@ class ActiveEqualsLocalFileFilterTest {
         Files.createDirectories(localDir)
         Files.createDirectories(activeDir)
         // Create subdirectory for test files
-        val testFileDir = localDir.resolve("test")
+
         Files.createDirectories(testFileDir) // Create the 'test' subdirect
         // Now we can safely create the test file
-        val testFile = testFileDir.resolve("test.txt").toFile().apply {
+        testFile.toFile().apply {
             writeText("Sample content") // Write to the test file
         }
         // Create the active file in the active directory
-        val activeFileDir = activeDir.resolve("test")
+
         Files.createDirectories(activeFileDir) // Create the 'test' subdirectory for active file
-        val activeFile = activeFileDir.resolve("test.txt").toFile().apply {
+        activeFile.toFile().apply {
             writeText("Sample content") // Write to the active file
         }
     }
@@ -76,4 +82,37 @@ class ActiveEqualsLocalFileFilterTest {
         }
         assertEquals("ActiveEqualsLocalFileFilter only accepts non-directory files.", ex.message)
     }
+
+    @Test
+    fun acceptWithLocalFile() {
+        assertTrue(ActiveEqualsLocalFileFilter.accept(testFile.toFile()))
+
+        testFile.toFile().apply {
+            writeText("Different content")
+        }
+
+        assertFalse(ActiveEqualsLocalFileFilter.accept(testFile.toFile()))
+    }
+
+    @Test
+    fun acceptWithActiveFile() {
+        assertTrue(ActiveEqualsLocalFileFilter.accept(activeFile.toFile()))
+
+        testFile.toFile().apply {
+            writeText("Different content")
+        }
+
+        assertFalse(ActiveEqualsLocalFileFilter.accept(activeFile.toFile()))
+    }
+
+    @Test
+    fun acceptWithNullParentDirectoryAndNullFileName(@TempDir dir: File) {
+        assertFalse(ActiveEqualsLocalFileFilter.accept(dir, null))
+        assertFalse(ActiveEqualsLocalFileFilter.accept(null, "Non-existentFile.txt"))
+        val p: File? = null
+        val attrs: String? = null
+        assertFalse( ActiveEqualsLocalFileFilter.accept(p, attrs))
+    }
+
+
 }

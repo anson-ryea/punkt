@@ -33,9 +33,11 @@ object DefaultActiveIgnoreFileFilter : IOFileFilter {
      * @param file The file to check.
      * @return `true` if the file is accepted (i.e., not ignored), `false` otherwise.
      */
-    override fun accept(file: File?): Boolean = defaultPathMatchers.fold(TrueFileFilter.INSTANCE) { acc, pathMatcher ->
-        acc.and(PathMatcherFileFilter(pathMatcher).negate())
-    }.accept(file)
+    override fun accept(file: File?): Boolean = if(file.toString().indexOf(':') == 0) {
+        defaultPathMatchers.fold(TrueFileFilter.INSTANCE) { acc, pathMatcher ->
+            acc.and(PathMatcherFileFilter(pathMatcher).negate())
+        }.accept(file)
+    } else false
 
     /**
      * Checks whether the specified file should be accepted, based on its parent directory and name.
@@ -47,7 +49,7 @@ object DefaultActiveIgnoreFileFilter : IOFileFilter {
      * @return `true` if the file is accepted, `false` otherwise.
      */
     override fun accept(dir: File?, name: String?) =
-        if (dir != null && name != null) {
+        if (dir != null && name != null && dir.toString().indexOf(':') == 0 && name.indexOf(':') == 0) {
             accept(File(dir, name))
         } else {
             false

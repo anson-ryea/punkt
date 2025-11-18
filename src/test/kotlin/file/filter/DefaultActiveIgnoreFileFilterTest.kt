@@ -1,0 +1,195 @@
+package file.filter
+
+import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
+import kotlin.test.Test
+import kotlin.test.assertFalse
+
+class DefaultActiveIgnoreFileFilterTest {
+
+
+//    val config = Configuration(
+//        GlobalConfiguration(
+//            localStatePath = Paths.get("test").toAbsolutePath().resolve("local"),
+//            activeStatePath = Paths.get("test").toAbsolutePath().resolve("active"),
+//        )
+//    )
+//
+//
+//
+//    init {
+//        ActiveConfiguration.configuration = config
+//    }
+//
+//    val localDir: Path = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
+//    val activeDir: Path = config.global.activeStatePath.resolve(".testDir")
+//    val testFileDir = localDir.resolve("test")
+//    val testFile = testFileDir.resolve("test.txt")
+//    val activeFileDir = activeDir.resolve("test")
+//    val activeFile = activeFileDir.resolve("test.txt")
+//
+//    @BeforeEach
+//    fun setUp() {
+//
+//        // Create sample test files
+//        Files.createDirectories(localDir)
+//        Files.createDirectories(activeDir)
+//        // Create subdirectory for test files
+//
+//        Files.createDirectories(testFileDir) // Create the 'test' subdirect
+//        // Now we can safely create the test file
+//        testFile.toFile().apply {
+//            writeText("Sample content") // Write to the test file
+//        }
+//        // Create the active file in the active directory
+//
+//        Files.createDirectories(activeFileDir) // Create the 'test' subdirectory for active file
+//        activeFile.toFile().apply {
+//            writeText("Sample content") // Write to the active file
+//        }
+//    }
+//    @AfterEach
+//    fun tearDown() {
+//        // Clean up the temporary directories and files after tests
+//        Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+//        Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+//    }
+
+    @Test
+    fun acceptWithValidFile (@TempDir tempDir: File) {
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.txt"))
+    }
+
+    @Test
+    fun acceptWithInValidFileForWin (@TempDir tempDir: File) {
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Thumbs.db"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Thumbs.db:encryptable"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "ehthumbs.db"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "ehthumbs_vista.db"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.stackdump"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Desktop.ini"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "desktop.ini"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File($$"$RECYCLE.BIN"), "test.txt"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.cab"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.msi"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.msix"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.msm"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.msp"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.lnk"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Thumbs.db")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Thumbs.db:encryptable")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("ehthumbs.db")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("ehthumbs_vista.db")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.stackdump")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Desktop.ini")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("desktop.ini")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File($$"$RECYCLE.BIN")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.cab")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msi")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msix")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msm")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msp")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.lnk")))
+    }
+
+    @Test
+    fun acceptWithInValidFileForDarwin(@TempDir tempDir: File) {
+        // names from ignoredActiveFilesForDarwin
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".DS_Store"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".localized"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".AppleDouble"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "__MACOSX"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".LSOverride"))
+        // glob example for "._*"
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "._foo"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "._bar.txt"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Icon"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".DocumentRevisions-V100"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".fseventsd"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".Spotlight-V100"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".TemporaryItems"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".Trashes"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".VolumeIcon.icns"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".com.apple.timemachine.donotpresent"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".AppleDB"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".AppleDesktop"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Network Trash Folder"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Temporary Items"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".apdisk"))
+
+        // also test File overloads (name-only, no dir)
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".DS_Store")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".localized")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".AppleDouble")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("__MACOSX")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".LSOverride")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("._foo")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Icon")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".DocumentRevisions-V100")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".fseventsd")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".Spotlight-V100")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".TemporaryItems")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".Trashes")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".VolumeIcon.icns")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".com.apple.timemachine.donotpresent")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".AppleDB")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".AppleDesktop")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Network Trash Folder")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Temporary Items")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".apdisk")))
+    }
+
+    @Test
+    fun acceptWithInValidFileForLinux(@TempDir tempDir: File) {
+        // swap files
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".foo.swp"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".foo.swo"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".foo.swx"))
+
+        // simple names
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".directory"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "nohup.out"))
+
+        // backup suffix
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "file~"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "notes.txt~"))
+
+        // fuse/nfs patterns
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".fuse_hidden123"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".nfs0001"))
+
+        // Trash and cache recursive globs (.Trash-*/**, .cache/**, .local/share/Trash/**)
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".Trash-1000/info"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".Trash-1000/files/somefile"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".cache/someapp/cachefile"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".cache/someapp/subdir/file"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".local/share/Trash/info"))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".local/share/Trash/files/removed"))
+
+        // Also test File overloads (name-only)
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".foo.swp")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".foo.swo")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".foo.swx")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".directory")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("nohup.out")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("file~")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".fuse_hidden123")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".nfs0001")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".Trash-1000/files/somefile")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".cache/someapp/file")))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".local/share/Trash/files/removed")))
+    }
+
+
+
+    @Test
+    fun acceptWithNullParentDirectoryAndNullFileName(@TempDir dir: File) {
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(dir, null))
+        assertFalse(DefaultActiveIgnoreFileFilter.accept(null, "Non-existentFile.txt"))
+        val p: File? = null
+        val attrs: String? = null
+        assertFalse( DefaultActiveIgnoreFileFilter.accept(p, attrs))
+    }
+}
