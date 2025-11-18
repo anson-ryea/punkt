@@ -1,14 +1,8 @@
 package file.filter
 
-import com.an5on.config.ActiveConfiguration
-import com.an5on.config.Configuration
-import com.an5on.config.GlobalConfiguration
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
