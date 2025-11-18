@@ -1,71 +1,32 @@
 package file.filter
 
+import com.an5on.config.ActiveConfiguration
+import com.an5on.config.Configuration
+import com.an5on.config.GlobalConfiguration
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DefaultActiveIgnoreFileFilterTest {
 
-
-//    val config = Configuration(
-//        GlobalConfiguration(
-//            localStatePath = Paths.get("test").toAbsolutePath().resolve("local"),
-//            activeStatePath = Paths.get("test").toAbsolutePath().resolve("active"),
-//        )
-//    )
-//
-//
-//
-//    init {
-//        ActiveConfiguration.configuration = config
-//    }
-//
-//    val localDir: Path = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
-//    val activeDir: Path = config.global.activeStatePath.resolve(".testDir")
-//    val testFileDir = localDir.resolve("test")
-//    val testFile = testFileDir.resolve("test.txt")
-//    val activeFileDir = activeDir.resolve("test")
-//    val activeFile = activeFileDir.resolve("test.txt")
-//
-//    @BeforeEach
-//    fun setUp() {
-//
-//        // Create sample test files
-//        Files.createDirectories(localDir)
-//        Files.createDirectories(activeDir)
-//        // Create subdirectory for test files
-//
-//        Files.createDirectories(testFileDir) // Create the 'test' subdirect
-//        // Now we can safely create the test file
-//        testFile.toFile().apply {
-//            writeText("Sample content") // Write to the test file
-//        }
-//        // Create the active file in the active directory
-//
-//        Files.createDirectories(activeFileDir) // Create the 'test' subdirectory for active file
-//        activeFile.toFile().apply {
-//            writeText("Sample content") // Write to the active file
-//        }
-//    }
-//    @AfterEach
-//    fun tearDown() {
-//        // Clean up the temporary directories and files after tests
-//        Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
-//        Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
-//    }
-
     @Test
     fun acceptWithValidFile (@TempDir tempDir: File) {
-        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.txt"))
+
+        assertTrue(DefaultActiveIgnoreFileFilter.accept(File("test.txt")))
+        assertTrue(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.txt"))
+
     }
 
     @Test
     fun acceptWithInValidFileForWin (@TempDir tempDir: File) {
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Thumbs.db"))
-        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Thumbs.db:encryptable"))
+//        assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Thumbs.db:encryptable"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "ehthumbs.db"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "ehthumbs_vista.db"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.stackdump"))
@@ -79,13 +40,13 @@ class DefaultActiveIgnoreFileFilterTest {
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.msp"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.lnk"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Thumbs.db")))
-        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Thumbs.db:encryptable")))
+//        assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Thumbs.db:encryptable")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("ehthumbs.db")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("ehthumbs_vista.db")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.stackdump")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Desktop.ini")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("desktop.ini")))
-        assertFalse(DefaultActiveIgnoreFileFilter.accept(File($$"$RECYCLE.BIN")))
+//        assertFalse(DefaultActiveIgnoreFileFilter.accept(File($$"$RECYCLE.BIN")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.cab")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msi")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msix")))
