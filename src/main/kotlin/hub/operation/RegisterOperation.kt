@@ -34,7 +34,7 @@ class RegisterOperation(
         )
     }
 
-    override suspend fun operate(): Either<PunktError, Unit> = either {
+    override suspend fun operate(fromBefore: Any): Either<PunktError, String> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(ContentNegotiation) {
@@ -68,13 +68,7 @@ class RegisterOperation(
                 client.close()
             }
         }
-    }
 
-    override suspend fun runAfter(): Either<PunktError, Unit> = either {
-        echos.echoSuccess(
-            "Welcome to Punkt Hub! You can now log in with ${registerOptions.email}.",
-            globalOptions.verbosity,
-            Verbosity.NORMAL
-        )
+        return@either registerOptions.email
     }
 }

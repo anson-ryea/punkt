@@ -13,7 +13,7 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
      */
-    suspend fun runBefore(): Either<PunktError, Unit> = Either.Right(Unit)
+    suspend fun runBefore(): Either<PunktError, Any> = Either.Right(Unit)
 
     /**
      * The core logic of the operation.
@@ -22,7 +22,7 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
      */
-    suspend fun operate(): Either<PunktError, Unit>
+    suspend fun operate(fromBefore: Any): Either<PunktError, Any>
 
     /**
      * A hook that runs after the main [operate] method has completed successfully.
@@ -32,7 +32,7 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
      */
-    suspend fun runAfter(): Either<PunktError, Unit> = Either.Right(Unit)
+    suspend fun runAfter(fromOperate: Any): Either<PunktError, Any> = Either.Right(fromOperate)
 
     /**
      * Executes the full lifecycle of the operation: [runBefore], [operate], and [runAfter].
@@ -42,9 +42,7 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing the first [PunktError] encountered, or [Unit] if all steps succeed.
      */
-    suspend fun run(): Either<PunktError, Unit> = either {
-        runBefore().bind()
-        operate().bind()
-        runAfter().bind()
+    suspend fun run(): Either<PunktError, Any> = either {
+        runAfter(operate(runBefore().bind()).bind()).bind()
     }
 }

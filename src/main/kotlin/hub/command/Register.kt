@@ -21,7 +21,10 @@ object Register : PunktCommand() {
                 handleError(it)
             },
             {
-                echoSuccess(verbosityOption = globalOptions.verbosity)
+                echoSuccess(
+                    "Welcome to Punkt Hub! You can now log in with ${registerOptions.email}.",
+                    globalOptions.verbosity
+                )
             }
         )
     }

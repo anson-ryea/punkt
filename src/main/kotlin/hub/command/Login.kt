@@ -22,7 +22,10 @@ object Login : PunktCommand() {
                 handleError(it)
             },
             {
-                echoSuccess(verbosityOption = globalOptions.verbosity)
+                echoSuccess(
+                    "Welcome back, ${loginOptions.email}!",
+                    verbosityOption = globalOptions.verbosity
+                )
             }
         )
     }

@@ -46,7 +46,7 @@ class LoginOperation(
         }
     }
 
-    override suspend fun operate(): Either<PunktError, Unit> = either {
+    override suspend fun operate(fromBefore: Any): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(ContentNegotiation) {
@@ -81,14 +81,6 @@ class LoginOperation(
                 client.close()
             }
         }
-    }
-
-    override suspend fun runAfter(): Either<PunktError, Unit> = either {
-        echos.echoSuccess(
-            "Welcome back, ${loginOptions.email}!",
-            globalOptions.verbosity,
-            Verbosity.NORMAL
-        )
     }
 
     companion object {

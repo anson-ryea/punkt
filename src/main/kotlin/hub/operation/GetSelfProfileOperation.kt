@@ -28,13 +28,15 @@ class GetSelfProfileOperation(
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable {
+    private lateinit var selfProfileResponse: SelfProfileResponse
+
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
-    override suspend fun operate(): Either<PunktError, Unit> = either {
+    override suspend fun operate(fromBefore: Any): Either<PunktError, String> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(Auth) {
@@ -56,15 +58,7 @@ class GetSelfProfileOperation(
                     configuration.hub.serverUrl + "/users/me",
                 )
 
-                val selfProfileResponse = response.body<SelfProfileResponse>()
-
-                echos.echoWithVerbosity(
-                    selfProfileResponse.username,
-                    true,
-                    false,
-                    globalOptions.verbosity,
-                    Verbosity.QUIET
-                )
+                selfProfileResponse = response.body<SelfProfileResponse>()
             } catch (e: HttpRequestTimeoutException) {
                 raise(HubError.ServerTimeout(e))
             } catch (e: ResponseException) {
@@ -78,5 +72,20 @@ class GetSelfProfileOperation(
                 client.close()
             }
         }
+
+        return@either selfProfileResponse.username
+    }
+
+    override suspend fun runAfter(fromOperate: Any): Either<PunktError, Unit> = either {
+        echos.echoWithVerbosity(
+            """
+                        username: ${selfProfileResponse.username}
+                        tier: ${selfProfileResponse.tier}
+                    """.trimIndent(),
+            true,
+            false,
+            globalOptions.verbosity,
+            Verbosity.QUIET
+        )
     }
 }
