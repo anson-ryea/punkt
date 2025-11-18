@@ -2,10 +2,7 @@ package com.an5on
 
 import com.an5on.command.*
 import com.an5on.command.List
-import com.an5on.hub.command.Hub
-import com.an5on.hub.command.Login
-import com.an5on.hub.command.Register
-import com.an5on.hub.command.WhoAmI
+import com.an5on.hub.command.*
 import com.an5on.system.SystemUtils.logPath
 import com.github.ajalt.clikt.command.main
 import com.github.ajalt.clikt.core.subcommands
@@ -55,6 +52,7 @@ suspend fun main(args: Array<String>) {
         Hub.subcommands(
             Register,
             Login,
+            Logout,
             WhoAmI
         )
     ).main(args)
