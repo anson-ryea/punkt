@@ -102,7 +102,6 @@ data class GlobalConfiguration(
         "nohup.out"
     ),
     val ignoredLocalFiles: Set<String> = setOf(
-        ".*",
-        ".*/**"
+        ".**",
     )
 )

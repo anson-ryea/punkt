@@ -26,7 +26,7 @@ class DefaultLocalIgnoreTest {
             DefaultLocalIgnore.ignorePathMatchers.any {
                 it.matches(
                     configuration.global.localStatePath.resolve(
-                        ".gitignore"
+                        "dir/.hidden/file"
                     )
                 )
             }
