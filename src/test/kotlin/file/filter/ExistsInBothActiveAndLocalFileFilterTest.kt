@@ -1,6 +1,6 @@
 package file.filter
 
-import com.an5on.config.ActiveConfiguration
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.config.Configuration
 import com.an5on.config.GlobalConfiguration
 import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -17,21 +16,19 @@ import kotlin.test.assertTrue
 class ExistsInBothActiveAndLocalFileFilterTest {
 
 
-    val config = Configuration(
+    val testConfiguration = Configuration(
         GlobalConfiguration(
-            localStatePath = Paths.get("test").toAbsolutePath().resolve("local"),
-            activeStatePath = Paths.get("test").toAbsolutePath().resolve("active"),
+            localStatePath = Files.createTempDirectory("test-share").toAbsolutePath().resolve("local"),
+            activeStatePath = Files.createTempDirectory("test-home").resolve("active"),
         )
     )
 
-
-
     init {
-        ActiveConfiguration.configuration = config
+        configuration = testConfiguration
     }
 
-    val localDir: Path = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
-    val activeDir: Path = config.global.activeStatePath.resolve(".testDir")
+    val localDir: Path = testConfiguration.global.localStatePath.resolve(testConfiguration.global.dotReplacementPrefix + "testDir")
+    val activeDir: Path = testConfiguration.global.activeStatePath.resolve(".testDir")
     val localFileDir = localDir.resolve("test")
     val localFile = localFileDir.resolve("test.txt")
     val activeFileDir = activeDir.resolve("test")
@@ -57,12 +54,6 @@ class ExistsInBothActiveAndLocalFileFilterTest {
             writeText("Sample content") // Write to the active file
         }
     }
-//    @AfterEach
-//    fun tearDown() {
-//        // Clean up the temporary directories and files after tests
-//        Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
-//        Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
-//    }
 
     @Test
     fun acceptWithLocalFiles() {
@@ -72,6 +63,7 @@ class ExistsInBothActiveAndLocalFileFilterTest {
         assertFalse(ExistsInBothActiveAndLocalFileFilter.accept(localFile.toFile()))
         Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
     }
+
     @Test
     fun acceptWithActiveFiles() {
         assertTrue(ExistsInBothActiveAndLocalFileFilter.accept(activeFile.toFile()))
@@ -79,6 +71,17 @@ class ExistsInBothActiveAndLocalFileFilterTest {
         // Clean up the temporary directories and files after tests
         assertFalse(ExistsInBothActiveAndLocalFileFilter.accept(activeFile.toFile()))
         Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+    }
+
+    @Test
+    fun acceptWithNeitherActiveNorLocalFile(@TempDir tempDir: File) {
+
+        val testFile = tempDir.resolve("test.txt")
+        assertFalse(ExistsInBothActiveAndLocalFileFilter.accept(testFile))
+
+        Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+        Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+
     }
 
     @Test
