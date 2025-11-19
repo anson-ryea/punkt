@@ -53,7 +53,8 @@ suspend fun main(args: Array<String>) {
             Register,
             Login,
             Logout,
-            WhoAmI
+            WhoAmI,
+            ActivateLicence
         )
     ).main(args)
 }

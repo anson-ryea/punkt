@@ -6,36 +6,39 @@ import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
-import com.an5on.hub.command.options.RegisterOptions
+import com.an5on.hub.command.options.ActivateLicenceOptions
 import com.an5on.hub.error.HubError
-import com.an5on.type.Verbosity
+import com.an5on.hub.operation.LoginOperation.Companion.getToken
 import com.github.ajalt.mordant.terminal.Terminal
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import kotlin.collections.mapOf
 
-class RegisterOperation(
+class ActivateLicenceOperation(
     val globalOptions: GlobalOptions,
-    val registerOptions: RegisterOptions,
+    val activateLicenceOptions: ActivateLicenceOptions,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable {
-    override suspend fun runBefore(): Either<PunktError, Unit> = either {
-        echos.echoStage(
-            "Registering a new account on ${configuration.hub.serverUrl}",
-            globalOptions.verbosity,
-            Verbosity.NORMAL
-        )
-    }
-
-    override suspend fun operate(fromBefore: Any): Either<PunktError, String> = either {
+    override suspend fun operate(fromBefore: Any): Either<PunktError, Boolean> = either {
         HttpClient(CIO) {
             expectSuccess = true
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(getToken()!!, "")
+                    }
+                }
+            }
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
@@ -44,13 +47,13 @@ class RegisterOperation(
             }
         }.use { client ->
             try {
-                client.post(configuration.hub.serverUrl + "/users/register") {
+                client.post(
+                    configuration.hub.serverUrl + "/users/me/license-activate",
+                ) {
                     contentType(ContentType.Application.Json)
                     setBody(
                         mapOf(
-                            "email" to registerOptions.email,
-                            "password" to registerOptions.password,
-                            "username" to registerOptions.username
+                            "key_string" to activateLicenceOptions.key,
                         )
                     )
                 }
@@ -59,7 +62,7 @@ class RegisterOperation(
             } catch (e: ResponseException) {
                 raise(
                     HubError.OperationFailed(
-                        "Register",
+                        "Activate Licence",
                         "${e.response.status.value} - ${e.response.status.description}"
                     )
                 )
@@ -68,6 +71,6 @@ class RegisterOperation(
             }
         }
 
-        return@either registerOptions.email
+        return@either true
     }
 }

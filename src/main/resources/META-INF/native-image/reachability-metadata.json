@@ -22,23 +22,6 @@
       "type": "[Lorg.apache.logging.log4j.core.config.Property;"
     },
     {
-      "type": "com.an5on.hub.type.RegisterPayload",
-      "fields": [
-        {
-          "name": "Companion"
-        }
-      ]
-    },
-    {
-      "type": "com.an5on.hub.type.RegisterPayload$Companion",
-      "methods": [
-        {
-          "name": "serializer",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "com.an5on.hub.type.TokenResponse",
       "fields": [
         {
