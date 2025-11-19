@@ -24,7 +24,7 @@ class RegisterOperation(
     val registerOptions: RegisterOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable {
+) : SuspendingOperable <Unit, String, String> {
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         echos.echoStage(
             "Registering a new account on ${configuration.hub.serverUrl}",
@@ -33,7 +33,7 @@ class RegisterOperation(
         )
     }
 
-    override suspend fun operate(fromBefore: Any): Either<PunktError, String> = either {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, String> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(ContentNegotiation) {

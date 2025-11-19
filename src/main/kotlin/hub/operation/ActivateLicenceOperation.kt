@@ -28,8 +28,8 @@ class ActivateLicenceOperation(
     val activateLicenceOptions: ActivateLicenceOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable {
-    override suspend fun operate(fromBefore: Any): Either<PunktError, Boolean> = either {
+) : SuspendingOperable <Unit, Boolean, Unit> {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, Boolean> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(Auth) {

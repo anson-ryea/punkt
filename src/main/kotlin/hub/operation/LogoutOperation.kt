@@ -18,14 +18,14 @@ class LogoutOperation(
     val globalOptions: GlobalOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable {
+) : SuspendingOperable <Unit, Unit, Unit> {
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
-    override suspend fun operate(fromBefore: Any): Either<PunktError, Any> = catchOrThrow<IOException, Unit> {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = catchOrThrow<IOException, Unit> {
         Files.deleteIfExists(configuration.hub.tokenPath)
     }.mapLeft {
         HubError.OperationFailed("Logout", "Failed to delete token file: ${it.message}")

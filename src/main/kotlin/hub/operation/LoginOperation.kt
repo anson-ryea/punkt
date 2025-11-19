@@ -34,7 +34,7 @@ class LoginOperation(
     val loginOptions: LoginOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable {
+) : SuspendingOperable <Unit, Unit, Unit> {
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         echos.echoStage(
             "Logging in as ${loginOptions.email}",
@@ -46,7 +46,7 @@ class LoginOperation(
         }
     }
 
-    override suspend fun operate(fromBefore: Any): Either<PunktError, Unit> = either {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(ContentNegotiation) {

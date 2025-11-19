@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import com.an5on.error.PunktError
 
-interface SuspendingOperable {
+interface SuspendingOperable <B, O, A> {
     /**
      * A hook that runs before the main [operate] method.
      *
@@ -13,7 +13,8 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
      */
-    suspend fun runBefore(): Either<PunktError, Any> = Either.Right(Unit)
+    @Suppress("UNCHECKED_CAST")
+    suspend fun runBefore(): Either<PunktError, B> = Either.Right(Unit as B)
 
     /**
      * The core logic of the operation.
@@ -22,7 +23,7 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
      */
-    suspend fun operate(fromBefore: Any): Either<PunktError, Any>
+    suspend fun operate(fromBefore: B): Either<PunktError, O>
 
     /**
      * A hook that runs after the main [operate] method has completed successfully.
@@ -32,7 +33,8 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing a [PunktError] on failure or [Unit] on success.
      */
-    suspend fun runAfter(fromOperate: Any): Either<PunktError, Any> = Either.Right(fromOperate)
+    @Suppress("UNCHECKED_CAST")
+    suspend fun runAfter(fromOperate: O): Either<PunktError, A> = Either.Right(fromOperate as A)
 
     /**
      * Executes the full lifecycle of the operation: [runBefore], [operate], and [runAfter].
@@ -42,7 +44,7 @@ interface SuspendingOperable {
      *
      * @return An [Either] containing the first [PunktError] encountered, or [Unit] if all steps succeed.
      */
-    suspend fun run(): Either<PunktError, Any> = either {
+    suspend fun run(): Either<PunktError, A> = either {
         runAfter(operate(runBefore().bind()).bind()).bind()
     }
 }

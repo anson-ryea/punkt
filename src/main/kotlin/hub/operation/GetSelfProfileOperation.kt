@@ -27,7 +27,7 @@ class GetSelfProfileOperation(
     val globalOptions: GlobalOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable {
+) : SuspendingOperable <Unit, String, Unit> {
     private lateinit var selfProfileResponse: SelfProfileResponse
 
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
@@ -36,7 +36,7 @@ class GetSelfProfileOperation(
         }
     }
 
-    override suspend fun operate(fromBefore: Any): Either<PunktError, String> = either {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, String> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(Auth) {
@@ -76,7 +76,7 @@ class GetSelfProfileOperation(
         return@either selfProfileResponse.username
     }
 
-    override suspend fun runAfter(fromOperate: Any): Either<PunktError, Unit> = either {
+    override suspend fun runAfter(fromOperate: String): Either<PunktError, Unit> = either {
         echos.echoWithVerbosity(
             """
                         username: ${selfProfileResponse.username}
