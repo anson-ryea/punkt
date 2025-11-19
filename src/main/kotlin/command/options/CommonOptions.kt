@@ -43,7 +43,7 @@ class CommonOptions : PunktOptionGroup("Common Options") {
     val include by option(
         "-i",
         "--include",
-        help = "Include file paths matching the regex pattern"
+        help = "Only Include file paths matching the regex pattern"
     ).convert { Regex(it) }
         .defaultLazy { Regex(".*") } // Matches everything if include is null
 

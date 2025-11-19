@@ -26,7 +26,8 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
      * defaults to `FULL`. The application's default is loaded from the configuration.
      */
     val verbosity by option(
-        "-v", "--verbosity"
+        "-v", "--verbosity",
+        help = "Set the level of detail in the command's output"
     )
         .choice(
             *Enum.toChoices<Verbosity>()
@@ -40,12 +41,12 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
     /**
      * Determines how file paths are displayed in command output.
      *
-     * This can be set to `ABSOLUTE`, `RELATIVE`, or `TILDE` (which shortens home directory paths).
+     * This can be set to `ABSOLUTE`, `RELATIVE`, `LOCAL_ABSOLUTE`, or `LOCAL_RELATIVE`.
      * The default style is loaded from the configuration.
      */
     val pathStyle by option(
         "-p", "--path-style",
-        help = "Set the path style for displaying the list of managed dotfiles."
+        help = "Set the path style for displaying paths"
     )
         .choice(
             *Enum.toChoices<PathStyle>()
@@ -56,12 +57,13 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
     /**
      * Controls whether the application should prompt for user confirmation during potentially destructive operations.
      *
-     * It can be set to `ALWAYS`, `NEVER`, or `AUTO`. Using `-y` or `--interactivity` without a value defaults
+     * It can be set to `ALWAYS`, `NEVER`. Using `-y` or `--interactivity` without a value defaults
      * to `NEVER`. The default behaviour is loaded from the configuration.
      */
     val interactivity by option(
         "-y",
-        "--interactivity"
+        "--interactivity",
+        help = "Whether the application should prompt for user confirmation during potentially destructive operations"
     )
         .choice(
             *Enum.toChoices<Interactivity>()
@@ -71,13 +73,13 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
         .default(configuration.global.interactivity)
 
     /**
-     * Determines whether to use the bundled Git executable or the system's native Git.
+     * Determines whether to use the bundled Git or the system-installed Git for Git Operations.
      *
      * This can be `TRUE`, `FALSE`, or `AUTO`. `AUTO` will attempt to use the system's Git and fall back to the
      * bundled version if not found. Using the option flag without a value defaults to `TRUE`. The default is
      * loaded from the configuration.
      */
-    val useBundledGit by option(help = "Whether to use the bundled Git executable")
+    val useBundledGit by option(help = "Whether to use the bundled Git for Git Operations")
         .choice(
             *Enum.toChoices<BooleanWithAuto>()
         )
@@ -90,9 +92,9 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
     /**
      * Defines the automatic Git action to perform when local file changes are detected.
      *
-     * This can be set to `COMMIT`, `ADD`, or `NONE`. The default action is loaded from the configuration.
+     * This can be set to `ADD_COMMIT_PUSH`, `COMMIT_PUSH`, `ADD_COMMIT`, `COMMIT`, `ADD`, or `NONE`. The default action is loaded from the configuration.
      */
-    val gitOnLocalChange by option(help = "The automatic Git action to perform on local file changes")
+    val gitOnLocalChange by option(help = "Automatically perform Git operations to perform on local state changes")
         .choice(
             *Enum.toChoices<GitOnLocalChange>()
         )
@@ -102,9 +104,9 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
     /**
      * The default commit message to use for automatic Git commits.
      *
-     * This message is used when `gitOnLocalChange` is set to `COMMIT`. The default message is loaded from the
+     * This message is used when `gitOnLocalChange` contains `COMMIT`. The default message is loaded from the
      * configuration.
      */
-    val gitCommitMessage by option(help = "The default commit message for automatic Git commits")
+    val gitCommitMessage by option(help = "Set the commit message for automatic Git commits")
         .default(configuration.git.commitMessage)
 }
