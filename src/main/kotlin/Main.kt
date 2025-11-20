@@ -54,7 +54,8 @@ suspend fun main(args: Array<String>) {
             Login,
             Logout,
             WhoAmI,
-            ActivateLicence
+            ActivateLicence,
+            com.an5on.hub.command.List
         )
     ).main(args)
 }

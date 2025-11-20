@@ -3,21 +3,37 @@ package com.an5on.hub.command
 import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.command.options.ListOptions
-import com.an5on.hub.operation.ListOperation
+import com.an5on.hub.operation.GetCollectionByIdOperation
+import com.an5on.hub.operation.ListCollectionOperation
 import com.github.ajalt.clikt.core.terminal
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
+import com.github.ajalt.clikt.parameters.types.int
 
 object List : PunktCommand() {
     val globalOptions by GlobalOptions()
     val listOptions by ListOptions()
+    val handle by argument().int().optional()
 
     override suspend fun run() {
-        ListOperation(
-            globalOptions,
-            listOptions,
-            echos,
-            terminal
-        ).run().fold(
+        val either = if (handle == null) {
+            ListCollectionOperation(
+                globalOptions,
+                echos,
+                terminal
+            ).run()
+        } else {
+            GetCollectionByIdOperation(
+                globalOptions,
+                listOptions,
+                handle!!,
+                echos,
+                terminal
+            ).run()
+        }
+
+        either.fold(
             { handleError(it) },
             {}
         )

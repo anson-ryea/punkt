@@ -6,10 +6,9 @@ import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
-import com.an5on.hub.command.options.ListOptions
 import com.an5on.hub.error.HubError
 import com.an5on.hub.operation.LoginOperation.Companion.getToken
-import com.an5on.hub.type.Dotfile
+import com.an5on.hub.type.Collection
 import com.github.ajalt.mordant.rendering.BorderType
 import com.github.ajalt.mordant.table.Borders
 import com.github.ajalt.mordant.table.table
@@ -23,17 +22,18 @@ import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
+import kotlin.time.ExperimentalTime
 
-class GetCollectionById(
+class ListCollectionOperation(
     val globalOptions: GlobalOptions,
-    val listOptions: ListOptions,
-    val handle: Int,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable<Unit, List<Dotfile>, Unit> {
-    override suspend fun operate(fromBefore: Unit): Either<PunktError, List<Dotfile>> = either {
-        var collection: List<Dotfile>
+) : SuspendingOperable<Unit, List<Collection>, Unit> {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, List<Collection>> = either {
+        var collections: List<Collection>
 
         HttpClient(CIO) {
             expectSuccess = true
@@ -53,16 +53,16 @@ class GetCollectionById(
         }.use { client ->
             try {
                 val response = client.get(
-                    configuration.hub.serverUrl + "/collections/${handle}/dotfiles",
+                    configuration.hub.serverUrl + "/collections/public",
                 )
 
-                collection = response.body<List<Dotfile>>()
+                collections = response.body<List<Collection>>()
             } catch (e: HttpRequestTimeoutException) {
                 raise(HubError.ServerTimeout(e))
             } catch (e: ResponseException) {
                 raise(
                     HubError.OperationFailed(
-                        "Get collection by handle",
+                        "List collections",
                         "${e.response.status.value} - ${e.response.status.description}"
                     )
                 )
@@ -71,20 +71,28 @@ class GetCollectionById(
             }
         }
 
-        return@either collection
+        return@either collections
     }
 
-    override suspend fun runAfter(fromOperate: List<Dotfile>): Either<PunktError, Unit> = either {
+    @OptIn(ExperimentalTime::class)
+    override suspend fun runAfter(fromOperate: List<Collection>): Either<PunktError, Unit> = either {
         terminal.println(
             table {
                 borderType = BorderType.SQUARE_DOUBLE_SECTION_SEPARATOR
                 tableBorders = Borders.NONE
                 header {
-                    row("file name", "path")
+                    row("name", "description", "handle", "last updated")
                 }
                 body {
-                    fromOperate.forEach { dotfile ->
-                        row(dotfile.fileName, dotfile.pathname)
+                    fromOperate.forEach { collection ->
+                        row(
+                            collection.name,
+                            collection.description,
+                            collection.id,
+                            collection.updatedAt.toLocalDateTime(
+                                TimeZone.currentSystemDefault()
+                            ).date.toString()
+                        )
                     }
                 }
             }
