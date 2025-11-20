@@ -2,6 +2,7 @@ package com.an5on.hub.operation
 
 import arrow.core.Either
 import arrow.core.raise.either
+import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
@@ -32,6 +33,12 @@ class ListCollectionsOperation(
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, List<Collection>, Unit> {
+    override suspend fun runBefore(): Either<PunktError, Unit> = either {
+        ensure(getToken() != null) {
+            HubError.LoggedOut()
+        }
+    }
+
     override suspend fun operate(fromBefore: Unit): Either<PunktError, List<Collection>> = either {
         var collections: List<Collection>
 
@@ -78,7 +85,7 @@ class ListCollectionsOperation(
     override suspend fun runAfter(fromOperate: List<Collection>): Either<PunktError, Unit> = either {
         terminal.println(
             table {
-                borderType = BorderType.SQUARE_DOUBLE_SECTION_SEPARATOR
+                borderType = BorderType.ASCII_DOUBLE_SECTION_SEPARATOR
                 tableBorders = Borders.NONE
                 header {
                     row("name", "description", "handle", "last updated")

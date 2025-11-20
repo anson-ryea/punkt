@@ -2,6 +2,7 @@ package com.an5on.hub.operation
 
 import arrow.core.Either
 import arrow.core.raise.either
+import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
@@ -29,6 +30,12 @@ class ActivateLicenceOperation(
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable <Unit, Boolean, Unit> {
+    override suspend fun runBefore(): Either<PunktError, Unit> = either {
+        ensure(getToken() != null) {
+            HubError.LoggedOut()
+        }
+    }
+
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Boolean> = either {
         HttpClient(CIO) {
             expectSuccess = true

@@ -28,7 +28,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.ExperimentalTime
 
-class ListSelfCollections(
+class ListSelfCollectionsOperation(
     val globalOptions: GlobalOptions,
     val handle: Int?,
     val echos: Echos,
@@ -83,11 +83,13 @@ class ListSelfCollections(
                     "Collection with handle $handle not found or it does not belong to you"
                 )
             }
-            GetCollectionByIdOperation(globalOptions, handle, echos, terminal).run().bind()
+            GetCollectionByIdOperation(globalOptions, handle, echos, terminal).let { it ->
+                it.runAfter(it.operate(Unit).bind())
+            }.bind()
         } else {
             terminal.println(
                 table {
-                    borderType = BorderType.SQUARE_DOUBLE_SECTION_SEPARATOR
+                    borderType = BorderType.ASCII_DOUBLE_SECTION_SEPARATOR
                     tableBorders = Borders.NONE
                     header {
                         row("name", "description", "handle", "last updated")
