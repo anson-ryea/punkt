@@ -6,7 +6,6 @@ import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
-import com.an5on.hub.command.options.ListOptions
 import com.an5on.hub.error.HubError
 import com.an5on.hub.operation.LoginOperation.Companion.getToken
 import com.an5on.hub.type.Dotfile
@@ -27,7 +26,6 @@ import kotlinx.serialization.json.Json
 
 class GetCollectionByIdOperation(
     val globalOptions: GlobalOptions,
-    val listOptions: ListOptions,
     val handle: Int,
     val echos: Echos,
     val terminal: Terminal

@@ -27,7 +27,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.ExperimentalTime
 
-class ListCollectionOperation(
+class ListCollectionsOperation(
     val globalOptions: GlobalOptions,
     val echos: Echos,
     val terminal: Terminal

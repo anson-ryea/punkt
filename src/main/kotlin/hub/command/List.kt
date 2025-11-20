@@ -4,7 +4,8 @@ import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.command.options.ListOptions
 import com.an5on.hub.operation.GetCollectionByIdOperation
-import com.an5on.hub.operation.ListCollectionOperation
+import com.an5on.hub.operation.ListCollectionsOperation
+import com.an5on.hub.operation.ListSelfCollections
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
@@ -17,8 +18,15 @@ object List : PunktCommand() {
     val handle by argument().int().optional()
 
     override suspend fun run() {
-        val either = if (handle == null) {
-            ListCollectionOperation(
+        val either = if (listOptions.mine) {
+            ListSelfCollections(
+                globalOptions,
+                handle,
+                echos,
+                terminal
+            ).run()
+        } else if (handle == null) {
+            ListCollectionsOperation(
                 globalOptions,
                 echos,
                 terminal
@@ -26,7 +34,6 @@ object List : PunktCommand() {
         } else {
             GetCollectionByIdOperation(
                 globalOptions,
-                listOptions,
                 handle!!,
                 echos,
                 terminal
