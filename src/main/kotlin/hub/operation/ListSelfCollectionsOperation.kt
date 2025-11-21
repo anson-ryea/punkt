@@ -33,9 +33,9 @@ class ListSelfCollectionsOperation(
     val handle: Int?,
     val echos: Echos,
     val terminal: Terminal,
-) : SuspendingOperable<Unit, List<Collection>, Unit> {
+) : SuspendingOperable<Unit, Unit, Unit> {
     @OptIn(ExperimentalTime::class)
-    override suspend fun operate(fromBefore: Unit): Either<PunktError, List<Collection>> = either {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         var selfCollections: List<Collection>
 
         val httpClient = HttpClient(CIO) {
@@ -109,7 +109,5 @@ class ListSelfCollectionsOperation(
                 }
             )
         }
-
-        return@either selfCollections
     }
 }

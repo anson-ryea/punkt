@@ -18,36 +18,31 @@ object List : PunktCommand() {
     val handle by argument().int().optional()
 
     override suspend fun run() {
-        // Must not group .fold calls as the operations are suspending
         if (listOptions.mine) {
             ListSelfCollectionsOperation(
                 globalOptions,
                 handle,
                 echos,
                 terminal
-            ).run().fold(
-                { handleError(it) },
-                {}
-            )
-        } else if (handle == null) {
-            ListCollectionsOperation(
-                globalOptions,
-                echos,
-                terminal
-            ).run().fold(
-                { handleError(it) },
-                {}
-            )
+            ).run()
         } else {
-            GetCollectionByIdOperation(
-                globalOptions,
-                handle!!,
-                echos,
-                terminal
-            ).run().fold(
-                { handleError(it) },
-                {}
-            )
-        }
+            if (handle == null) {
+                ListCollectionsOperation(
+                    globalOptions,
+                    echos,
+                    terminal
+                ).run()
+            } else {
+                GetCollectionByIdOperation(
+                    globalOptions,
+                    handle!!,
+                    echos,
+                    terminal
+                ).run()
+            }
+        }.fold(
+            { handleError(it) },
+            {}
+        )
     }
 }
