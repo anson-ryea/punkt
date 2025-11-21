@@ -58,7 +58,8 @@ suspend fun main(args: Array<String>) {
             ActivateLicence,
             com.an5on.hub.command.List,
             com.an5on.hub.command.Sync,
-            CreateCollection
+            CreateCollection,
+            DeleteCollection
         )
     ).main(args)
 }
