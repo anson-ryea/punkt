@@ -22,6 +22,23 @@
       "type": "[Lorg.apache.logging.log4j.core.config.Property;"
     },
     {
+      "type": "com.an5on.hub.type.CreateCollectionRequest",
+      "fields": [
+        {
+          "name": "Companion"
+        }
+      ]
+    },
+    {
+      "type": "com.an5on.hub.type.CreateCollectionRequest$Companion",
+      "methods": [
+        {
+          "name": "serializer",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.an5on.hub.type.Collection",
       "fields": [
         {

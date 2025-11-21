@@ -57,7 +57,8 @@ suspend fun main(args: Array<String>) {
             WhoAmI,
             ActivateLicence,
             com.an5on.hub.command.List,
-            com.an5on.hub.command.Sync
+            com.an5on.hub.command.Sync,
+            CreateCollection
         )
     ).main(args)
 }
