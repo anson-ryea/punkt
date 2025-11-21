@@ -29,14 +29,14 @@ class ActivateLicenceOperation(
     val activateLicenceOptions: ActivateLicenceOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable <Unit, Boolean, Unit> {
+) : SuspendingOperable <Unit, Unit, Unit> {
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
-    override suspend fun operate(fromBefore: Unit): Either<PunktError, Boolean> = either {
+    override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true
             install(Auth) {
@@ -77,7 +77,5 @@ class ActivateLicenceOperation(
                 client.close()
             }
         }
-
-        return@either true
     }
 }
