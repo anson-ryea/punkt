@@ -2,12 +2,14 @@ package com.an5on.hub.operation
 
 import arrow.core.Either
 import arrow.core.raise.either
+import arrow.core.raise.ensure
 import com.an5on.command.Echos
 import com.an5on.command.options.GlobalOptions
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.error.PunktError
 import com.an5on.hub.command.options.RegisterOptions
 import com.an5on.hub.error.HubError
+import com.an5on.hub.operation.LoginOperation.Companion.validateToken
 import com.an5on.type.Verbosity
 import com.github.ajalt.mordant.terminal.Terminal
 import io.ktor.client.*
@@ -24,8 +26,11 @@ class RegisterOperation(
     val registerOptions: RegisterOptions,
     val echos: Echos,
     val terminal: Terminal
-) : SuspendingOperable <Unit, String, String> {
+) : SuspendingOperable<Unit, String, String> {
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
+        ensure(!validateToken().bind()) {
+            HubError.AlreadyLoggedIn()
+        }
         echos.echoStage(
             "Registering a new account on ${configuration.hub.serverUrl}",
             globalOptions.verbosity,

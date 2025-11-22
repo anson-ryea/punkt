@@ -36,14 +36,14 @@ class LoginOperation(
     val terminal: Terminal
 ) : SuspendingOperable <Unit, Unit, Unit> {
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
+        ensure(!validateToken().bind()) {
+            HubError.AlreadyLoggedIn()
+        }
         echos.echoStage(
             "Logging in as ${loginOptions.email}",
             globalOptions.verbosity,
             Verbosity.NORMAL
         )
-        ensure(!validateToken().bind()) {
-            HubError.AlreadyLoggedIn()
-        }
     }
 
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
