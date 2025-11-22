@@ -18,6 +18,7 @@ import com.an5on.file.FileUtils.toStringInPathStyle
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import com.an5on.file.filter.DefaultLocalIgnoreFileFilter
 import com.an5on.file.filter.RegexBasedOnActiveFileFilter
+import com.an5on.hub.operation.ActivateOperation
 import com.an5on.states.active.ActiveState
 import com.an5on.states.active.ActiveTransactionCopyToActive
 import com.an5on.states.active.ActiveTransactionMakeDirectories
@@ -131,6 +132,12 @@ class ActivateOperation(
             }
 
         commit(existingLocalPaths, globalOptions, echos, terminal).bind()
+
+        ActivateOperation(
+            globalOptions,
+            echos,
+            terminal
+        ).run().bind()
     }
 
     /**

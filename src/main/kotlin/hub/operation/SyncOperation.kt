@@ -23,6 +23,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.file.PathUtils
 import java.io.File
 import java.io.FileInputStream
@@ -30,15 +31,17 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.util.zip.ZipInputStream
+import kotlin.io.path.exists
 
 class SyncOperation(
     val globalOptions: GlobalOptions,
-    val handle: Int?,
+    var handle: Int?,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, Unit, Unit> {
     private val tempDownloadedZipFile: File = File.createTempFile("punkt_collection_$handle", ".zip")
     private val unzipPath: Path = Files.createTempDirectory("punkt_unzip_$handle")
+    private val collectionsPath: Path = configuration.global.localStatePath.resolve(".punkthub/collections")
 
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(LocalState.exists()) {
@@ -50,6 +53,19 @@ class SyncOperation(
     }
 
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
+        val json = Json {
+            prettyPrint = true
+            ignoreUnknownKeys = true
+            explicitNulls = false
+        }
+
+        // Get collection metadata
+        val collection = GetCollectionByIdOperation(globalOptions, handle!!, echos, terminal).operate(Unit).bind()
+        val collectionInJson = json.encodeToString(collection)
+        val metadataFile = collectionsPath.resolve("c$handle.json").toFile()
+        FileUtils.createParentDirectories(metadataFile)
+        metadataFile.writeText(collectionInJson)
+
         HttpClient(CIO) {
             expectSuccess = true
             install(Auth) {
@@ -98,16 +114,17 @@ class SyncOperation(
                     }
                 }
 
-                val destPath = configuration.global.localStatePath.resolve(".punkthub/collections")
-                Files.createDirectories(destPath)
-                PathUtils.copyDirectory(unzipPath, destPath,
-                    StandardCopyOption.REPLACE_EXISTING)
+                Files.createDirectories(collectionsPath)
+                PathUtils.copyDirectory(
+                    unzipPath, collectionsPath,
+                    StandardCopyOption.REPLACE_EXISTING
+                )
             } catch (e: HttpRequestTimeoutException) {
                 raise(HubError.ServerTimeout(e))
             } catch (e: ResponseException) {
                 raise(
                     HubError.OperationFailed(
-                        "List collections",
+                        "Sync collection",
                         "${e.response.status.value} - ${e.response.status.description}"
                     )
                 )
@@ -117,6 +134,37 @@ class SyncOperation(
                 tempDownloadedZipFile.delete()
                 client.close()
             }
+        }
+    }
+
+    override suspend fun run(): Either<PunktError, Unit> = either {
+        runBefore().bind()
+
+        if (handle == null) {
+            if (collectionsPath.exists()) {
+                FileUtils.listFiles(collectionsPath.toFile(), arrayOf("json"), false).forEach { file ->
+                    val fileName = file.nameWithoutExtension
+                    if (fileName.startsWith("c")) {
+                        val collectionId = fileName.removePrefix("c").toIntOrNull()
+                        if (collectionId != null) {
+                            handle = collectionId
+                            echos.echoStage(
+                                "Syncing collection with ID: $handle",
+                                globalOptions.verbosity,
+                                Verbosity.NORMAL
+                            )
+                            operate(Unit).bind()
+                        }
+                    }
+                }
+            }
+        } else {
+            echos.echoStage(
+                "Syncing collection with ID: $handle",
+                globalOptions.verbosity,
+                Verbosity.NORMAL
+            )
+            operate(Unit).bind()
         }
     }
 }
