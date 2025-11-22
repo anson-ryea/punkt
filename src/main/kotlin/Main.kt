@@ -3,6 +3,7 @@ package com.an5on
 import com.an5on.command.*
 import com.an5on.command.List
 import com.an5on.command.Sync
+import com.an5on.command.Unsync
 import com.an5on.hub.command.*
 import com.an5on.system.SystemUtils.logPath
 import com.github.ajalt.clikt.command.main
@@ -59,7 +60,8 @@ suspend fun main(args: Array<String>) {
             com.an5on.hub.command.List,
             com.an5on.hub.command.Sync,
             CreateCollection,
-            DeleteCollection
+            DeleteCollection,
+            com.an5on.hub.command.Unsync
         )
     ).main(args)
 }
