@@ -42,6 +42,14 @@ class RegisterOperation(
                     isLenient = true
                 })
             }
+            engine {
+                requestTimeout = 30_000
+
+                endpoint {
+                    connectTimeout = 10_000
+                    connectAttempts = 3
+                }
+            }
         }.use { client ->
             try {
                 client.post(configuration.hub.serverUrl + "/users/register") {

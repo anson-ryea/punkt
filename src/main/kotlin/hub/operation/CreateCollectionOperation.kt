@@ -46,6 +46,14 @@ class CreateCollectionOperation(
                     isLenient = true
                 })
             }
+            engine {
+                requestTimeout = 30_000
+
+                endpoint {
+                    connectTimeout = 10_000
+                    connectAttempts = 3
+                }
+            }
         }.use { client ->
             try {
                 val requestBody = CreateCollectionRequest(

@@ -39,6 +39,14 @@ class DeleteFileFromCollectionOperation(
                     }
                 }
             }
+            engine {
+                requestTimeout = 30_000
+
+                endpoint {
+                    connectTimeout = 10_000
+                    connectAttempts = 3
+                }
+            }
         }.use { client ->
             try {
                 client.delete(

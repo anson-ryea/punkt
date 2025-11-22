@@ -47,6 +47,14 @@ class ListSelfCollectionsOperation(
                     }
                 }
             }
+            engine {
+                requestTimeout = 30_000
+
+                endpoint {
+                    connectTimeout = 10_000
+                    connectAttempts = 3
+                }
+            }
             install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true

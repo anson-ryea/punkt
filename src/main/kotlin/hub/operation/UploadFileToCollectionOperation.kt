@@ -21,7 +21,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
@@ -66,8 +65,13 @@ class UploadFileToCollectionOperation(
                     }
                 }
             }
-            install(ContentNegotiation) {
+            engine {
+                requestTimeout = 30_000
 
+                endpoint {
+                    connectTimeout = 10_000
+                    connectAttempts = 3
+                }
             }
         }.use { client ->
             val jsonPayload = UploadDotfilePayload(
