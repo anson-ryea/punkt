@@ -61,7 +61,9 @@ suspend fun main(args: Array<String>) {
             com.an5on.hub.command.Sync,
             CreateCollection,
             DeleteCollection,
-            com.an5on.hub.command.Unsync
+            com.an5on.hub.command.Unsync,
+            Publish,
+            Unpublish
         )
     ).main(args)
 }
