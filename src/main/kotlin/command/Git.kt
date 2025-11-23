@@ -3,6 +3,7 @@ package com.an5on.command
 import com.an5on.git.GenericOperationWithSystem
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.multiple
 
@@ -17,8 +18,11 @@ import com.github.ajalt.clikt.parameters.arguments.multiple
  * @author Anson Ng <hej@an5on.com>
  */
 object Git : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     /**
-     * The list of arguments to pass to the Git command.
+     * The git command that is going to be executed.
      */
     private val arguments by argument().multiple()
 
@@ -28,9 +32,11 @@ object Git : PunktCommand() {
         This command only executes if Git is installed and available in the system's PATH.
         
         Examples:
+        ```
         punkt git status
         punkt git log --oneline
         punkt git checkout -b new-branch
+        ```
     """.trimIndent()
 
     override suspend fun run() {

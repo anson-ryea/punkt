@@ -5,6 +5,7 @@ import com.an5on.system.SystemUtils
 import com.an5on.system.SystemUtils.environmentVariables
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.pty4j.PtyProcessBuilder
 import kotlin.io.path.pathString
 
@@ -23,13 +24,18 @@ import kotlin.io.path.pathString
  * @author Anson Ng <hej@an5on.com>
  */
 object Shell : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     override fun help(context: Context): String = """
         Launch an interactive shell session within the local state directory.
         
         This command is experimental and it might not work properly under many scenarios.
         
         Example:
+        ```
         punkt shell
+        ```
     """.trimIndent()
 
     override suspend fun run() {

@@ -8,6 +8,7 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.DiffOperation
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -28,6 +29,9 @@ import com.github.ajalt.clikt.parameters.types.path
  * @property paths The list of specific file or directory paths to diff. If empty, all tracked files are diffed.
  */
 object Diff : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val paths by argument().convert {
@@ -44,10 +48,12 @@ object Diff : PunktCommand() {
         Display the differences between files in the active state and their corresponding versions in the local state.
         
         Examples:
+        ```
         punkt diff
         punkt diff ~/a.txt ~/audrey
         punkt diff -i ".*.txt"
         punkt diff -i ".*.txt" -x ".*/a.txt" /users/audrey
+        ```
     """.trimIndent()
 
     override suspend fun run() {

@@ -4,6 +4,7 @@ import com.an5on.command.Ignored.globalOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.operation.IgnoredOperation
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
@@ -19,6 +20,9 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
  * @property globalOptions The global options for the command, such as verbosity.
  */
 object Ignored : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     private val globalOptions by GlobalOptions()
 
     override fun help(context: Context): String = """
@@ -27,7 +31,9 @@ object Ignored : PunktCommand() {
         Ignored rules are defined in the `.punktignore` file located at the top level of the local state directory.
         
         Examples:
+        ```
         punkt ignored
+        ```
     """.trimIndent()
 
     override suspend fun run() {

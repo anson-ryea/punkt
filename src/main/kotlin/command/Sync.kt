@@ -7,6 +7,7 @@ import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.SyncOperation
 import com.an5on.states.tracked.TrackedEntriesStore
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -30,6 +31,9 @@ import com.github.ajalt.clikt.parameters.types.path
  * tracked files.
  */
 object Sync : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val syncOptions by SyncOptions()
@@ -48,10 +52,12 @@ object Sync : PunktCommand() {
         If no targets are specified, modify all dotfiles that are currently in the local state so that they match the active state.
         
         Examples:
+        ```
         punkt sync
         punkt sync ~/.txt ~/audrey
         punkt sync -i ".*\.txt"
         punkt sync --no-recursive -i ".*.txt" -x ".*/a.txt" /users/audrey
+        ```
     """.trimIndent()
 
     override suspend fun run() {

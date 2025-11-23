@@ -4,6 +4,7 @@ import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.file.FileUtils.toLocal
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.types.path
 import kotlin.io.path.pathString
@@ -17,6 +18,9 @@ import kotlin.io.path.pathString
  * @author Anson Ng <hej@an5on.com>
  */
 object LocalPath : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     /**
      * The list of target paths to resolve to their local state paths.
      * Tilde (`~`) is expanded to the user's home directory.
@@ -35,8 +39,10 @@ object LocalPath : PunktCommand() {
         If no targets are specified then print the path to the local state directory.
         
         Examples:
+        ```
         punkt local-path
         punkt local-path ~/.audrey
+        ```
     """.trimIndent()
 
     override suspend fun run() {
