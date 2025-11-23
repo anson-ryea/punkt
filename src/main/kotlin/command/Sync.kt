@@ -1,15 +1,12 @@
 package com.an5on.command
 
-import com.an5on.command.Sync.commonOptions
-import com.an5on.command.Sync.globalOptions
-import com.an5on.command.Sync.syncOptions
-import com.an5on.command.Sync.targets
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.SyncOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.SyncOperation
 import com.an5on.states.tracked.TrackedEntriesStore
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -46,7 +43,18 @@ object Sync : PunktCommand() {
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique().optional()
 
-    override suspend fun run() {
+    override fun help(context: Context): String = """
+        Add dotfiles to or update dotfiles in the local state so that they match the content in the active state. 
+        If no targets are specified, modify all dotfiles that are currently in the local state so that they match the active state.
+        
+        Examples:
+        punkt sync
+        punkt sync ~/.txt ~/audrey
+        punkt sync -i ".*\.txt"
+        punkt sync --no-recursive -i ".*.txt" -x ".*/a.txt" /users/audrey
+    """.trimIndent()
+
+    override fun run() {
         TrackedEntriesStore.connect()
 
         SyncOperation(

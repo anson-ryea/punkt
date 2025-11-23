@@ -1,11 +1,10 @@
 package com.an5on.command
 
-import com.an5on.command.Unsync.globalOptions
-import com.an5on.command.Unsync.targets
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.UnsyncOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert
@@ -38,7 +37,16 @@ object Unsync : PunktCommand() {
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique()
 
-    override suspend fun run() {
+    override fun help(context: Context): String = """
+        Remove dotfiles from the local state so that they will no longer be managed by punkt.
+        
+        This does not affect the original files in the active state.
+        
+        Examples:
+        punkt unsync ~/.txt ~/audrey
+    """.trimIndent()
+
+    override fun run() {
         UnsyncOperation(
             targets,
             globalOptions,

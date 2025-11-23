@@ -7,6 +7,7 @@ import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.DiffOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -14,7 +15,7 @@ import com.github.ajalt.clikt.parameters.types.path
 
 /**
  * A command to display the differences between files in the active state and their corresponding versions in the
- * local repository.
+ * local state.
  *
  * This command compares files and directories in the user's filesystem (active state) with the versions stored in
  * the `punkt` local state. It highlights additions, deletions, and modifications, providing a clear overview of
@@ -39,7 +40,17 @@ object Diff : PunktCommand() {
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique().optional()
 
-    override suspend fun run() {
+    override fun help(context: Context): String = """
+        Display the differences between files in the active state and their corresponding versions in the local state.
+        
+        Examples:
+        punkt diff
+        punkt diff ~/a.txt ~/audrey
+        punkt diff -i ".*.txt"
+        punkt diff -i ".*.txt" -x ".*/a.txt" /users/audrey
+    """.trimIndent()
+
+    override fun run() {
         DiffOperation(
             paths,
             globalOptions,
