@@ -7,6 +7,15 @@ import com.an5on.hub.operation.ActivateLicenceOperation
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
+/**
+ * Command that activates a Punkt Hub licence for the current user.
+ *
+ * This calls the remote activation endpoint and, on success,
+ * enables unlimited downloads for the configured account.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 object ActivateLicence : PunktCommand() {
     val globalOptions by GlobalOptions()
     val activateLicenceOptions by ActivateLicenceOptions()

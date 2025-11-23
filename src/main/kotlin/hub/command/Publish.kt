@@ -13,6 +13,15 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.path
 
+/**
+ * Command that publishes one or more local files to a Punkt Hub collection.
+ *
+ * The files specified in [targets] are active state paths disk and uploaded the corresponding local state
+ * to the collection identified by [handle].
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 object Publish : PunktCommand() {
     val globalOptions by GlobalOptions()
     val handle by argument().int()

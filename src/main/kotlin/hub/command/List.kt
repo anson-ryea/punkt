@@ -12,6 +12,16 @@ import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.int
 
+/**
+ * Command that lists Punkt Hub collections.
+ *
+ * Depending on the provided options, this can list all public
+ * collections, only the current user's collections, or details
+ * for a specific collection identified by [handle].
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 object List : PunktCommand() {
     val globalOptions by GlobalOptions()
     val listOptions by ListOptions()

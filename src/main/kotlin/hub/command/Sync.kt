@@ -8,6 +8,15 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 import com.github.ajalt.clikt.parameters.types.int
 
+/**
+ * Command that synchronises a collection on Punkt Hub to local state.
+ *
+ * The collection is identified by [handle], and the synchronisation
+ * strategy is determined by [SyncOperation].
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 object Sync : PunktCommand() {
     val globalOptions by GlobalOptions()
     val handle by argument().int()
