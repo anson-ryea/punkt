@@ -5,6 +5,15 @@ import com.an5on.system.SystemUtils
 import kotlinx.serialization.Serializable
 import java.nio.file.Path
 
+/**
+ * Configuration for the hub client, including server endpoint and token storage path.
+ *
+ * @property serverUrl Base URL of the hub backend server.
+ * @property tokenPath File system path to the persisted authentication token.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 @Serializable
 data class HubConfiguration (
     val serverUrl: String = "https://dot-backend-85b8.onrender.com",
