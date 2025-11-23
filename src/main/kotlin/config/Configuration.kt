@@ -1,5 +1,6 @@
 package com.an5on.config
 
+import com.an5on.hub.config.HubConfiguration
 import kotlinx.serialization.Serializable
 
 /**
@@ -18,4 +19,5 @@ data class Configuration(
     val global: GlobalConfiguration = GlobalConfiguration(),
 //    val command: CommandConfiguration,
     val git: GitConfiguration = GitConfiguration(),
+    val hub: HubConfiguration = HubConfiguration(),
 )

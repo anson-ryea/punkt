@@ -13,7 +13,7 @@ package com.an5on.error
  * @since 0.1.0
  * @author Anson Ng <hej@an5on.com>
  */
-sealed interface PunktError {
+interface PunktError {
     val code: String
     val message: String
     val statusCode: Int

@@ -1,9 +1,6 @@
 group = "com.an5on"
 version = "0.0.0"
 
-val kotlinVersion = "2.2.21"
-val cliktVersion = "5.0.3"
-
 plugins {
     application
     kotlin("jvm") version "2.2.21"
@@ -18,9 +15,14 @@ repositories {
     mavenCentral()
 }
 
+val kotlinVersion: String by project
+val cliktVersion: String by project
+val ktorVersion: String by project
+
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
     implementation(platform("io.arrow-kt:arrow-stack:2.1.0"))
     implementation("io.arrow-kt:arrow-core")
     implementation("commons-io:commons-io:2.20.0")
@@ -35,14 +37,19 @@ dependencies {
     implementation("com.github.ajalt.clikt:clikt-markdown:${cliktVersion}")
     implementation("com.github.mwiede:jsch:2.27.3")
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") // Must not change its version to guarantee GraalVM compatibility
-    implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:6.5.0.202303070854-r"){
-        exclude(group="com.jcraft", module="jsch") // Strip off original jsch as it is abandoned
+    implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:6.5.0.202303070854-r") {
+        exclude(group = "com.jcraft", module = "jsch") // Strip off original jsch as it is abandoned
     }
     implementation("com.h2database:h2:2.4.240")
     implementation("commons-codec:commons-codec:1.19.0")
     implementation("io.github.java-diff-utils:java-diff-utils:4.16")
     implementation("io.github.java-diff-utils:java-diff-utils-jgit:4.16")
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
+    implementation("io.ktor:ktor-client-core:${ktorVersion}")
+    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+    implementation("io.ktor:ktor-client-content-negotiation:${ktorVersion}")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
+    implementation("io.ktor:ktor-client-auth:${ktorVersion}")
     testImplementation(kotlin("test"))
 }
 

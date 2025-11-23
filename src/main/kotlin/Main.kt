@@ -2,8 +2,11 @@ package com.an5on
 
 import com.an5on.command.*
 import com.an5on.command.List
+import com.an5on.command.Sync
+import com.an5on.command.Unsync
+import com.an5on.hub.command.*
 import com.an5on.system.SystemUtils.logPath
-import com.github.ajalt.clikt.core.main
+import com.github.ajalt.clikt.command.main
 import com.github.ajalt.clikt.core.subcommands
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.io.path.pathString
@@ -22,7 +25,7 @@ import kotlin.io.path.pathString
  * @since 0.1.0
  * @author Anson Ng <hej@an5on.com>
  */
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) {
     System.setProperty("log.dir", logPath.pathString)
 
     val logger = KotlinLogging.logger {}
@@ -35,7 +38,7 @@ fun main(args: Array<String>) {
         logger.error { message }
     }
 
-    Command().subcommands(
+    Base.subcommands(
         Init,
         Sync,
         Unsync,
@@ -47,6 +50,20 @@ fun main(args: Array<String>) {
         Update,
         Ignored,
         LocalPath,
-        ActivePath
+        ActivePath,
+        Hub.subcommands(
+            Register,
+            Login,
+            Logout,
+            WhoAmI,
+            ActivateLicence,
+            com.an5on.hub.command.List,
+            com.an5on.hub.command.Sync,
+            CreateCollection,
+            DeleteCollection,
+            com.an5on.hub.command.Unsync,
+            Publish,
+            Unpublish
+        )
     ).main(args)
 }

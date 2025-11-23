@@ -1,5 +1,9 @@
 package com.an5on.command
 
+import com.an5on.command.Sync.commonOptions
+import com.an5on.command.Sync.globalOptions
+import com.an5on.command.Sync.syncOptions
+import com.an5on.command.Sync.targets
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.SyncOptions
@@ -42,7 +46,7 @@ object Sync : PunktCommand() {
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique().optional()
 
-    override fun run() {
+    override suspend fun run() {
         TrackedEntriesStore.connect()
 
         SyncOperation(
