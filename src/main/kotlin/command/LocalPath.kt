@@ -39,7 +39,7 @@ object LocalPath : PunktCommand() {
         punkt local-path ~/.audrey
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         echo(
             if (targets != null && targets!!.isNotEmpty()) {
                 targets!!.joinToString(separator = "\n") { it.toLocal().pathString }

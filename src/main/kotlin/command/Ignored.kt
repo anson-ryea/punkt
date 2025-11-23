@@ -30,7 +30,7 @@ object Ignored : PunktCommand() {
         punkt ignored
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         IgnoredOperation(
             globalOptions,
             echos,

@@ -33,7 +33,7 @@ object Git : PunktCommand() {
         punkt git checkout -b new-branch
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         GenericOperationWithSystem(arguments)
             .operateWithSystem()
             .fold(

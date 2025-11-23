@@ -38,7 +38,7 @@ object ActivePath : PunktCommand() {
         punkt active-path ~/.local/share/punkt/punkt_audrey
     """
 
-    override fun run() {
+    override suspend fun run() {
         echo(
             if (targets != null && targets!!.isNotEmpty()) {
                 targets!!.joinToString(separator = "\n") { it.toActive().pathString }

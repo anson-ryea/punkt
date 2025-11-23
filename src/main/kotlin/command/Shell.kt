@@ -32,7 +32,7 @@ object Shell : PunktCommand() {
         punkt shell
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         val cmd = arrayOf(SystemUtils.shell)
 
         val builder = PtyProcessBuilder(cmd)

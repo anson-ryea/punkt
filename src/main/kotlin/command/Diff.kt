@@ -50,7 +50,7 @@ object Diff : PunktCommand() {
         punkt diff -i ".*.txt" -x ".*/a.txt" /users/audrey
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         DiffOperation(
             paths,
             globalOptions,

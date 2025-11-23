@@ -29,7 +29,7 @@ object Update : PunktCommand() {
         punkt update
     """
 
-    override fun run() {
+    override suspend fun run() {
         if (!LocalState.exists()) {
             handleError(LocalError.LocalNotFound())
             return

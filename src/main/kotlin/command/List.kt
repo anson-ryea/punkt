@@ -47,7 +47,7 @@ object List : PunktCommand() {
         punkt list --path-style local-relative -i ".*.txt" -x ".*/a.txt" /users/audrey
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         ListOperation(
             paths,
             globalOptions,

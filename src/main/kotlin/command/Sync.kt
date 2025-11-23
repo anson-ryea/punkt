@@ -54,7 +54,7 @@ object Sync : PunktCommand() {
         punkt sync --no-recursive -i ".*.txt" -x ".*/a.txt" /users/audrey
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         TrackedEntriesStore.connect()
 
         SyncOperation(

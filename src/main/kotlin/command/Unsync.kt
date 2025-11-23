@@ -46,7 +46,7 @@ object Unsync : PunktCommand() {
         punkt unsync ~/.txt ~/audrey
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         UnsyncOperation(
             targets,
             globalOptions,

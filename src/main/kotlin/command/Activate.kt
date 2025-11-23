@@ -47,7 +47,7 @@ object Activate : PunktCommand() {
         punkt activate --no-recursive -i ".*.txt" -x ".*a.txt" /users/audrey
     """.trimIndent()
 
-    override fun run() {
+    override suspend fun run() {
         ActivateOperation(
             targets,
             globalOptions,
