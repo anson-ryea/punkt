@@ -23,12 +23,39 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
+/**
+ * Operation that creates a new collection on Punkt Hub.
+ *
+ * It sends a JSON [CreateCollectionRequest] to the Hub API and follows a `307 Temporary Redirect`
+ * if one is returned, failing the operation when the final response is not successful.
+ *
+ * @property globalOptions Global CLI options controlling verbosity.
+ * @property createCollectionOptions Options that define the name, description, and privacy of the collection.
+ * @property echos Helper used to render feedback to the user.
+ * @property terminal Terminal used for table and message output.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class CreateCollectionOperation(
     val globalOptions: GlobalOptions,
     val createCollectionOptions: CreateCollectionOptions,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, Unit, Unit> {
+
+    /**
+     * Issues the HTTP request that creates the collection on Punkt Hub.
+     *
+     * A bearer token is attached for authentication. If a `307 Temporary Redirect` is received,
+     * the request is repeated against the URL in the `Location` header, preserving body and method.
+     * Any non-successful final status codes are mapped to [HubError.OperationFailed].
+     *
+     * @param fromBefore Value produced by `runBefore`; currently unused.
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             // Do not throw on non-2xx so we can inspect 307 Temporary Redirect and other statuses

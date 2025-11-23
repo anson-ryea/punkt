@@ -33,6 +33,22 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 
+/**
+ * Operation that uploads one or more local files to a Punkt Hub collection.
+ *
+ * For each active path, the corresponding local path is resolved within the Punkt
+ * local state and uploaded to Hub together with a JSON payload describing the
+ * dotfiles being added.
+ *
+ * @property globalOptions Global CLI options that influence verbosity.
+ * @property handle Handle of the collection to which files will be uploaded.
+ * @property echos Helper used for logging and progress messages.
+ * @property terminal Terminal used for HTTP-related output.
+ * @property activeLocalPathPairs Pairs of active paths and their mapped local-state paths.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class UploadFileToCollectionOperation(
     val globalOptions: GlobalOptions,
     val handle: Int,
@@ -42,6 +58,15 @@ class UploadFileToCollectionOperation(
 ) : SuspendingOperable<Unit, Unit, Unit> {
     val activeLocalPathPairs = targets.map { it to it.toLocal() }
 
+    /**
+     * Validates that local state exists and that all target files resolve within it.
+     *
+     * Any missing local path results in [LocalError.LocalPathNotFound].
+     *
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -54,6 +79,17 @@ class UploadFileToCollectionOperation(
 
     }
 
+    /**
+     * Builds and submits a multipart request containing metadata and file contents.
+     *
+     * The JSON part describes the dotfiles being uploaded, while each file is attached
+     * as a separate binary part. Network and HTTP errors are mapped to [HubError] variants.
+     *
+     * @param fromBefore Value produced by [runBefore]; unused.
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     @OptIn(InternalAPI::class)
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {

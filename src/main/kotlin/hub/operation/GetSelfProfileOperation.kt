@@ -23,6 +23,19 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
+/**
+ * Operation that retrieves and prints the profile of the currently authenticated user.
+ *
+ * The profile is fetched from the Hub `/users/me` endpoint and a short summary is
+ * printed through [echos] in [runAfter].
+ *
+ * @property globalOptions Global CLI options controlling verbosity.
+ * @property echos Helper used to output formatted profile information.
+ * @property terminal Terminal used for HTTP-related messages and interaction.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class GetSelfProfileOperation(
     val globalOptions: GlobalOptions,
     val echos: Echos,
@@ -30,12 +43,32 @@ class GetSelfProfileOperation(
 ) : SuspendingOperable <Unit, String, Unit> {
     private lateinit var selfProfileResponse: SelfProfileResponse
 
+    /**
+     * Ensures that the user is logged in before retrieving the profile.
+     *
+     * Fails with [HubError.LoggedOut] when no access token is present.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
+    /**
+     * Calls the Hub API to retrieve the authenticated user's profile.
+     *
+     * The deserialised [SelfProfileResponse] is stored for later use and the
+     * username is returned as the intermediate result.
+     *
+     * @param fromBefore Value from [runBefore]; unused.
+     * @return An [Either] containing [PunktError] on failure or the username on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, String> = either {
         HttpClient(CIO) {
             expectSuccess = true
@@ -84,6 +117,16 @@ class GetSelfProfileOperation(
         return@either selfProfileResponse.username
     }
 
+    /**
+     * Prints a terse summary of the user's profile using the configured verbosity.
+     *
+     * Currently it outputs the username and account tier.
+     *
+     * @param fromOperate The username returned by [operate]; not used directly.
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runAfter(fromOperate: String): Either<PunktError, Unit> = either {
         echos.echoWithVerbosity(
             """

@@ -28,17 +28,51 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.ExperimentalTime
 
+/**
+ * Operation that lists public Punkt Hub collections and prints them in a table.
+ *
+ * Collections are fetched from the `/collections/public` endpoint and then displayed
+ * with basic metadata such as name, description, handle, and last updated date.
+ *
+ * @property globalOptions Global CLI options affecting verbosity.
+ * @property echos Helper used for user-facing messages.
+ * @property terminal Terminal used for rendering the collections table.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class ListCollectionsOperation(
     val globalOptions: GlobalOptions,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, List<Collection>, Unit> {
+
+    /**
+     * Ensures that the user is authenticated before listing collections.
+     *
+     * Fails with [HubError.LoggedOut] when no access token is available.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
+    /**
+     * Retrieves all public collections from Punkt Hub.
+     *
+     * The HTTP response body is deserialised into a [List] of [Collection] objects.
+     * Timeouts and HTTP failures are reported using [HubError].
+     *
+     * @param fromBefore Value produced by [runBefore]; unused.
+     * @return An [Either] containing [PunktError] on failure or a list of [Collection] on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, List<Collection>> = either {
         var collections: List<Collection>
 
@@ -89,6 +123,17 @@ class ListCollectionsOperation(
         return@either collections
     }
 
+    /**
+     * Renders the retrieved collections in a tabular format on the terminal.
+     *
+     * Each row contains the collection name, description, handle, and last updated date
+     * converted to the local time zone.
+     *
+     * @param fromOperate The list of [Collection] instances returned by [operate].
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     @OptIn(ExperimentalTime::class)
     override suspend fun runAfter(fromOperate: List<Collection>): Either<PunktError, Unit> = either {
         terminal.println(

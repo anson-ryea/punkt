@@ -24,6 +24,19 @@ import java.nio.file.StandardCopyOption
 import kotlin.io.path.Path
 import kotlin.io.path.exists
 
+/**
+ * Operation that activates dotfiles from Punkt Hub collections into the local file system.
+ *
+ * It reads collection metadata and dotfile archives from the local Hub cache and materialises
+ * them at their intended paths, preferring existing local files over remote ones.
+ *
+ * @property globalOptions Global CLI options controlling verbosity and behaviour.
+ * @property echos Helper used to emit informational and warning messages.
+ * @property terminal Terminal used for interactive output.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class ActivateOperation(
     val globalOptions: GlobalOptions,
     val echos: Echos,
@@ -31,12 +44,34 @@ class ActivateOperation(
 ) : Operable {
     private val collectionsPath: Path = configuration.global.localStatePath.resolve(".punkthub/collections")
 
+    /**
+     * Ensures that the local state exists before attempting activation.
+     *
+     * Fails with [LocalError.LocalNotFound] if the Punkt local state directory
+     * has not been initialised.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override fun runBefore(): Either<PunktError, Unit> = either {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
         }
     }
 
+    /**
+     * Restores dotfiles for each cached collection into their target locations.
+     *
+     * For every collection descriptor found under `.punkthub/collections`, this:
+     *  * Deserialises the list of [Dotfile] metadata.
+     *  * Skips any dotfile that already exists locally, warning the user.
+     *  * Copies the stored file to the requested absolute path, creating parents as needed.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override fun operate(): Either<PunktError, Unit> = either {
         if (collectionsPath.exists()) {
             FileUtils.listFiles(collectionsPath.toFile(), arrayOf("json"), false).forEach { file ->

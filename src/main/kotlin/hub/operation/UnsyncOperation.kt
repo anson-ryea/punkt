@@ -18,6 +18,20 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 
+/**
+ * Operation that removes a collection's cached state from the local Punkt directory.
+ *
+ * It deletes both the collection metadata file and its unpacked directory for the
+ * specified handle, effectively stopping local synchronisation.
+ *
+ * @property globalOptions Global CLI options affecting verbosity.
+ * @property handle Handle of the collection to unsynchronise.
+ * @property echos Helper used to output stage messages.
+ * @property terminal Terminal used for console interaction.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class UnsyncOperation(
     val globalOptions: GlobalOptions,
     val handle: Int,
@@ -27,6 +41,16 @@ class UnsyncOperation(
     private val collectionsPath: Path = configuration.global.localStatePath.resolve(".punkthub/collections")
     private val collections = FileUtils.listFiles(collectionsPath.toFile(), arrayOf("json"), false)
 
+    /**
+     * Ensures that local state exists and that the target collection is currently synced.
+     *
+     * If the collection has no local metadata file, the operation fails with
+     * [HubError.OperationFailed].
+     *
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override fun runBefore(): Either<PunktError, Unit> = either {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -43,6 +67,15 @@ class UnsyncOperation(
         )
     }
 
+    /**
+     * Removes the collection's metadata file and extracted directory, if present.
+     *
+     * Both the `c<handle>.json` file and the `c<handle>` directory are deleted.
+     *
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override fun operate(): Either<PunktError, Unit> = either {
         if (collectionsPath.resolve("c$handle.json").exists()) {
             FileUtils.delete(collectionsPath.resolve("c$handle.json").toFile())

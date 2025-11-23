@@ -28,12 +28,54 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.ExperimentalTime
 
+/**
+ * Operation that lists Punkt Hub collections owned by the current user.
+ *
+ * When a [handle] is provided, it validates ownership of the requested collection and
+ * delegates to [GetCollectionByIdOperation] to display its contents. Otherwise, it
+ * prints a table of all owned collections.
+ *
+ * @property globalOptions Global CLI options controlling verbosity.
+ * @property handle Optional handle of a specific collection to inspect.
+ * @property echos Helper used for formatted messaging.
+ * @property terminal Terminal used to render tables and errors.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class ListSelfCollectionsOperation(
     val globalOptions: GlobalOptions,
     val handle: Int?,
     val echos: Echos,
     val terminal: Terminal,
 ) : SuspendingOperable<Unit, Unit, Unit> {
+    /**
+     * Ensures that the user is authenticated before listing collections.
+     *
+     * Fails with [HubError.LoggedOut] when no access token is available.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
+    override suspend fun runBefore(): Either<PunktError, Unit> = either {
+        ensure(getToken() != null) {
+            HubError.LoggedOut()
+        }
+    }
+
+    /**
+     * Fetches all collections owned by the authenticated user and either:
+     *  * Validates and displays a single collection when [handle] is set, or
+     *  * Prints a summary table of all owned collections.
+     *
+     * HTTP and timeout failures are wrapped in [HubError] variants.
+     *
+     * @param fromBefore Value from `runBefore`; currently unused as no pre-check is implemented.
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     @OptIn(ExperimentalTime::class)
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         var selfCollections: List<Collection>

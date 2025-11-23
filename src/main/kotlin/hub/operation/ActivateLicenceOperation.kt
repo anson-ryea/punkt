@@ -24,18 +24,53 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlin.collections.mapOf
 
+/**
+ * Operation that activates a Punkt Hub licence for the currently authenticated user.
+ *
+ * This operation requires an existing authentication token and calls the Hub API
+ * to activate the licence key supplied via [activateLicenceOptions].
+ *
+ * @property globalOptions Global CLI options that influence logging and verbosity.
+ * @property activateLicenceOptions Options containing the licence key to activate.
+ * @property echos Helper used to render messages to the user.
+ * @property terminal Terminal used for low-level output.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class ActivateLicenceOperation(
     val globalOptions: GlobalOptions,
     val activateLicenceOptions: ActivateLicenceOptions,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable <Unit, Unit, Unit> {
+
+    /**
+     * Verifies that the user is logged in before attempting licence activation.
+     *
+     * Fails with [HubError.LoggedOut] if no access token is available.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
+    /**
+     * Calls the Hub API to activate the provided licence key.
+     *
+     * A bearer token is attached to the request, and HTTP errors are mapped to [HubError]
+     * instances with descriptive messages. Timeouts are surfaced as [HubError.ServerTimeout].
+     *
+     * @param fromBefore Value produced by [runBefore]; unused but required by the interface.
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true

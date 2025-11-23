@@ -21,12 +21,36 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
+/**
+ * Operation that registers a new Punkt Hub account.
+ *
+ * The operation first checks that there is no valid existing session, then submits
+ * the registration payload to the `/users/register` endpoint.
+ *
+ * @property globalOptions Global CLI options affecting verbosity.
+ * @property registerOptions Options providing username, e-mail, and password.
+ * @property echos Helper used to display progress and informational messages.
+ * @property terminal Terminal used for low-level interaction.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class RegisterOperation(
     val globalOptions: GlobalOptions,
     val registerOptions: RegisterOptions,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, String, String> {
+
+    /**
+     * Ensures that the user is not already logged in and announces registration.
+     *
+     * If a valid token exists, the operation fails with [HubError.AlreadyLoggedIn].
+     *
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(!validateToken().bind()) {
             HubError.AlreadyLoggedIn()
@@ -38,6 +62,18 @@ class RegisterOperation(
         )
     }
 
+    /**
+     * Sends the registration request to Punkt Hub.
+     *
+     * The request is submitted as JSON; timeouts and non-successful responses are mapped
+     * to [HubError.ServerTimeout] and [HubError.OperationFailed] respectively. On success,
+     * the account e-mail is returned as the intermediate result.
+     *
+     * @param fromBefore Value produced by [runBefore]; unused.
+     * @return An [Either] containing a [PunktError] on failure or the registered e-mail on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, String> = either {
         HttpClient(CIO) {
             expectSuccess = true

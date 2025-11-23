@@ -16,6 +16,21 @@ import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.request.*
 
+/**
+ * Operation that deletes a single dotfile from a Punkt Hub collection.
+ *
+ * It performs an authenticated `DELETE` request for the given file within
+ * the specified collection handle.
+ *
+ * @property globalOptions Global CLI options controlling verbosity and behaviour.
+ * @property handle Integer handle of the collection containing the file.
+ * @property fileName Name of the dotfile to delete from the collection.
+ * @property echos Helper used to print messages to the user.
+ * @property terminal Terminal used for console output.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class DeleteFileFromCollectionOperation(
     val globalOptions: GlobalOptions,
     val handle: Int,
@@ -23,12 +38,33 @@ class DeleteFileFromCollectionOperation(
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, Unit, Unit> {
+
+    /**
+     * Ensures that the user is authenticated before deleting a dotfile.
+     *
+     * Fails with [HubError.LoggedOut] if no access token is present.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(LoginOperation.getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
+    /**
+     * Issues the HTTP `DELETE` call to remove the dotfile from the collection.
+     *
+     * Network timeouts are surfaced as [HubError.ServerTimeout]. Non-success HTTP
+     * responses are wrapped in [HubError.OperationFailed] including status details.
+     *
+     * @param fromBefore Value from [runBefore]; unused.
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true

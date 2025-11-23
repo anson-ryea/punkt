@@ -17,18 +17,53 @@ import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.request.*
 
+/**
+ * Operation that deletes a Punkt Hub collection by its handle.
+ *
+ * It performs an authenticated `DELETE` request against the Hub API and
+ * reports HTTP and timeout failures as [HubError] instances.
+ *
+ * @property globalOptions Global CLI options controlling verbosity.
+ * @property handle Integer handle of the collection to delete.
+ * @property echos Helper used to print user-facing messages.
+ * @property terminal Terminal used for output.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class DeleteCollectionOperation(
     val globalOptions: GlobalOptions,
     val handle: Int,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, Unit, Unit> {
+
+    /**
+     * Ensures that the user is logged in before attempting deletion.
+     *
+     * Fails with [HubError.LoggedOut] when no access token is available.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
+    /**
+     * Sends a `DELETE` request to remove the target collection.
+     *
+     * Timeouts are mapped to [HubError.ServerTimeout], while non-success HTTP responses
+     * are mapped to [HubError.OperationFailed] with the status code and description.
+     *
+     * @param fromBefore Value produced by [runBefore]; unused.
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         HttpClient(CIO) {
             expectSuccess = true

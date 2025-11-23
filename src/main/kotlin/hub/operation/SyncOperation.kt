@@ -33,6 +33,21 @@ import java.nio.file.StandardCopyOption
 import java.util.zip.ZipInputStream
 import kotlin.io.path.exists
 
+/**
+ * Operation that synchronises remote Punkt Hub collections to the local cache.
+ *
+ * It downloads collection archives, stores their metadata under `.punkthub/collections`,
+ * and unpacks the archives into the local state directory.
+ *
+ * @property globalOptions Global CLI options affecting verbosity.
+ * @property handle Optional handle of a specific collection to sync; when `null`, all cached
+ *   collections are synchronised.
+ * @property echos Helper used for progress and diagnostic output.
+ * @property terminal Terminal used for low-level console interaction.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class SyncOperation(
     val globalOptions: GlobalOptions,
     var handle: Int?,
@@ -43,6 +58,16 @@ class SyncOperation(
     private val unzipPath: Path = Files.createTempDirectory("punkt_unzip_$handle")
     private val collectionsPath: Path = configuration.global.localStatePath.resolve(".punkthub/collections")
 
+    /**
+     * Verifies that local state is initialised and that the user is logged in.
+     *
+     * Fails with [LocalError.LocalNotFound] when no local state exists, or
+     * [HubError.LoggedOut] when no access token is available.
+     *
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(LocalState.exists()) {
             LocalError.LocalNotFound()
@@ -52,6 +77,17 @@ class SyncOperation(
         }
     }
 
+    /**
+     * Downloads and unpacks the collection archive for the current [handle].
+     *
+     * Collection metadata is written to `c<handle>.json`, and the zip contents are copied
+     * into the collections directory. Network and unpacking issues are mapped to [HubError].
+     *
+     * @param fromBefore Value produced by [runBefore]; unused.
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, Unit> = either {
         val json = Json {
             prettyPrint = true
@@ -145,6 +181,16 @@ class SyncOperation(
         }
     }
 
+    /**
+     * Runs the sync operation, supporting both explicit and implicit collection handles.
+     *
+     * When [handle] is `null`, all collections with cached metadata are iterated over and
+     * synchronised in turn. Otherwise, only the specified handle is processed.
+     *
+     * @return An [Either] containing a [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun run(): Either<PunktError, Unit> = either {
         runBefore().bind()
 

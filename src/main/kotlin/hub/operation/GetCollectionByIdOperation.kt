@@ -25,18 +25,53 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
+/**
+ * Operation that retrieves and displays the dotfiles for a specific Punkt Hub collection.
+ *
+ * It fetches the list of [Dotfile] entries by collection handle and renders them
+ * as a table to the configured [terminal].
+ *
+ * @property globalOptions Global CLI options controlling verbosity.
+ * @property handle Integer handle of the collection to inspect.
+ * @property echos Helper for user-facing messaging.
+ * @property terminal Terminal used to render the resulting table.
+ *
+ * @since 0.1.0
+ * @author Anson Ng <hej@an5on.com>
+ */
 class GetCollectionByIdOperation(
     val globalOptions: GlobalOptions,
     val handle: Int,
     val echos: Echos,
     val terminal: Terminal
 ) : SuspendingOperable<Unit, List<Dotfile>, Unit> {
+
+    /**
+     * Ensures that the current user is logged in before querying the collection.
+     *
+     * Fails with [HubError.LoggedOut] if no access token is present.
+     *
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runBefore(): Either<PunktError, Unit> = either {
         ensure(getToken() != null) {
             HubError.LoggedOut()
         }
     }
 
+    /**
+     * Retrieves the list of dotfiles belonging to the target collection.
+     *
+     * The response body is deserialised into a [List] of [Dotfile]. HTTP and timeout
+     * failures are converted into appropriate [HubError] variants.
+     *
+     * @param fromBefore Value from [runBefore]; unused.
+     * @return An [Either] containing [PunktError] on failure or a list of [Dotfile] on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun operate(fromBefore: Unit): Either<PunktError, List<Dotfile>> = either {
         var collection: List<Dotfile>
 
@@ -87,6 +122,16 @@ class GetCollectionByIdOperation(
         return@either collection
     }
 
+    /**
+     * Renders the retrieved dotfiles as a table printed to the terminal.
+     *
+     * Each row shows the dotfile name and its path.
+     *
+     * @param fromOperate The list of [Dotfile] instances returned by [operate].
+     * @return An [Either] containing [PunktError] on failure or `Unit` on success.
+     *
+     * @since 0.1.0
+     */
     override suspend fun runAfter(fromOperate: List<Dotfile>): Either<PunktError, Unit> = either {
         terminal.println(
             table {
