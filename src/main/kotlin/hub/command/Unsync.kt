@@ -3,6 +3,7 @@ package com.an5on.hub.command
 import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.operation.UnsyncOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -20,6 +21,17 @@ import com.github.ajalt.clikt.parameters.types.int
 object Unsync : PunktCommand() {
     val globalOptions by GlobalOptions()
     val handle by argument().int()
+
+    override fun help(context: Context): String = """
+        Stop synchronising a Punkt Hub collection and remove it from the local state.
+        
+        The collection is identified by its handle.
+        
+        Example:
+        ```
+        punkt hub unsync 77
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         UnsyncOperation(

@@ -15,6 +15,7 @@ import com.github.ajalt.clikt.parameters.options.validate
  */
 class ActivateLicenceOptions : PunktOptionGroup() {
     val key by option().prompt("licence key").validate {
-        it.isNotBlank()
+        it.isNotBlank() && Regex("^[A-Z0-9]{4}(-[A-Z0-9]{4}){3}\$").matches(it) ||
+            fail("Licence key must be in the format XXXX-XXXX-XXXX-XXXX")
     }
 }

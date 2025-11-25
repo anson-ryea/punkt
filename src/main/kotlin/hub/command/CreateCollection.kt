@@ -4,6 +4,7 @@ import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.command.options.CreateCollectionOptions
 import com.an5on.hub.operation.CreateCollectionOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
@@ -19,6 +20,16 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 object CreateCollection : PunktCommand() {
     val globalOptions by GlobalOptions()
     val createCollectionOptions by CreateCollectionOptions()
+
+    override fun help(context: Context): String = """
+        Create a new collection on Punkt Hub.
+                
+        Example usage:
+        ```
+        punkt hub create-collection --name "Audrey's Collection" --description "A collection of my favorite assets."
+        punkt hub create-collection --name "Private Collection" --private
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         CreateCollectionOperation(

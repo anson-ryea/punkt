@@ -4,6 +4,7 @@ import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.command.options.RegisterOptions
 import com.an5on.hub.operation.RegisterOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
@@ -19,6 +20,15 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 object Register : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val registerOptions by RegisterOptions()
+
+    override fun help(context: Context): String = """
+        Register a new Punkt Hub account.
+        
+        Example:
+        ```
+        punkt hub register
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         RegisterOperation(

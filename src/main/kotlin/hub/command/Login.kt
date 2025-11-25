@@ -4,6 +4,7 @@ import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.command.options.LoginOptions
 import com.an5on.hub.operation.LoginOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
@@ -21,6 +22,15 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 object Login : PunktCommand() {
     private val globalOptions by GlobalOptions()
     private val loginOptions by LoginOptions()
+
+    override fun help(context: Context): String = """
+        Log in to Punkt Hub.
+        
+        Examples:
+        ```
+        punkt hub login --email
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         LoginOperation(

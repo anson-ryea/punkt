@@ -3,6 +3,7 @@ package com.an5on.hub.command
 import com.an5on.command.PunktCommand
 import com.an5on.command.options.GlobalOptions
 import com.an5on.hub.operation.LogoutOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
@@ -17,6 +18,15 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
  */
 object Logout : PunktCommand() {
     private val globalOptions by GlobalOptions()
+
+    override fun help(context: Context): String = """
+        Log out of Punkt Hub.
+        
+        Example:
+        ```
+        punkt hub logout
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         LogoutOperation(
