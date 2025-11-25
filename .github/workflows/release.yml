@@ -15,9 +15,17 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: punkt-linux
+            os_name: linux
+            arch: x86
+          - os: ubuntu-latest
+            os_name: linux
+            arch: amd64
+          - os: macos-13
+            os_name: macos
+            arch: x86
           - os: macos-latest
-            artifact_name: punkt-macos
+            os_name: macos
+            arch: amd64
 
     steps:
       - name: Checkout code
@@ -36,13 +44,23 @@ jobs:
       - name: Build GraalVM Native Image with Gradle Wrapper
         run: ./gradlew nativeCompile
 
+      - name: Derive version
+        id: vars
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
       - name: Prepare Artifacts
-        run: mv build/native/nativeCompile/punkt ${{ matrix.artifact_name }}
+        run: |
+          VERSION=${{ steps.vars.outputs.version }}
+          ARTIFACT="punkt-${VERSION}-${{ matrix.arch }}-${{ matrix.os_name }}"
+          mkdir -p "$ARTIFACT"
+          cp build/native/nativeCompile/punkt "$ARTIFACT/punkt"
+          tar -czf "${ARTIFACT}.tar.gz" -C "$ARTIFACT" punkt
+          rm -rf "$ARTIFACT"
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ matrix.artifact_name }}
+          files: punkt-${{ steps.vars.outputs.version }}-${{ matrix.arch }}-${{ matrix.os_name }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
