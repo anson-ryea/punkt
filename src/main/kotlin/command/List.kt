@@ -7,6 +7,8 @@ import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.ListOperation
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.*
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -26,6 +28,9 @@ import com.github.ajalt.clikt.parameters.types.path
  * @property paths The specific file or directory paths to list. If empty, all files in the local state are listed.
  */
 object List : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val paths by argument().convert {
@@ -35,6 +40,18 @@ object List : PunktCommand() {
         canBeDir = true,
         canBeSymlink = true
     ).multiple().unique().optional()
+
+    override fun help(context: Context): String = """
+        List files and directories managed within Punkt's local state.
+        
+        Examples:
+        ```
+        punkt list
+        punkt list ~/.txt ~/audrey
+        punkt list -i ".*.txt"
+        punkt list --path-style local-relative -i ".*.txt" -x ".*/a.txt" /users/audrey
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         ListOperation(

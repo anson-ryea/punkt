@@ -6,6 +6,7 @@ import com.an5on.hub.command.options.ListOptions
 import com.an5on.hub.operation.GetCollectionByIdOperation
 import com.an5on.hub.operation.ListCollectionsOperation
 import com.an5on.hub.operation.ListSelfCollectionsOperation
+import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
@@ -26,6 +27,24 @@ object List : PunktCommand() {
     val globalOptions by GlobalOptions()
     val listOptions by ListOptions()
     val handle by argument().int().optional()
+
+    override fun help(context: Context): String = """
+        List Punkt Hub collections.
+
+        By default, this command lists all public collections available on Punkt Hub.
+
+        Use the '--mine' option to list only the collections owned by you.
+
+        Provide a specific collection handle as an argument to retrieve the content of that collection.
+
+        Examples:
+        ```
+        punkt hub list
+        punkt hub list --mine
+        punkt hub list --mine 777
+        punkt hub list 777
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         if (listOptions.mine) {

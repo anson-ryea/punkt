@@ -1,11 +1,11 @@
 package com.an5on.command
 
-import com.an5on.command.Unsync.globalOptions
-import com.an5on.command.Unsync.targets
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.UnsyncOperation
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.core.terminal
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert
@@ -27,6 +27,9 @@ import com.github.ajalt.clikt.parameters.types.path
  * @property targets The list of target paths in the active state to remove from the local repository.
  */
 object Unsync : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     private val globalOptions by GlobalOptions()
     private val targets by argument().convert {
         it.expandTildeWithHomePathname()
@@ -37,6 +40,17 @@ object Unsync : PunktCommand() {
         mustExist = true,
         mustBeReadable = true
     ).convert { it.toRealPath() }.multiple().unique()
+
+    override fun help(context: Context): String = """
+        Remove dotfiles from the local state so that they will no longer be managed by punkt.
+        
+        This does not affect the original files in the active state.
+        
+        Examples:
+        ```
+        punkt unsync ~/.txt ~/audrey
+        ```
+    """.trimIndent()
 
     override suspend fun run() {
         UnsyncOperation(

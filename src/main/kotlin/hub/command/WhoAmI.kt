@@ -18,6 +18,15 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
 object WhoAmI : PunktCommand("whoami") {
     private val globalOptions by GlobalOptions()
 
+    override fun help(context: com.github.ajalt.clikt.core.Context): String = """
+        Display the profile of the currently authenticated Punkt Hub user.
+        
+        Example:
+        ```
+        punkt hub whoami
+        ```
+    """.trimIndent()
+
     override suspend fun run() {
         GetSelfProfileOperation(
             globalOptions,

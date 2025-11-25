@@ -5,6 +5,8 @@ import com.an5on.command.options.GlobalOptions
 import com.an5on.error.LocalError
 import com.an5on.git.PullOperation
 import com.an5on.states.local.LocalState
+import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
 
 /**
@@ -19,7 +21,19 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
  * @property globalOptions The global options for the command, such as verbosity and whether to use the bundled Git executable.
  */
 object Update : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
     private val globalOptions by GlobalOptions()
+
+    override fun help(context: Context): String = """
+        Update the local state repository by pulling the latest changes from its remote repository.
+        
+        Examples:
+        ```
+        punkt update
+        ```
+    """
 
     override suspend fun run() {
         if (!LocalState.exists()) {

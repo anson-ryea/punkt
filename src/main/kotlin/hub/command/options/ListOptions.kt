@@ -11,5 +11,5 @@ import com.github.ajalt.clikt.parameters.options.option
  * @author Anson Ng <hej@an5on.com>
  */
 class ListOptions : PunktOptionGroup() {
-    val mine by option().flag()
+    val mine by option(help = "Include items belong to you only").flag()
 }

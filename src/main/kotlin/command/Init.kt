@@ -50,15 +50,16 @@ object Init : PunktCommand() {
     If the repository URL is not complete, Punkt will try to make guesses of it.
     Supported formats for the remote Punkt repository URL:
 
-    
     Examples:
-        punkt init
-        punkt init audrey
-        punkt init audrey/dotfiles
-        punkt init --ssh audrey/config
-        punkt init --branch main audrey/dotfiles
-        punkt init --depth 1 audrey/dotfiles
-        punkt init --ssh --branch main --depth 1 audrey/dotfiles
+    ```
+    punkt init
+    punkt init audrey
+    punkt init audrey/dotfiles
+    punkt init --ssh audrey/config
+    punkt init --branch main audrey/dotfiles
+    punkt init --depth 1 audrey/dotfiles
+    punkt init --ssh --branch main --depth 1 audrey/dotfiles
+    ```
     """.trimIndent()
 
     /**
