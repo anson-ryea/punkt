@@ -56,7 +56,7 @@ interface GitOperableWithBundled : GitOperable {
          * if no credentials could be obtained.
          */
         fun buildCredentialsProvider(): Either<GitError, CredentialsProvider> = either {
-            for (method in ActiveConfiguration.configuration.git.builtInCredentialsPreference) {
+            for (method in ActiveConfiguration.configuration.git.bundledGitCredentialsPreference) {
                 val provider = when (method) {
                     GitCredentialsProviderForBundledType.GCM -> {
                         buildCredentialsProviderFromGitCredentialManager().getOrNull()
@@ -76,7 +76,7 @@ interface GitOperableWithBundled : GitOperable {
                 }
             }
 
-            raise(GitError.BundledCredentialsNotFound(ActiveConfiguration.configuration.git.builtInCredentialsPreference))
+            raise(GitError.BundledCredentialsNotFound(ActiveConfiguration.configuration.git.bundledGitCredentialsPreference))
         }
 
         /**

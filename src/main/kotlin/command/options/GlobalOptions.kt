@@ -108,5 +108,5 @@ class GlobalOptions : PunktOptionGroup("Global Options") {
      * configuration.
      */
     val gitCommitMessage by option(help = "Set the commit message for automatic Git commits")
-        .default(configuration.git.commitMessage)
+        .default(configuration.git.autoCommitMessage)
 }
