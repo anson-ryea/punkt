@@ -4,7 +4,7 @@ import BaseTestWithTestConfiguration
 import com.an5on.file.filter.DefaultActiveIgnoreFileFilter
 import com.an5on.system.OsType
 import com.an5on.system.SystemUtils.osType
-import org.junit.jupiter.api.Assumptions
+import com.an5on.system.SystemUtils.resetOsType
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
@@ -15,15 +15,13 @@ class DefaultActiveIgnoreFileFilterTest : BaseTestWithTestConfiguration() {
 
     @Test
     fun acceptWithValidFile(@TempDir tempDir: File) {
-
         assertTrue(DefaultActiveIgnoreFileFilter.accept(File("test.txt")))
         assertTrue(DefaultActiveIgnoreFileFilter.accept(tempDir, "test.txt"))
-
     }
 
     @Test
     fun acceptWithInValidFileForWin(@TempDir tempDir: File) {
-        Assumptions.assumeTrue { osType == OsType.WINDOWS }
+        osType = OsType.WINDOWS
 
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "Thumbs.db"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, "ehthumbs.db"))
@@ -51,11 +49,13 @@ class DefaultActiveIgnoreFileFilterTest : BaseTestWithTestConfiguration() {
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msm")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.msp")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("test.lnk")))
+
+        resetOsType()
     }
 
     @Test
     fun acceptWithInValidFileForDarwin(@TempDir tempDir: File) {
-        Assumptions.assumeTrue { osType == OsType.DARWIN }
+        osType = OsType.DARWIN
 
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".DS_Store"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".localized"))
@@ -99,11 +99,14 @@ class DefaultActiveIgnoreFileFilterTest : BaseTestWithTestConfiguration() {
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Network Trash Folder")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File("Temporary Items")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".apdisk")))
+
+        resetOsType()
     }
 
     @Test
     fun acceptWithInValidFileForLinux(@TempDir tempDir: File) {
-        Assumptions.assumeTrue { osType == OsType.LINUX }
+        osType = OsType.LINUX
+
         // swap files
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".foo.swp"))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(tempDir, ".foo.swo"))
@@ -141,6 +144,8 @@ class DefaultActiveIgnoreFileFilterTest : BaseTestWithTestConfiguration() {
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".Trash-1000/files/somefile")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".cache/someapp/file")))
         assertFalse(DefaultActiveIgnoreFileFilter.accept(File(".local/share/Trash/files/removed")))
+
+        resetOsType()
     }
 
 

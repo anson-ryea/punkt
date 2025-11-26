@@ -31,7 +31,7 @@ object FileUtils {
      * @return the pathname with `~` replaced by the absolute home directory path.
      */
     fun String.expandTildeWithHomePathname(): String =
-        replaceFirst("~", homePath.pathString)
+        replaceFirst("^~".toRegex(), homePath.pathString)
 
     /**
      * Computes the Blake3 hash of the given file and returns it as a hexadecimal string.
