@@ -22,7 +22,7 @@ class DefaultLocalIgnoreTest : BaseTestWithTestConfiguration() {
         val p1 = configuration.global.localStatePath.resolve(".gitignore")
         assertTrue(DefaultLocalIgnore.ignorePathMatchers.any { it.matches(p1) })
         // file under dot-directory
-        val p2 = configuration.global.localStatePath.resolve(".config").resolve("file.txt")
+        val p2 = configuration.global.localStatePath.resolve(".config/file.txt")
         assertTrue(DefaultLocalIgnore.ignorePathMatchers.any { it.matches(p2) })
     }
 
@@ -36,10 +36,10 @@ class DefaultLocalIgnoreTest : BaseTestWithTestConfiguration() {
     @Test
     fun matchesWithGlobalRecursivePattern() {
         // ensure patterns include a recursive dot-dir pattern like ".*/**"
-        val nested = configuration.global.localStatePath.resolve(".trash").resolve("files").resolve("a.txt")
+        val nested = configuration.global.localStatePath.resolve(".hidden/inner/file.txt")
         assertTrue(
             DefaultLocalIgnore.ignorePathMatchers.any { it.matches(nested) },
-            "expected recursive pattern to match ${nested}"
+            "expected recursive pattern to match $nested"
         )
     }
 
