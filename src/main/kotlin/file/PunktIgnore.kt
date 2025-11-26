@@ -6,7 +6,7 @@ import kotlin.io.path.Path
 
 
 /**
- * An implementation of the [Ignore] interface that sources ignore patterns from a `.punktignore` file.
+ * An implementation of the [Ignorable] interface that sources ignore patterns from a `.punktignore` file.
  *
  * This object is responsible for locating and parsing the `.punktignore` file within the application's
  * local state directory. It extracts patterns, ignoring comments and blank lines, to be used for
@@ -15,9 +15,9 @@ import kotlin.io.path.Path
  * @since 0.1.0
  * @author Anson Ng <hej@an5on.com>
  */
-object PunktIgnore : Ignore {
+object PunktIgnore : Ignorable {
     /** The path to the `.punktignore` file, located in the configured local state directory. */
-    val ignoreFilePath = Path("${configuration.global.localStatePath}/.punktignore")
+    var ignoreFilePath = Path("${configuration.global.localStatePath}/.punktignore")
 
     /**
      * Provides the set of ignore patterns by parsing the `.punktignore` file.
