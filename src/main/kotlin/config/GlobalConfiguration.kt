@@ -138,7 +138,6 @@ data class GlobalConfiguration(
         "**/*~",
         ".fuse_hidden*",
         "**/.fuse_hidden*",
-        ".directory",
         ".nfs*",
         "**/.nfs*",
         "nohup.out",
