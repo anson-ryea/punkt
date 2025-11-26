@@ -12,7 +12,6 @@ import kotlin.test.assertEquals
 
 class PunktIgnoreTest {
 
-
     @Test
     fun parseWithNonExistingPath() {
         val missing = Path("nonexistent-file-xyz")

@@ -23,8 +23,6 @@ class PunktIgnoreFileFilterTest {
     lateinit var ignorePatterns: Set<String>
     lateinit var pathMatchers: Set<PathMatcher>
 
-
-
     @BeforeEach
     fun setup() {
         ignoreFilePath = Path("src/test/resources/.punktIgnore")
@@ -37,11 +35,6 @@ class PunktIgnoreFileFilterTest {
 
     @TempDir
     lateinit var tempDir: Path
-
-//    @Test
-//    fun punktIgnore(){
-//        println(ignorePatterns.toString())
-//    }
 
     @Test
     fun acceptWithFileNotInPunktIgnore() {

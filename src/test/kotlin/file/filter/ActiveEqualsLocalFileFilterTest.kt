@@ -1,8 +1,7 @@
 package file.filter
 
-import com.an5on.config.ActiveConfiguration
-import com.an5on.config.Configuration
-import com.an5on.config.GlobalConfiguration
+import BaseTestWithTestConfiguration
+import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -11,29 +10,16 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ActiveEqualsLocalFileFilterTest {
+class ActiveEqualsLocalFileFilterTest : BaseTestWithTestConfiguration() {
 
-    val config = Configuration(
-        GlobalConfiguration(
-            localStatePath = Paths.get("test").toAbsolutePath().resolve("local"),
-            activeStatePath = Paths.get("test").toAbsolutePath().resolve("active"),
-        )
-    )
-
-
-
-    init {
-        ActiveConfiguration.configuration = config
-    }
-
-    val localDir: Path = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
-    val activeDir: Path = config.global.activeStatePath.resolve(".testDir")
+    val localDir: Path =
+        configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
+    val activeDir: Path = configuration.global.activeStatePath.resolve(".testDir")
     val testFileDir = localDir.resolve("test")
     val testFile = testFileDir.resolve("test.txt")
     val activeFileDir = activeDir.resolve("test")
@@ -59,12 +45,14 @@ class ActiveEqualsLocalFileFilterTest {
             writeText("Sample content") // Write to the active file
         }
     }
+
     @AfterEach
     fun tearDown() {
         // Clean up the temporary directories and files after tests
         Files.walk(localDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
         Files.walk(activeDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
     }
+
     @Test
     fun acceptWithNullPath() {
         val ex = assertThrows(IllegalArgumentException::class.java) {
@@ -111,7 +99,7 @@ class ActiveEqualsLocalFileFilterTest {
         assertFalse(ActiveEqualsLocalFileFilter.accept(null, "Non-existentFile.txt"))
         val p: File? = null
         val attrs: String? = null
-        assertFalse( ActiveEqualsLocalFileFilter.accept(p, attrs))
+        assertFalse(ActiveEqualsLocalFileFilter.accept(p, attrs))
     }
 
 

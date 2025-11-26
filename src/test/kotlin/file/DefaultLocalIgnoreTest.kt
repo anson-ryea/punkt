@@ -1,26 +1,14 @@
 package file
 
+import BaseTestWithTestConfiguration
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.config.Configuration
-import com.an5on.config.GlobalConfiguration
 import com.an5on.file.DefaultLocalIgnore
 import org.junit.jupiter.api.Assertions.assertFalse
-import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class DefaultLocalIgnoreTest {
-    private val testConfiguration = Configuration(
-        GlobalConfiguration(
-            localStatePath = Files.createTempDirectory("test-share"),
-            activeStatePath = Files.createTempDirectory("test-home"),
-        )
-    )
-
-    init {
-        configuration = testConfiguration
-    }
+class DefaultLocalIgnoreTest : BaseTestWithTestConfiguration() {
 
     @Test
     fun ignorePatternsEqualsToLocalIgnoreFiles() {
@@ -49,7 +37,10 @@ class DefaultLocalIgnoreTest {
     fun matchesWithGlobalRecursivePattern() {
         // ensure patterns include a recursive dot-dir pattern like ".*/**"
         val nested = configuration.global.localStatePath.resolve(".trash").resolve("files").resolve("a.txt")
-        assertTrue(DefaultLocalIgnore.ignorePathMatchers.any { it.matches(nested) }, "expected recursive pattern to match ${nested}")
+        assertTrue(
+            DefaultLocalIgnore.ignorePathMatchers.any { it.matches(nested) },
+            "expected recursive pattern to match ${nested}"
+        )
     }
 
     @Test

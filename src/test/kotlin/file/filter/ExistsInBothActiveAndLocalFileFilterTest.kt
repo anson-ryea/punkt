@@ -1,8 +1,7 @@
 package file.filter
 
+import BaseTestWithTestConfiguration
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.config.Configuration
-import com.an5on.config.GlobalConfiguration
 import com.an5on.file.filter.ExistsInBothActiveAndLocalFileFilter
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
@@ -13,22 +12,11 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ExistsInBothActiveAndLocalFileFilterTest {
+class ExistsInBothActiveAndLocalFileFilterTest : BaseTestWithTestConfiguration() {
 
-
-    val testConfiguration = Configuration(
-        GlobalConfiguration(
-            localStatePath = Files.createTempDirectory("test-share").toAbsolutePath().resolve("local"),
-            activeStatePath = Files.createTempDirectory("test-home").resolve("active"),
-        )
-    )
-
-    init {
-        configuration = testConfiguration
-    }
-
-    val localDir: Path = testConfiguration.global.localStatePath.resolve(testConfiguration.global.dotReplacementPrefix + "testDir")
-    val activeDir: Path = testConfiguration.global.activeStatePath.resolve(".testDir")
+    val localDir: Path =
+        configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
+    val activeDir: Path = configuration.global.activeStatePath.resolve(".testDir")
     val localFileDir = localDir.resolve("test")
     val localFile = localFileDir.resolve("test.txt")
     val activeFileDir = activeDir.resolve("test")
@@ -90,7 +78,7 @@ class ExistsInBothActiveAndLocalFileFilterTest {
         assertFalse(ExistsInBothActiveAndLocalFileFilter.accept(null, "Non-existentFile.txt"))
         val p: File? = null
         val attrs: String? = null
-        assertFalse( ExistsInBothActiveAndLocalFileFilter.accept(p, attrs))
+        assertFalse(ExistsInBothActiveAndLocalFileFilter.accept(p, attrs))
     }
 
 }
