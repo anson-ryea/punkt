@@ -1,4 +1,4 @@
-name: JVM Test - IntelliJ Agent
+name: JVM Test - Qodana with IntelliJ Agent
 
 on:
   workflow_dispatch:
@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - 'releases/*'
 
 jobs:
   build:
