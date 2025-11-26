@@ -43,7 +43,7 @@ interface Ignore {
             val fullPattern = if (normalisedPattern.contains('/') || pattern.startsWith("**")) {
                 normalisedPrefixLocal + normalisedPattern
             } else {
-                "$normalisedPrefixLocal**$normalisedPattern"
+                "$normalisedPrefixLocal**/$normalisedPattern"
             }.expandTildeWithHomePathname()
 
             FileSystems.getDefault().getPathMatcher("glob:$fullPattern")
