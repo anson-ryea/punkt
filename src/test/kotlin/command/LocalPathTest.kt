@@ -20,8 +20,8 @@ class LocalPathTest {
     fun setup() {
         configuration = Configuration(
             GlobalConfiguration(
-                activeStatePath = Path("src/test/resources/sample_state/state_1/active"),
-                localStatePath = Path("src/test/resources/sample_state/state_1/local")
+                activeStatePath = Path("src/test/resources/sample_state/state_1/active").toAbsolutePath(),
+                localStatePath = Path("src/test/resources/sample_state/state_1/local").toAbsolutePath()
             )
         )
     }
