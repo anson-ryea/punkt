@@ -11,6 +11,7 @@ import com.an5on.git.CloneOperation
 import com.an5on.git.InitOperation
 import com.an5on.states.local.LocalState
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.groups.provideDelegate
@@ -35,6 +36,10 @@ import com.github.ajalt.clikt.parameters.groups.provideDelegate
  * @since 0.1.0
  */
 object Init : PunktCommand() {
+    init {
+        installMordantMarkdown()
+    }
+
     private val globalOptions by GlobalOptions()
     private val initOptions by InitOptions()
     private val repo: String? by argument(
