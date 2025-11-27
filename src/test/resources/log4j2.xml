@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="OFF" monitorInterval="60">
+    <Loggers>
+        <Root level="off"/>
+    </Loggers>
+</Configuration>
+
