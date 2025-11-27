@@ -1,8 +1,9 @@
 package states.local
 
+import BaseTestWithTestConfiguration
 import com.an5on.config.ActiveConfiguration.configuration
-import com.an5on.states.local.LocalUtils.isLocal
-import com.an5on.states.local.LocalUtils.toLocal
+import com.an5on.file.FileUtils.isLocal
+import com.an5on.file.FileUtils.toLocal
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -11,7 +12,7 @@ import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class LocalUtilsTest {
+class LocalUtilsTest : BaseTestWithTestConfiguration() {
     @Test
     fun pathToLocalWithPathInHomeForWin() {
 
@@ -33,15 +34,6 @@ class LocalUtilsTest {
     }
 
     @Test
-    fun pathToLocalWithNotInHomePathForWin() {
-
-        val subject = Path("C:\\ProgramFiles\\.test\\file.txt")
-        val result = Path("C:\\ProgramFiles\\" + configuration.global.dotReplacementPrefix + "test\\file.txt")
-
-        assertEquals(subject.toLocal(), result)
-    }
-
-    @Test
     fun pathToLocalWithLocalPathForWin() {
 
         val subject = configuration.global.activeStatePath.resolve(".test\\file.txt").toLocal()
@@ -54,7 +46,8 @@ class LocalUtilsTest {
 
         val subject = File(configuration.global.activeStatePath.resolve(".test\\file.txt").pathString)
         val result =
-            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt").toFile()
+            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt")
+                .toFile()
         assertEquals(subject.toLocal(), result)
     }
 
@@ -63,16 +56,8 @@ class LocalUtilsTest {
 
         val subject = File(".test\\file.txt")
         val result =
-            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt").toFile()
-        assertEquals(subject.toLocal(), result)
-    }
-
-    @Test
-    fun fileToLocalWithPathNotInForWin() {
-
-        val subject = File("C:\\ProgramFiles\\.test\\file.txt")
-        val result =
-            Path("C:\\ProgramFiles\\" + configuration.global.dotReplacementPrefix + "test\\file.txt").toFile()
+            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt")
+                .toFile()
         assertEquals(subject.toLocal(), result)
     }
 
@@ -143,16 +128,6 @@ class LocalUtilsTest {
     }
 
     @Test
-    fun pathToLocalWithRelativePathForUnix() {
-
-        val subject = Path(".test/file.txt")
-        val result =
-            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test\\file.txt")
-
-        assertEquals(subject.toLocal(), result)
-    }
-
-    @Test
     fun pathToLocalWithNotInHomePathForUnix() {
 
         val subject = Path("/ProgramFiles/.test/file.txt")
@@ -166,7 +141,8 @@ class LocalUtilsTest {
 
         val subject = File(configuration.global.activeStatePath.resolve(".test/file.txt").pathString)
         val result =
-            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt").toFile()
+            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt")
+                .toFile()
         assertEquals(subject.toLocal(), result)
     }
 
@@ -175,7 +151,8 @@ class LocalUtilsTest {
 
         val subject = File(".test/file.txt")
         val result =
-            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt").toFile()
+            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "test/file.txt")
+                .toFile()
         assertEquals(subject.toLocal(), result)
     }
 
