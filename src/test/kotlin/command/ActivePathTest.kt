@@ -20,8 +20,8 @@ class ActivePathTest {
     fun setup() {
         configuration = Configuration(
             GlobalConfiguration(
-                activeStatePath = Path("src/test/resources/sample-state/state-1/active"),
-                localStatePath = Path("src/test/resources/sample-state/state-1/local")
+                activeStatePath = Path("src/test/resources/sample_state/state_1/active"),
+                localStatePath = Path("src/test/resources/sample_state/state_1/local")
             )
         )
     }

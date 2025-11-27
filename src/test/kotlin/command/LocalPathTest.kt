@@ -20,8 +20,8 @@ class LocalPathTest {
     fun setup() {
         configuration = Configuration(
             GlobalConfiguration(
-                activeStatePath = Path("src/test/resources/sample-state/state-1/active"),
-                localStatePath = Path("src/test/resources/sample-state/state-1/local")
+                activeStatePath = Path("src/test/resources/sample_state/state_1/active"),
+                localStatePath = Path("src/test/resources/sample_state/state_1/local")
             )
         )
     }
@@ -35,7 +35,7 @@ class LocalPathTest {
     fun testLocalPathWithoutArguments() = runTest {
         val result = command.test("")
 
-        assertEquals(activeStatePath.pathString + '\n', result.stdout)
+        assertEquals(localStatePath.pathString + '\n', result.stdout)
         assertEquals(0, result.statusCode)
     }
 
