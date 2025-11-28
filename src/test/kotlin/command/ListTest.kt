@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class ListTest {
@@ -31,63 +30,96 @@ class ListTest {
     private val localStatePath
         get() = configuration.global.localStatePath
 
+    private val relativeActivePaths = listOf(
+        "audrey",
+        "audrey/test.txt",
+        "hello.txt",
+        ".hidden_audrey",
+        ".hidden_audrey/.dot.txt"
+    ).map { Path(it) }
+
+    private val relativeLocalPaths = listOf(
+        "audrey",
+        "audrey/test.txt",
+        "hello.txt",
+        "punkt_hidden_audrey",
+        "punkt_hidden_audrey/punkt_dot.txt"
+    ).map { Path(it) }
+
     @Test
     fun testListInSampleState1WithoutArguments() = runTest {
         val result = command.test("")
 
-        val expected = listOf(
-            "/audrey",
-            "/audrey/test.txt",
-            "/hello.txt",
-            "/.hidden_audrey",
-            "/.hidden_audrey/.dot.txt"
-        ).map { activeStatePath.pathString + it }
+        val expected = relativeActivePaths.joinToString(
+            separator = "\n",
+            postfix = "\n"
+        ) { activeStatePath.resolve(it).pathString }
 
         assertEquals(0, result.statusCode)
-        assertContentEquals(expected, result.stdout.dropLastWhile { it == '\n' }.lines())
+        assertEquals(expected, result.stdout)
     }
 
     @Test
     fun testListInSampleState1WithPathStyles() = runTest {
-        val relativeActivePaths = listOf(
-            "audrey",
-            "audrey/test.txt",
-            "hello.txt",
-            ".hidden_audrey",
-            ".hidden_audrey/.dot.txt"
-        ).map { Path(it) }
-
-        val relativeLocalPaths = listOf(
-            "audrey",
-            "audrey/test.txt",
-            "hello.txt",
-            "punkt_hidden_audrey",
-            "punkt_hidden_audrey/punkt_dot.txt"
-        ).map { Path(it) }
-
         // Test for absolute path style
         var result = command.test("--path-style absolute")
-        var expected = relativeActivePaths.map { activeStatePath.resolve(it).pathString }
+        var expected = relativeActivePaths.joinToString(
+            separator = "\n",
+            postfix = "\n"
+        ) { activeStatePath.resolve(it).pathString }
         assertEquals(0, result.statusCode)
-        assertContentEquals(expected, result.stdout.dropLastWhile { it == '\n' }.lines())
+        assertEquals(expected, result.stdout)
 
         // Test for relative path style
         result = command.test("--path-style relative")
-        expected = relativeActivePaths.map { it.pathString }
+        expected = relativeActivePaths.joinToString(separator = "\n", postfix = "\n")
         assertEquals(0, result.statusCode)
-        assertContentEquals(expected, result.stdout.dropLastWhile { it == '\n' }.lines())
+        assertEquals(expected, result.stdout)
 
         // Test for local-absolute path style
         result = command.test("--path-style local-absolute")
-        expected = relativeLocalPaths.map { localStatePath.resolve(it).pathString }
+        expected =
+            relativeLocalPaths.joinToString(separator = "\n", postfix = "\n") { localStatePath.resolve(it).pathString }
 
         assertEquals(0, result.statusCode)
-        assertContentEquals(expected, result.stdout.dropLastWhile { it == '\n' }.lines())
+        assertEquals(expected, result.stdout)
 
         // Test for local-relative path style
         result = command.test("--path-style local-relative")
-        expected = relativeLocalPaths.map { it.pathString }
+        expected = relativeLocalPaths.joinToString(separator = "\n", postfix = "\n")
         assertEquals(0, result.statusCode)
-        assertContentEquals(expected, result.stdout.dropLastWhile { it == '\n' }.lines())
+        assertEquals(expected, result.stdout)
+    }
+
+    @Test
+    fun testListInSampleState1WithSyncedPath() = runTest {
+        // Test for synced single file
+        var result = command.test("${activeStatePath.pathString}/hello.txt")
+        var expected = activeStatePath.resolve("hello.txt").pathString + '\n'
+        assertEquals(0, result.statusCode)
+        assertEquals(expected, result.stdout)
+
+        // Test for synced directory
+        result = command.test("${activeStatePath.pathString}/audrey")
+        expected =
+            relativeActivePaths.filter { it.startsWith("audrey") }.joinToString(separator = "\n", postfix = "\n") {
+                activeStatePath.resolve(it).pathString
+            }
+        assertEquals(0, result.statusCode)
+        assertEquals(expected, result.stdout)
+    }
+
+    @Test
+    fun testListInSampleState1WithUnsyncedPath() = runTest {
+        // Test for unsynced single file
+        var result = command.test("${activeStatePath.pathString}/non_existent.txt")
+        val expected = "\n"
+        assertEquals(2, result.statusCode)
+        assertEquals(expected, result.stdout)
+
+        // Test for unsynced directory
+        result = command.test("${activeStatePath.pathString}/non_existent_dir")
+        assertEquals(2, result.statusCode)
+        assertEquals(expected, result.stdout)
     }
 }
