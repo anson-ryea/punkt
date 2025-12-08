@@ -404,9 +404,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
             configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
         assertTrue(localDir.isLocal())
         val activeDir = configuration.global.activeStatePath.resolve(".testDir")
-        println(localDir)
-        println(activeDir)
-        println(activeDir.toLocal())
 
         // Create sample test files
         Files.createDirectories(localDir)
@@ -425,8 +422,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
             writeText("Sample content") // Write to the active file
         }
 
-        println(activeFile)
-        println(testFile.toLocal())
         assertTrue(activeFile.toPath().existsInLocal())
         assertTrue(testFile.toPath().existsInLocal())
         // Clean up the temporary directories and files after tests
@@ -563,9 +558,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
         val tempDir = configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
         assertTrue(tempDir.isLocal())
         val activeDir = configuration.global.activeStatePath.resolve(".testDir")
-        println(tempDir)
-        println(activeDir)
-        println(activeDir.toActive())
 
         // Create sample test files
         Files.createDirectories(tempDir)
@@ -584,8 +576,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
             writeText("Sample content") // Write to the active file
         }
 
-        println(activeFile)
-        println(testFile.toActive())
         assertTrue(activeFile.toPath().existsInActive())
         assertTrue(testFile.toPath().existsInActive())
         // Clean up the temporary directories and files after tests
