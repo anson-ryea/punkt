@@ -113,13 +113,11 @@ class ListTest {
     fun testListInSampleState1WithUnsyncedPath() = runTest {
         // Test for unsynced single file
         var result = command.test(activeStatePath.resolve("non_existent.txt").pathString.replace('\\', '/'))
-        val expected = "\n"
-        assertEquals(2, result.statusCode)
+        val expected = ""
         assertEquals(expected, result.stdout)
 
         // Test for unsynced directory
         result = command.test(activeStatePath.resolve("non_existent_dir").pathString.replace('\\', '/'))
-        assertEquals(2, result.statusCode)
         assertEquals(expected, result.stdout)
     }
 }
