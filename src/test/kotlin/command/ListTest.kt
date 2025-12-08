@@ -94,13 +94,13 @@ class ListTest {
     @Test
     fun testListInSampleState1WithSyncedPath() = runTest {
         // Test for synced single file
-        var result = command.test("${activeStatePath.pathString}/hello.txt")
+        var result = command.test(activeStatePath.resolve("hello.txt").pathString.replace('\\', '/'))
         var expected = activeStatePath.resolve("hello.txt").pathString + '\n'
         assertEquals(0, result.statusCode)
         assertEquals(expected, result.stdout)
 
         // Test for synced directory
-        result = command.test("${activeStatePath.pathString}/audrey")
+        result = command.test(activeStatePath.resolve("audrey").pathString.replace('\\', '/'))
         expected =
             relativeActivePaths.filter { it.startsWith("audrey") }.joinToString(separator = "\n", postfix = "\n") {
                 activeStatePath.resolve(it).pathString
@@ -112,13 +112,13 @@ class ListTest {
     @Test
     fun testListInSampleState1WithUnsyncedPath() = runTest {
         // Test for unsynced single file
-        var result = command.test("${activeStatePath.pathString}/non_existent.txt")
+        var result = command.test(activeStatePath.resolve("non_existent.txt").pathString.replace('\\', '/'))
         val expected = "\n"
         assertEquals(2, result.statusCode)
         assertEquals(expected, result.stdout)
 
         // Test for unsynced directory
-        result = command.test("${activeStatePath.pathString}/non_existent_dir")
+        result = command.test(activeStatePath.resolve("non_existent_dir").pathString.replace('\\', '/'))
         assertEquals(2, result.statusCode)
         assertEquals(expected, result.stdout)
     }
