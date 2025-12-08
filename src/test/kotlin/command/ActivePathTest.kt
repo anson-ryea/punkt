@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
@@ -42,15 +43,16 @@ class ActivePathTest {
     @Test
     fun testLocalPathWithSyncedFiles() = runTest {
 
-        var result: CliktCommandTestResult = command.test(localStatePath.resolve("hello.txt").pathString)
+        var result: CliktCommandTestResult =
+            command.test(localStatePath.resolve("hello.txt").invariantSeparatorsPathString)
         assertEquals(0, result.statusCode)
         assertEquals(activeStatePath.resolve("hello.txt").pathString + '\n', result.stdout)
 
-        result = command.test(localStatePath.resolve("audrey/test.txt").pathString)
+        result = command.test(localStatePath.resolve("audrey/test.txt").invariantSeparatorsPathString)
         assertEquals(0, result.statusCode)
         assertEquals(activeStatePath.resolve("audrey/test.txt").pathString + '\n', result.stdout)
 
-        result = command.test(localStatePath.resolve("punkt_hidden-audrey/punkt_dot.txt").pathString)
+        result = command.test(localStatePath.resolve("punkt_hidden-audrey/punkt_dot.txt").invariantSeparatorsPathString)
         assertEquals(0, result.statusCode)
         assertEquals(activeStatePath.resolve(".hidden-audrey/.dot.txt").pathString + '\n', result.stdout)
     }
