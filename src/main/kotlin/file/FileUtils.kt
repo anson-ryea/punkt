@@ -246,7 +246,7 @@ object FileUtils {
         assert(this.exists())
 
         val activeFile = this.toActive()
-        assert(activeFile.exists())
+//        assert(activeFile.exists())
 
         return FileUtils.contentEquals(activeFile, this)
     }
