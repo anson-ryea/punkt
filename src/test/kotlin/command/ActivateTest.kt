@@ -6,6 +6,7 @@ import com.an5on.config.Configuration
 import com.an5on.config.GlobalConfiguration
 import com.github.ajalt.clikt.command.test
 import kotlinx.coroutines.test.runTest
+import org.apache.commons.io.file.PathUtils
 import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.nio.file.Files.createDirectory
@@ -45,6 +46,14 @@ class ActivateTest {
         val result = command.test("", stdin = "y")
 
         assertEquals(0, result.statusCode)
+        assertTrue(localStatePath.resolve("diff.txt").exists())
+        assertTrue(
+            PathUtils.fileContentEquals(
+                localStatePath.resolve("hello.txt"),
+                activeStatePath.resolve("hello.txt")
+            )
+        )
+        assertTrue(PathUtils.fileContentEquals(localStatePath.resolve("diff.txt"), activeStatePath.resolve("diff.txt")))
 
         localStatePath.resolve("hello.txt").toFile().apply { writeText("") }
         activeStatePath.resolve("hello.txt").toFile().apply { writeText("") }
