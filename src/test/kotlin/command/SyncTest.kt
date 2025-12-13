@@ -35,24 +35,14 @@ class SyncTest {
     private val localStatePath
         get() = configuration.global.localStatePath
 
+
     @Test
     fun testSyncWithoutArgument() = runTest {
-
         activeStatePath.resolve("hello.txt").toFile().writeText("A total different messagee")
-        val activeFileDir = activeStatePath.resolve(".test")
-        createDirectory(activeFileDir)
-        val activeFile = activeFileDir.resolve("test.txt")
-        activeFile.toFile().writeText("test message")
+        localStatePath.resolve("hello.txt").toFile().writeText("")
 
-        val result = command.test("")
+        command.test("", stdin = "y\n")
 
-        assertEquals(0, result.statusCode)
-
-        val localFileDir = localStatePath.resolve(configuration.global.dotReplacementPrefix + "test")
-        val localFile = localFileDir.resolve("test.txt")
-        assertTrue(localFileDir.exists())
-        assertTrue(localFile.exists())
-        assertTrue(PathUtils.fileContentEquals(localFile, activeFile))
         assertTrue(
             PathUtils.fileContentEquals(
                 activeStatePath.resolve("hello.txt"),
@@ -61,6 +51,50 @@ class SyncTest {
         )
 
         activeStatePath.resolve("hello.txt").toFile().writeText("")
+        localStatePath.resolve("hello.txt").toFile().writeText("")
+    }
+
+    @Test
+    fun testSyncWithExistingActiveFile() = runTest {
+        val dotFileDir = activeStatePath.resolve(".hidden_audrey")
+        val dotFile = dotFileDir.resolve(".test.txt")
+        val dotLocalFile =
+            localStatePath.resolve(configuration.global.dotReplacementPrefix + "hidden_audrey/" + configuration.global.dotReplacementPrefix + "test.txt")
+        deleteIfExists(dotLocalFile)
+        deleteIfExists(dotFile)
+        dotFile.toFile().writeText("hello")
+
+        command.test("src/test/resources/sample_state/state_1/active/.hidden_audrey", stdin = "y\n")
+
+        assertTrue(dotLocalFile.exists())
+        deleteIfExists(dotFile)
+        deleteIfExists(dotLocalFile)
+    }
+
+    @Test
+    fun testSyncWithANewActiveFileDirectory() = runTest {
+
+        val activeFileDir = activeStatePath.resolve(".test")
+        val activeFile = activeFileDir.resolve("test.txt")
+        val localFileDir = localStatePath.resolve(configuration.global.dotReplacementPrefix + "test")
+        val localFile = localFileDir.resolve("test.txt")
+
+        deleteIfExists(localFile)
+        deleteIfExists(localFileDir)
+        deleteIfExists(activeFile)
+        deleteIfExists(activeFileDir)
+
+        createDirectory(activeFileDir)
+        activeFile.toFile().writeText("test message")
+
+        val result = command.test("src/test/resources/sample_state/state_1/active/.test", stdin = "y\n")
+
+        assertEquals(0, result.statusCode)
+
+        assertTrue(localFileDir.exists())
+        assertTrue(localFile.exists())
+        assertTrue(PathUtils.fileContentEquals(localFile, activeFile))
+
         deleteIfExists(localFile)
         deleteIfExists(localFileDir)
         deleteIfExists(activeFile)
