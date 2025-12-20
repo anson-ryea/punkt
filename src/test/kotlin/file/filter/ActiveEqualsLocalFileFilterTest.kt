@@ -2,14 +2,18 @@ package file.filter
 
 import BaseTestWithTestConfiguration
 import com.an5on.config.ActiveConfiguration.configuration
+import com.an5on.config.Configuration
+import com.an5on.config.GlobalConfiguration
 import com.an5on.file.filter.ActiveEqualsLocalFileFilter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,13 +21,34 @@ import kotlin.test.assertTrue
 
 class ActiveEqualsLocalFileFilterTest : BaseTestWithTestConfiguration() {
 
-    val localDir: Path =
-        configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
-    val activeDir: Path = configuration.global.activeStatePath.resolve(".testDir")
-    val testFileDir = localDir.resolve("test")
-    val testFile = testFileDir.resolve("test.txt")
-    val activeFileDir = activeDir.resolve("test")
-    val activeFile = activeFileDir.resolve("test.txt")
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            val systemTempDir = Paths.get(System.getProperty("java.io.tmpdir"))
+            configuration = Configuration(
+                GlobalConfiguration(
+                    activeStatePath = systemTempDir.resolve("test-active-state"),
+                    localStatePath = systemTempDir.resolve("test-local-state")
+                )
+            )
+        }
+    }
+
+    val localDir: Path
+        get() =
+            configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
+    val activeDir: Path
+        get() = configuration.global.activeStatePath.resolve(".testDir")
+    val localFileDir: Path
+        get() = localDir.resolve("test")
+    val localFile: Path
+        get() = localFileDir.resolve("test.txt")
+    val activeFileDir: Path
+        get() = activeDir.resolve("test")
+    val activeFile: Path
+        get() = activeFileDir.resolve("test.txt")
 
     @BeforeEach
     fun setUp() {
@@ -33,9 +58,9 @@ class ActiveEqualsLocalFileFilterTest : BaseTestWithTestConfiguration() {
         Files.createDirectories(activeDir)
         // Create subdirectory for test files
 
-        Files.createDirectories(testFileDir) // Create the 'test' subdirect
+        Files.createDirectories(localFileDir) // Create the 'test' subdirect
         // Now we can safely create the test file
-        testFile.toFile().apply {
+        localFile.toFile().apply {
             writeText("Sample content") // Write to the test file
         }
         // Create the active file in the active directory
@@ -73,20 +98,20 @@ class ActiveEqualsLocalFileFilterTest : BaseTestWithTestConfiguration() {
 
     @Test
     fun acceptWithLocalFile() {
-        assertTrue(ActiveEqualsLocalFileFilter.accept(testFile.toFile()))
+        assertTrue(ActiveEqualsLocalFileFilter.accept(localFile.toFile()))
 
-        testFile.toFile().apply {
+        localFile.toFile().apply {
             writeText("Different content")
         }
 
-        assertFalse(ActiveEqualsLocalFileFilter.accept(testFile.toFile()))
+        assertFalse(ActiveEqualsLocalFileFilter.accept(localFile.toFile()))
     }
 
     @Test
     fun acceptWithActiveFile() {
         assertTrue(ActiveEqualsLocalFileFilter.accept(activeFile.toFile()))
 
-        testFile.toFile().apply {
+        localFile.toFile().apply {
             writeText("Different content")
         }
 
