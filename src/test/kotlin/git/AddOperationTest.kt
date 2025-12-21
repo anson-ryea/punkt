@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
+import kotlin.io.path.Path
 import kotlin.io.path.relativeTo
 
 class AddOperationTest : BaseTestWithTestConfiguration() {
@@ -24,28 +25,23 @@ class AddOperationTest : BaseTestWithTestConfiguration() {
     @Test
     fun operateWithBundledWithLocalDirectory() {
 
-        // init repo
         val git = Git.init().setDirectory(configuration.global.localStatePath.toFile()).call()
 
-        // create file
-//        should fix since the add operation doesn't allow to have pathString starts with "."
-        val fileDir = configuration.global.localStatePath.resolve(".dir")
-        Files.createDirectories(fileDir)
-        val file = fileDir.resolve("file.txt").toFile().apply { writeText("hello") }.toPath()
+        val fileDir = Files.createTempDirectory(configuration.global.localStatePath, ".dir")
+        val file = fileDir.resolve("file.txt").toFile().apply { writeText("hello") }
+        val filePath = Path(file.toString().replace("\\", "/"))
 
-        // Instantiate AddOperation with bundled = TRUE
         val op = AddOperation(
             BooleanWithAuto.TRUE,
             repositoryPath = configuration.global.localStatePath,
-            targetPath = file
+            targetPath = filePath
         )
 
         val result = op.operateWithBundled()
         assertTrue(result.isRight())
 
-        // verify staged
         val status = git.status().call()
-        val expectedPath = file.relativeTo(configuration.global.localStatePath).toString()
+        val expectedPath = filePath.relativeTo(configuration.global.localStatePath).toString().replace("\\", "/")
         println("added: ${status.added}")
         println("changed: ${status.changed}")
         println("untracked: ${status.untracked}")

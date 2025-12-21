@@ -44,9 +44,9 @@ class AddOperation(
      */
     override fun operateWithBundled(): Either<GitError, Unit> = catchOrThrow<GitAPIException, Unit> {
         val localRepository = Git.open(repositoryPath.toFile())
-
+        val pattern = relativeTargetPath.pathString.replace("\\", "/")
         localRepository.add()
-            .addFilepattern(".${relativeTargetPath.pathString}")
+            .addFilepattern(pattern)
             .call()
     }.mapLeft {
         GitError.BundledGitOperationFailed("Add", it)
@@ -58,7 +58,7 @@ class AddOperation(
      * @return An [Either] containing a [GitError] on failure or the process's exit code on success.
      */
     override fun operateWithSystem(): Either<GitError, Int> = either {
-        val args = listOf("add", ".${relativeTargetPath.pathString}")
+        val args = listOf("add", relativeTargetPath.pathString)
 
         executeSystemGit(args, repositoryPath).bind()
     }
