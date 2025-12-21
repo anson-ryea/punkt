@@ -1,0 +1,4 @@
+ignored.txt
+**/ignored_folder
+**/ignored_folder/**
+*.aux

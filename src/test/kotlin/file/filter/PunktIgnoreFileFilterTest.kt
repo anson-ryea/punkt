@@ -1,15 +1,11 @@
 package file.filter
 
-import com.an5on.file.PunktIgnore.buildPathMatchersFromPatterns
-import com.an5on.file.PunktIgnore.parse
-import org.apache.commons.io.filefilter.IOFileFilter
-import org.apache.commons.io.filefilter.PathMatcherFileFilter
-import org.apache.commons.io.filefilter.TrueFileFilter
+import com.an5on.file.PunktIgnore
+import com.an5on.file.filter.PunktIgnoreFileFilter
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
-import java.nio.file.PathMatcher
 import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,19 +14,9 @@ import kotlin.test.assertTrue
 
 class PunktIgnoreFileFilterTest {
 
-    lateinit var testPunktIgnoreFileFilter: IOFileFilter
-    lateinit var ignoreFilePath: Path
-    lateinit var ignorePatterns: Set<String>
-    lateinit var pathMatchers: Set<PathMatcher>
-
     @BeforeEach
     fun setup() {
-        ignoreFilePath = Path("src/test/resources/.punktIgnore")
-        ignorePatterns = parse(ignoreFilePath)
-        pathMatchers = buildPathMatchersFromPatterns(ignorePatterns)
-        testPunktIgnoreFileFilter = pathMatchers.fold(TrueFileFilter.INSTANCE) { acc, m ->
-            acc.and(PathMatcherFileFilter(m).negate())
-        }
+        PunktIgnore.ignoreFilePath = Path("src/test/resources/.punktignore")
     }
 
     @TempDir
@@ -38,33 +24,33 @@ class PunktIgnoreFileFilterTest {
 
     @Test
     fun acceptWithFileNotInPunktIgnore() {
-        val file = File(tempDir.toFile(), "keep.txt").also { it.writeText("keep") }
-        assertTrue(testPunktIgnoreFileFilter.accept(file), "Non-ignored file should be accepted")
+        val notIgnored = File(tempDir.toFile(), "keep.txt")
+        assertTrue(PunktIgnoreFileFilter.accept(notIgnored), "Non-ignored file should be accepted")
     }
 
     @Test
     fun acceptWithFileInPunktIgnore() {
-
-        val ignored = File(tempDir.toFile(), "ignored.txt").also { it.writeText("x") }
-        assertFalse(testPunktIgnoreFileFilter.accept(ignored), "File matching ignore pattern should be rejected")
+        val ignored = File("ignored.txt")
+        assertFalse(PunktIgnoreFileFilter.accept(ignored), "File matching ignore pattern should be rejected")
     }
+
     @Test
     fun acceptWithDirectoryInPunktIgnore() {
-        val sub = File(tempDir.toFile(), "JustATestPattern").apply { mkdir() }
-        val nested = File(sub, "file.txt").also { it.writeText("x") }
-        println(nested )
-        assertFalse(testPunktIgnoreFileFilter.accept(nested), "File under ignored directory should be rejected")
+        val sub = File(tempDir.toFile(), "ignored_folder")
+        val nested = File(sub, "file.txt")
+
+        assertFalse(PunktIgnoreFileFilter.accept(sub), "Ignored directory itself should be rejected")
+        assertFalse(PunktIgnoreFileFilter.accept(nested), "File under ignored directory should be rejected")
     }
 
     @Test
     fun acceptWithDirectoryNotInPunktIgnore() {
         val root = tempDir.toFile()
-        val f = File(root, "keep2.txt").also { it.writeText("x") }
+        val file = File(root, "keep2.txt")
 
         assertEquals(
-            testPunktIgnoreFileFilter.accept(f),
-            testPunktIgnoreFileFilter.accept(root, f.name),
-            "accept(dir,name) should delegate to accept(file)"
+            PunktIgnoreFileFilter.accept(file),
+            PunktIgnoreFileFilter.accept(root, file.name)
         )
     }
 }

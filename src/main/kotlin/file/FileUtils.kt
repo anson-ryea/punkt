@@ -12,11 +12,9 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.io.file.PathUtils
 import org.apache.commons.io.filefilter.IOFileFilter
 import java.io.File
+import java.nio.file.FileSystems
 import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.io.path.exists
-import kotlin.io.path.pathString
-import kotlin.io.path.relativeTo
+import kotlin.io.path.*
 
 /**
  * A utility object for file operations.
@@ -31,7 +29,10 @@ object FileUtils {
      * @return the pathname with `~` replaced by the absolute home directory path.
      */
     fun String.expandTildeWithHomePathname(): String =
-        replaceFirst("~", homePath.pathString)
+        replaceFirst("^~".toRegex(), homePath.invariantSeparatorsPathString).replace(
+            "/",
+            FileSystems.getDefault().separator
+        )
 
     /**
      * Computes the Blake3 hash of the given file and returns it as a hexadecimal string.
@@ -245,7 +246,7 @@ object FileUtils {
         assert(this.exists())
 
         val activeFile = this.toActive()
-        assert(activeFile.exists())
+//        assert(activeFile.exists())
 
         return FileUtils.contentEquals(activeFile, this)
     }

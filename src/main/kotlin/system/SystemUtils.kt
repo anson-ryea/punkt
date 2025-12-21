@@ -10,11 +10,7 @@ import kotlin.io.path.Path
  * @author Anson Ng <hej@an5on.com>
  */
 object SystemUtils {
-    val osType = when {
-        System.getProperty("os.name").lowercase().startsWith("windows") -> OsType.WINDOWS
-        System.getProperty("os.name").lowercase().startsWith("mac") -> OsType.DARWIN
-        else -> OsType.LINUX
-    }
+    var osType = determineOsType()
 
     val username: String = System.getProperty("user.name")
     val environmentVariables = System.getenv().toMutableMap()
@@ -32,10 +28,11 @@ object SystemUtils {
      * @since 0.1.0
      */
     val configPath: Path = when (osType) {
-       OsType.WINDOWS -> System.getenv("APPDATA")?.let { Path(it) } ?: homePath.resolve("AppData").resolve("Roaming")
+        OsType.WINDOWS -> System.getenv("APPDATA")?.let { Path(it) } ?: homePath.resolve("AppData").resolve("Roaming")
         OsType.DARWIN -> homePath.resolve("Library/Application Support")
         OsType.LINUX -> System.getenv("XDG_CONFIG_HOME")?.let { Path(it) } ?: homePath.resolve(".config")
     }.resolve("punkt/punkt.json")
+
     /**
      * Path to Punkt logs.
      *
@@ -52,5 +49,15 @@ object SystemUtils {
     val sshIdentitiesPath: Path = when (osType) {
         OsType.WINDOWS -> homePath.resolve(".ssh")
         else -> homePath.resolve(".ssh")
+    }
+
+    fun resetOsType() {
+        osType = determineOsType()
+    }
+
+    private fun determineOsType() = when {
+        System.getProperty("os.name").lowercase().startsWith("windows") -> OsType.WINDOWS
+        System.getProperty("os.name").lowercase().startsWith("mac") -> OsType.DARWIN
+        else -> OsType.LINUX
     }
 }

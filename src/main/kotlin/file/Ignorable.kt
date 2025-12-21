@@ -13,7 +13,7 @@ import kotlin.io.path.pathString
  * @since 0.1.0
  * @author Anson Ng <hej@an5on.com>
  */
-interface Ignore {
+interface Ignorable {
     /** The set of glob patterns used to ignore files and directories. */
     val ignorePatterns: Set<String>
 
@@ -24,29 +24,26 @@ interface Ignore {
     /**
      * Converts a set of string patterns into a set of [PathMatcher] objects.
      *
-     * This function performs the following processing:
-     * - Normalises all path separators `\` to `/`.
-     * - Prepends `**\/` to patterns that do not contain a `/` and do not start with `**`, to match at any directory depth.
-     * - Expands `~` to the user's home directory.
+     * This function performs
      *
      * @param patterns The set of glob pattern strings to convert.
      * @param isForLocal If true, prefixes the pattern with the local state path.
      * @return A set of [PathMatcher] instances ready for matching.
      */
-    fun buildPathMatchersFromPatterns(patterns: Set<String>, isForLocal: Boolean = false): Set<PathMatcher> {
-        val normalisedPrefixLocal =
-            if (isForLocal) configuration.global.localStatePath.pathString.replace('\\', '/') else ""
+    fun buildPathMatchersFromPatterns(patterns: Set<String>, isForLocal: Boolean = false): Set<PathMatcher> =
+        patterns.map { pattern ->
+            val localStatePathstring = configuration.global.localStatePath.pathString
 
-        return patterns.map { pattern ->
-            val normalisedPattern = pattern.replace('\\', '/')
-
-            val fullPattern = if (normalisedPattern.contains('/') || pattern.startsWith("**")) {
-                normalisedPrefixLocal + normalisedPattern
+            val fullPattern = if (isForLocal) {
+                if (pattern.startsWith('/')) {
+                        "glob:${localStatePathstring}${pattern}"
+                } else {
+                        "glob:${localStatePathstring}/$pattern"
+                }
             } else {
-                "$normalisedPrefixLocal**/$normalisedPattern"
-            }.expandTildeWithHomePathname()
+                "glob:${pattern.expandTildeWithHomePathname()}"
+            }.replace("\\", "/")
 
-            FileSystems.getDefault().getPathMatcher("glob:$fullPattern")
+            FileSystems.getDefault().getPathMatcher(fullPattern)
         }.toSet()
-    }
 }
