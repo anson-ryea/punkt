@@ -33,9 +33,6 @@ class AddOperationTest : BaseTestWithTestConfiguration() {
 
         val status = git.status().call()
         val expectedPath = file.relativeTo(configuration.global.localStatePath).toString().replace("\\", "/")
-        println("added: ${status.added}")
-        println("changed: ${status.changed}")
-        println("untracked: ${status.untracked}")
         assertTrue(status.added.contains(expectedPath), "expected $expectedPath to be staged, got ${status.added}")
 
     }
@@ -62,12 +59,8 @@ class AddOperationTest : BaseTestWithTestConfiguration() {
         val result = op.operateWithSystem()
         assertTrue(result.isRight())
 
-        // verify staged
         val status = git.status().call()
         val expectedPath = file.relativeTo(configuration.global.localStatePath).toString().replace("\\", "/")
-        println("added: ${status.added}")
-        println("changed: ${status.changed}")
-        println("untracked: ${status.untracked}")
         assertTrue(status.added.contains(expectedPath), "expected $expectedPath to be staged, got ${status.added}")
 
     }
