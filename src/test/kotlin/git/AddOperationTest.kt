@@ -6,42 +6,33 @@ import com.an5on.git.AddOperation
 import com.an5on.type.BooleanWithAuto
 import org.eclipse.jgit.api.Git
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
-import kotlin.io.path.Path
 import kotlin.io.path.relativeTo
+import kotlin.io.path.writeText
 
 class AddOperationTest : BaseTestWithTestConfiguration() {
-
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun setupLogDir() {
-            System.setProperty("log.dir", Files.createTempDirectory("test-logs").toString())
-        }
-    }
-
     @Test
     fun operateWithBundledWithLocalDirectory() {
 
         val git = Git.init().setDirectory(configuration.global.localStatePath.toFile()).call()
 
-        val fileDir = Files.createTempDirectory(configuration.global.localStatePath, ".dir")
-        val file = fileDir.resolve("file.txt").toFile().apply { writeText("hello") }
-        val filePath = Path(file.toString().replace("\\", "/"))
+        val fileDir = configuration.global.localStatePath.resolve("dir")
+        Files.createDirectories(fileDir)
+        val file = fileDir.resolve("file.txt")
+        file.writeText("hello")
 
         val op = AddOperation(
             BooleanWithAuto.TRUE,
             repositoryPath = configuration.global.localStatePath,
-            targetPath = filePath
+            targetPath = file
         )
 
         val result = op.operateWithBundled()
         assertTrue(result.isRight())
 
         val status = git.status().call()
-        val expectedPath = filePath.relativeTo(configuration.global.localStatePath).toString().replace("\\", "/")
+        val expectedPath = file.relativeTo(configuration.global.localStatePath).toString().replace("\\", "/")
         println("added: ${status.added}")
         println("changed: ${status.changed}")
         println("untracked: ${status.untracked}")
@@ -56,10 +47,10 @@ class AddOperationTest : BaseTestWithTestConfiguration() {
         val git = Git.init().setDirectory(configuration.global.localStatePath.toFile()).call()
 
         // create file
-//        should fix since the add operation doesn't allow to have pathString starts with "."
-        val fileDir = configuration.global.localStatePath.resolve(".dir")
+        val fileDir = configuration.global.localStatePath.resolve("dir")
         Files.createDirectories(fileDir)
-        val file = fileDir.resolve("file.txt").toFile().apply { writeText("hello") }.toPath()
+        val file = fileDir.resolve("file.txt")
+        file.writeText("hello")
 
         // Instantiate AddOperation with bundled = False
         val op = AddOperation(
@@ -73,7 +64,7 @@ class AddOperationTest : BaseTestWithTestConfiguration() {
 
         // verify staged
         val status = git.status().call()
-        val expectedPath = file.relativeTo(configuration.global.localStatePath).toString()
+        val expectedPath = file.relativeTo(configuration.global.localStatePath).toString().replace("\\", "/")
         println("added: ${status.added}")
         println("changed: ${status.changed}")
         println("untracked: ${status.untracked}")
