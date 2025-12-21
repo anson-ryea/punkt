@@ -1,5 +1,6 @@
 package command
 
+import BaseTestWithTestConfiguration
 import com.an5on.command.Ignored
 import com.an5on.file.PunktIgnore
 import com.github.ajalt.clikt.command.test
@@ -7,13 +8,13 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
-class IgnoredTest {
+class IgnoredTest : BaseTestWithTestConfiguration() {
 
     private val command = Ignored
 
-    private val punktIgnore = listOf(
+    private val punktIgnoreContent = listOf(
         "ignored.txt",
         "**/ignored_folder",
         "**/ignored_folder/**",
@@ -28,8 +29,6 @@ class IgnoredTest {
     @Test
     fun testIgnored() = runTest {
         val result = command.test("")
-        val actual = result.stdout.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
-        assertEquals(punktIgnore, actual)
+        assertContentEquals(punktIgnoreContent, result.stdout.lines().filterNot { it.isBlank() })
     }
-
 }
