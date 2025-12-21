@@ -1,7 +1,5 @@
 package state.active
 
-//import com.an5on.states.active.ActiveUtils.dotReplacementPrefix
-import com.an5on.config.ActiveConfiguration
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.config.Configuration
 import com.an5on.config.GlobalConfiguration
@@ -25,17 +23,12 @@ class ActiveUtilsTest {
         GlobalConfiguration(
             localStatePath = SystemUtils.homePath.resolve(".local/share/punkt/test"),
             activeStatePath = SystemUtils.homePath.resolve(".local/share/punkt/test"),
-            )
+        )
     )
 
     init {
-        ActiveConfiguration.configuration = config
+        configuration = config
     }
-//
-//    @Test
-//    fun test(){
-//        println(config.global.activeStatePath)
-//    }
 
     @Test
     fun pathToActiveWithActivePathForWin() {
@@ -61,7 +54,7 @@ class ActiveUtilsTest {
         assertEquals(result, subject.toActive())
     }
 
-//    @Test
+    //    @Test
 //    fun pathToActiveWithAbsoluteNonLocalPath() {
 //
 //        val subject = Path("C:\\ProgramFiles\\.test\\active\\file.txt")
@@ -99,7 +92,7 @@ class ActiveUtilsTest {
         assertEquals(result, subject.toActive())
     }
 
-//    @Test
+    //    @Test
 //    fun pathToActiveWithAbsoluteNonLocalPath() {
 //
 //        val subject = Path("C:/ProgramFiles/.test/active/file.txt")
@@ -114,7 +107,7 @@ class ActiveUtilsTest {
     }
 
     @Test
-    fun fileExistsInActiveTest(){
+    fun fileExistsInActiveTest() {
         val tempDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
         assertTrue(tempDir.isLocal())
         val activeDir = config.global.activeStatePath.resolve(".testDir")
@@ -146,7 +139,7 @@ class ActiveUtilsTest {
     }
 
     @Test
-    fun pathExistsInActiveTest(){
+    fun pathExistsInActiveTest() {
         val tempDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
         assertTrue(tempDir.isLocal())
         val activeDir = config.global.activeStatePath.resolve(".testDir")
@@ -178,7 +171,7 @@ class ActiveUtilsTest {
     }
 
     @Test
-    fun fileContentEqualsActiveTest(){
+    fun fileContentEqualsActiveTest() {
         val tempDir = config.global.localStatePath.resolve(config.global.dotReplacementPrefix + "testDir")
 //        assertTrue(tempDir.isLocal())
         val activeDir = config.global.activeStatePath.resolve(".testDir")
