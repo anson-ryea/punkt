@@ -6,6 +6,8 @@ import com.an5on.file.FileUtils.isLocal
 import com.an5on.file.FileUtils.toLocal
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
@@ -128,6 +130,7 @@ class LocalUtilsTest : BaseTestWithTestConfiguration() {
     }
 
     @Test
+    @EnabledOnOs(OS.LINUX, OS.MAC)
     fun pathToLocalWithNotInHomePathForUnix() {
 
         val subject = Path("/ProgramFiles/.test/file.txt")
@@ -157,6 +160,7 @@ class LocalUtilsTest : BaseTestWithTestConfiguration() {
     }
 
     @Test
+    @EnabledOnOs(OS.LINUX, OS.MAC)
     fun fileToLocalWithRelativePathForUnix() {
 
         val subject = File("/ProgramFiles/.test/file.txt")
