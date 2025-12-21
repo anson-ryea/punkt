@@ -4,22 +4,10 @@ import BaseTestWithTestConfiguration
 import com.an5on.config.ActiveConfiguration.configuration
 import com.an5on.git.GenericOperationWithSystem
 import org.eclipse.jgit.api.Git
-import org.junit.jupiter.api.BeforeAll
-import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class GenericOperationWithSystemTest : BaseTestWithTestConfiguration() {
-
-
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun setupLogDir() {
-            System.setProperty("log.dir", Files.createTempDirectory("test-logs").toString())
-        }
-    }
-
     @Test
     fun operateWithSystemWithRepo() {
         // init repo

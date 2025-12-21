@@ -10,7 +10,6 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.errors.EmptyCommitException
 import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeAll
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,14 +17,6 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class CommitOperationTest : BaseTestWithTestConfiguration() {
-
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun setupLogDir() {
-            System.setProperty("log.dir", Files.createTempDirectory("test-logs").toString())
-        }
-    }
 
     @Test
     fun operateWithBundledWithRepo() {

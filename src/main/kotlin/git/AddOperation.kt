@@ -36,6 +36,7 @@ class AddOperation(
     determineUseBundledGit(useBundledGitOption)
 ) {
     private val relativeTargetPath = targetPath.relativeTo(repositoryPath)
+    private val pattern = relativeTargetPath.pathString.replace("\\", "/")
 
     /**
      * Adds the target path to the Git index using the bundled JGit library.
@@ -44,7 +45,7 @@ class AddOperation(
      */
     override fun operateWithBundled(): Either<GitError, Unit> = catchOrThrow<GitAPIException, Unit> {
         val localRepository = Git.open(repositoryPath.toFile())
-        val pattern = relativeTargetPath.pathString.replace("\\", "/")
+
         localRepository.add()
             .addFilepattern(pattern)
             .call()
@@ -58,7 +59,7 @@ class AddOperation(
      * @return An [Either] containing a [GitError] on failure or the process's exit code on success.
      */
     override fun operateWithSystem(): Either<GitError, Int> = either {
-        val args = listOf("add", relativeTargetPath.pathString)
+        val args = listOf("add", pattern)
 
         executeSystemGit(args, repositoryPath).bind()
     }
