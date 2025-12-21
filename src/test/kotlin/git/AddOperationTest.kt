@@ -49,7 +49,6 @@ class AddOperationTest : BaseTestWithTestConfiguration() {
         val file = fileDir.resolve("file.txt")
         file.writeText("hello")
 
-        // Instantiate AddOperation with bundled = False
         val op = AddOperation(
             BooleanWithAuto.FALSE,
             repositoryPath = configuration.global.localStatePath,
