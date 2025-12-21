@@ -6,13 +6,13 @@ import com.an5on.config.ActiveConfiguration.configuration
 import com.github.ajalt.clikt.command.test
 import kotlinx.coroutines.test.runTest
 import org.apache.commons.io.file.PathUtils
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.io.path.deleteIfExists
-import kotlin.io.path.exists
-import kotlin.io.path.pathString
-import kotlin.test.*
-
-private val globalLock = ReentrantLock()
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import java.nio.file.StandardOpenOption
+import kotlin.io.path.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ActivateTest : BaseTestWithTestConfiguration() {
     private val command = Activate
@@ -22,23 +22,20 @@ class ActivateTest : BaseTestWithTestConfiguration() {
     private val localStatePath
         get() = configuration.global.localStatePath.toAbsolutePath()
 
-    @BeforeTest
-    fun initialize() {
-        globalLock.lock()
-    }
-
-    @AfterTest
-    fun cleanup() {
-        globalLock.unlock()
+    @BeforeEach
+    fun setup() {
+        PathUtils.cleanDirectory(localStatePath)
+        PathUtils.cleanDirectory(activeStatePath)
     }
 
     @Test
-    fun testActivateInSampleState1WithoutArguments() = runTest {
+    fun testActivateWithoutArguments() = runTest {
 
-        localStatePath.resolve("diff.txt").toFile().apply { writeText("hello") }
-        localStatePath.resolve("hello.txt").toFile().apply { writeText("test") }
+        localStatePath.resolve("diff.txt").writeText("diff", options = arrayOf(StandardOpenOption.CREATE_NEW))
+        localStatePath.resolve("hello.txt").writeText("hello", options = arrayOf(StandardOpenOption.CREATE_NEW))
+        activeStatePath.resolve("hello.txt").createFile()
 
-        val result = command.test(listOf(localStatePath.pathString), stdin = "y")
+        val result = command.test(listOf("-y", localStatePath.pathString))
 
         assertEquals(0, result.statusCode)
         assertTrue(localStatePath.resolve("diff.txt").exists())
@@ -48,12 +45,12 @@ class ActivateTest : BaseTestWithTestConfiguration() {
                 activeStatePath.resolve("hello.txt")
             )
         )
-        assertTrue(PathUtils.fileContentEquals(localStatePath.resolve("diff.txt"), activeStatePath.resolve("diff.txt")))
-
-        localStatePath.resolve("hello.txt").toFile().apply { writeText("") }
-        activeStatePath.resolve("hello.txt").toFile().apply { writeText("") }
-        localStatePath.resolve("diff.txt").deleteIfExists()
-        activeStatePath.resolve("diff.txt").deleteIfExists()
+        assertTrue(
+            PathUtils.fileContentEquals(
+                localStatePath.resolve("diff.txt"),
+                activeStatePath.resolve("diff.txt")
+            )
+        )
     }
 
 //    @Test
@@ -80,43 +77,42 @@ class ActivateTest : BaseTestWithTestConfiguration() {
 //    }
 
     @Test
-    fun testActivateInSampleState1WithExclude() = runTest {
+    fun testActivateWithExclude() = runTest {
 
         val localIncludeFile = localStatePath.resolve("include.txt")
         val localExcludeFile = localStatePath.resolve("exclude.md")
-        localIncludeFile.toFile().writeText("")
-        localExcludeFile.toFile().writeText("")
+        localIncludeFile.createFile()
+        localExcludeFile.createFile()
 
-        val result = command.test(listOf("-x", ".*\\.md", localStatePath.pathString), stdin = "y\n")
+        val result = command.test(listOf("-y", "-x", ".*\\.md", localStatePath.pathString))
         val activeIncludeFile = activeStatePath.resolve("include.txt")
         val activeExcludeFile = activeStatePath.resolve("exclude.md")
 
         assertEquals(0, result.statusCode)
         assertTrue(activeIncludeFile.exists())
-        assertFalse(activeExcludeFile.exists())
-        activeIncludeFile.deleteIfExists()
-        localIncludeFile.deleteIfExists()
-        localExcludeFile.deleteIfExists()
+        assertTrue(activeExcludeFile.notExists())
     }
 
     @Test
-    fun testActivateInSampleState1WithInclude() = runTest {
+    fun testActivateWithInclude() = runTest {
 
         val localIncludeFile = localStatePath.resolve("include.md")
         val localExcludeFile = localStatePath.resolve("exclude.txt")
-        localIncludeFile.toFile().writeText("")
-        localExcludeFile.toFile().writeText("")
+        localIncludeFile.createFile()
+        localExcludeFile.createFile()
 
-        val result = command.test(listOf("-i", ".*\\.md", localStatePath.pathString), stdin = "y\n")
+        val result = command.test(listOf("-y", "-i", ".*\\.md", localStatePath.pathString))
         val activeIncludeFile = activeStatePath.resolve("include.md")
         val activeExcludeFile = activeStatePath.resolve("exclude.txt")
 
         assertEquals(0, result.statusCode)
         assertTrue(activeIncludeFile.exists())
-        assertFalse(activeExcludeFile.exists())
-        activeIncludeFile.deleteIfExists()
-        localIncludeFile.deleteIfExists()
-        localExcludeFile.deleteIfExists()
+        assertTrue(activeExcludeFile.notExists())
     }
 
+    @AfterEach
+    fun tearDown() {
+        PathUtils.cleanDirectory(localStatePath)
+        PathUtils.cleanDirectory(activeStatePath)
+    }
 }
