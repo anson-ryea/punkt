@@ -1,11 +1,14 @@
 package com.an5on.command
 
+import com.an5on.command.Sync.commonOptions
+import com.an5on.command.Sync.globalOptions
+import com.an5on.command.Sync.syncOptions
+import com.an5on.command.Sync.targets
 import com.an5on.command.options.CommonOptions
 import com.an5on.command.options.GlobalOptions
 import com.an5on.command.options.SyncOptions
 import com.an5on.file.FileUtils.expandTildeWithHomePathname
 import com.an5on.operation.SyncOperation
-import com.an5on.states.tracked.TrackedEntriesStore
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.installMordantMarkdown
 import com.github.ajalt.clikt.core.terminal
@@ -34,6 +37,7 @@ object Sync : PunktCommand() {
     init {
         installMordantMarkdown()
     }
+
     private val globalOptions by GlobalOptions()
     private val commonOptions by CommonOptions()
     private val syncOptions by SyncOptions()
@@ -61,7 +65,7 @@ object Sync : PunktCommand() {
     """.trimIndent()
 
     override suspend fun run() {
-        TrackedEntriesStore.connect()
+//        TrackedEntriesStore.connect()
 
         SyncOperation(
             targets,
@@ -77,6 +81,6 @@ object Sync : PunktCommand() {
             }
         )
 
-        TrackedEntriesStore.disconnect()
+//        TrackedEntriesStore.disconnect()
     }
 }

@@ -96,7 +96,7 @@ class ActivateOperation(
                             )
                             continue
                         }
-                        println("Activating $metadataPathname")
+
                         FileUtils.createParentDirectories(File(metadataPathname))
                         FileUtils.copyFile(
                             dotFiles.first { it.name == metadata.fileName },

@@ -20,6 +20,8 @@ val cliktVersion: String by project
 val ktorVersion: String by project
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
@@ -51,10 +53,12 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
     implementation("io.ktor:ktor-client-auth:${ktorVersion}")
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.1")
 }
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
 }
 
 application {

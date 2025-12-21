@@ -15,6 +15,8 @@ import com.an5on.system.SystemUtils.homePath
 import com.an5on.type.PathStyle
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.Path
@@ -84,15 +86,8 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
 
     }
 
-//    @Test
-//    fun pathToStringInPathStyleAbsoluteWithRelativeLocalPathForWin(){
-//        val subject = Path(configuration.global.dotReplacementPrefix +"test\\file\\test.txt")
-//        val result = configuration.global.activeStatePath.resolve(".test\\file\\test.txt").pathString
-//
-//        assertEquals(result, subject.toStringInPathStyle(PathStyle.ABSOLUTE))
-//    }
-
     @Test
+    @EnabledOnOs(OS.MAC, OS.LINUX)
     fun stringExpandTildeWithHomePathNameForUnix() {
         val subject = "~/.test/file/test.txt"
         val result = homePath.pathString + "/.test/file/test.txt"
@@ -136,6 +131,7 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
     }
 
     @Test
+    @EnabledOnOs(OS.MAC, OS.LINUX)
     fun pathToStringInPathStyleLocalAbsoluteWithAbsolutePathForUnix() {
         val subject = Path("/.test/file/test.txt")
         val result = Path("/" + configuration.global.dotReplacementPrefix + "test/file/test.txt").pathString
@@ -285,6 +281,7 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
     }
 
     @Test
+    @EnabledOnOs(OS.MAC, OS.LINUX)
     fun pathToLocalWithNotInHomePathForUnix() {
 
         val subject = Path("/ProgramFiles/.test/file.txt")
@@ -314,6 +311,7 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
     }
 
     @Test
+    @EnabledOnOs(OS.MAC, OS.LINUX)
     fun fileToLocalWithRelativePathForUnix() {
 
         val subject = File("/ProgramFiles/.test/file.txt")
@@ -406,9 +404,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
             configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
         assertTrue(localDir.isLocal())
         val activeDir = configuration.global.activeStatePath.resolve(".testDir")
-        println(localDir)
-        println(activeDir)
-        println(activeDir.toLocal())
 
         // Create sample test files
         Files.createDirectories(localDir)
@@ -427,8 +422,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
             writeText("Sample content") // Write to the active file
         }
 
-        println(activeFile)
-        println(testFile.toLocal())
         assertTrue(activeFile.toPath().existsInLocal())
         assertTrue(testFile.toPath().existsInLocal())
         // Clean up the temporary directories and files after tests
@@ -565,9 +558,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
         val tempDir = configuration.global.localStatePath.resolve(configuration.global.dotReplacementPrefix + "testDir")
         assertTrue(tempDir.isLocal())
         val activeDir = configuration.global.activeStatePath.resolve(".testDir")
-        println(tempDir)
-        println(activeDir)
-        println(activeDir.toActive())
 
         // Create sample test files
         Files.createDirectories(tempDir)
@@ -586,8 +576,6 @@ class FileUtilsTest : BaseTestWithTestConfiguration() {
             writeText("Sample content") // Write to the active file
         }
 
-        println(activeFile)
-        println(testFile.toActive())
         assertTrue(activeFile.toPath().existsInActive())
         assertTrue(testFile.toPath().existsInActive())
         // Clean up the temporary directories and files after tests
