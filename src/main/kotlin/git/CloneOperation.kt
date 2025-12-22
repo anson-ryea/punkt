@@ -95,78 +95,80 @@ class CloneOperation(
         executeSystemGit(args).bind()
     }
 
-    /**
-     * A data class representing a repository URL pattern and its corresponding HTTPS and SSH URL templates.
-     *
-     * This is used to convert shorthand repository identifiers (like `user/repo`) into full, cloneable Git URLs.
-     *
-     * @property pattern A [Regex] pattern to match against input repository strings.
-     * @property httpsUrlTemplate A template string for constructing the HTTPS URL, with placeholders for regex capture groups.
-     * @property sshUrlTemplate A template string for constructing the SSH URL, with placeholders for regex capture groups.
-     */
-    private data class RepoPattern(val pattern: Regex, val httpsUrlTemplate: String, val sshUrlTemplate: String)
+    companion object {
+        /**
+         * A data class representing a repository URL pattern and its corresponding HTTPS and SSH URL templates.
+         *
+         * This is used to convert shorthand repository identifiers (like `user/repo`) into full, cloneable Git URLs.
+         *
+         * @property pattern A [Regex] pattern to match against input repository strings.
+         * @property httpsUrlTemplate A template string for constructing the HTTPS URL, with placeholders for regex capture groups.
+         * @property sshUrlTemplate A template string for constructing the SSH URL, with placeholders for regex capture groups.
+         */
+        private data class RepoPattern(val pattern: Regex, val httpsUrlTemplate: String, val sshUrlTemplate: String)
 
-    /**
-     * A list of predefined [RepoPattern]s used to parse shorthand repository URLs.
-     *
-     * The patterns are tried in order, and the first one that matches the input string is used to generate the
-     * final URL. This allows for flexible repository identifiers, such as `username`, `username/repo`, etc.
-     */
-    private val commonPatterns = listOf(
-        RepoPattern(
-            Regex("([-0-9A-Za-z]+)"),
-            $$"https://github.com/%1$s/dotfiles.git",
-            $$"git@github.com:%1$s/dotfiles.git"
-        ),
-        RepoPattern(
-            Regex("([-0-9A-Za-z]+)/([-.0-9A-Z_a-z]+?)(\\.git)?"),
-            $$"https://github.com/%1$s/%2$s.git",
-            $$"git@github.com:%1$s/%2$s.git"
-        ),
-        RepoPattern(
-            Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)"),
-            $$"https://%1$s/%2$s/dotfiles.git",
-            $$"git@%1$s:%2$s/dotfiles.git"
-        ),
-        RepoPattern(
-            Regex("([-0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-.0-9A-Za-z]+)"),
-            $$"https://%1$s/%2$s/%3$s.git",
-            $$"git@%1$s:%2$s/%3$s.git"
-        ),
-        RepoPattern(
-            Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"),
-            $$"https://%1$s/%2$s/%3$s.git",
-            $$"git@%1$s:%2$s/%3$s.git"
-        ),
-        RepoPattern(
-            Regex("(https?://)([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"),
-            $$"%1$s%2$s/%3$s/%4$s.git",
-            $$"git@%2$s:%3$s/%4$s.git"
+        /**
+         * A list of predefined [RepoPattern]s used to parse shorthand repository URLs.
+         *
+         * The patterns are tried in order, and the first one that matches the input string is used to generate the
+         * final URL. This allows for flexible repository identifiers, such as `username`, `username/repo`, etc.
+         */
+        private val commonPatterns = listOf(
+            RepoPattern(
+                Regex("([-0-9A-Za-z]+)"),
+                $$"https://github.com/%1$s/dotfiles.git",
+                $$"git@github.com:%1$s/dotfiles.git"
+            ),
+            RepoPattern(
+                Regex("([-0-9A-Za-z]+)/([-.0-9A-Z_a-z]+?)(\\.git)?"),
+                $$"https://github.com/%1$s/%2$s.git",
+                $$"git@github.com:%1$s/%2$s.git"
+            ),
+            RepoPattern(
+                Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)"),
+                $$"https://%1$s/%2$s/dotfiles.git",
+                $$"git@%1$s:%2$s/dotfiles.git"
+            ),
+            RepoPattern(
+                Regex("([-0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-.0-9A-Za-z]+)"),
+                $$"https://%1$s/%2$s/%3$s.git",
+                $$"git@%1$s:%2$s/%3$s.git"
+            ),
+            RepoPattern(
+                Regex("([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"),
+                $$"https://%1$s/%2$s/%3$s.git",
+                $$"git@%1$s:%2$s/%3$s.git"
+            ),
+            RepoPattern(
+                Regex("(https?://)([-.0-9A-Za-z]+)/([-0-9A-Za-z]+)/([-0-9A-Za-z]+)(\\.git)?"),
+                $$"%1$s%2$s/%3$s/%4$s.git",
+                $$"git@%2$s:%3$s/%4$s.git"
+            )
         )
-    )
 
-    /**
-     * Parses an input repository string and converts it to a valid Git repository URL in either HTTPS or SSH format.
-     *
-     * This function iterates through the [commonPatterns] and applies them to the input string. If a match is found,
-     * it formats the corresponding URL template (HTTPS or SSH) with the captured groups. If no patterns match,
-     * the original input string is returned, assuming it is already a valid URL.
-     *
-     * @param input The input repository string to parse (e.g., "my-user/my-repo").
-     * @param ssh A flag indicating whether to return the URL in SSH format (`true`) or HTTPS format (`false`).
-     * @return A valid Git repository URL in the specified format, or the original input string if no patterns matched.
-     */
-    fun parseRepoUrl(input: String, ssh: Boolean): String {
-        commonPatterns.forEach {
-            val matchResult = it.pattern.matchEntire(input)
-            if (matchResult != null) {
-                return if (ssh) {
-                    String.format(it.sshUrlTemplate, *matchResult.groupValues.drop(1).toTypedArray())
-                } else {
-                    String.format(it.httpsUrlTemplate, *matchResult.groupValues.drop(1).toTypedArray())
+        /**
+         * Parses an input repository string and converts it to a valid Git repository URL in either HTTPS or SSH format.
+         *
+         * This function iterates through the [commonPatterns] and applies them to the input string. If a match is found,
+         * it formats the corresponding URL template (HTTPS or SSH) with the captured groups. If no patterns match,
+         * the original input string is returned, assuming it is already a valid URL.
+         *
+         * @param input The input repository string to parse (e.g., "my-user/my-repo").
+         * @param ssh A flag indicating whether to return the URL in SSH format (`true`) or HTTPS format (`false`).
+         * @return A valid Git repository URL in the specified format, or the original input string if no patterns matched.
+         */
+        private fun parseRepoUrl(input: String, ssh: Boolean): String {
+            commonPatterns.forEach {
+                val matchResult = it.pattern.matchEntire(input)
+                if (matchResult != null) {
+                    return if (ssh) {
+                        String.format(it.sshUrlTemplate, *matchResult.groupValues.drop(1).toTypedArray())
+                    } else {
+                        String.format(it.httpsUrlTemplate, *matchResult.groupValues.drop(1).toTypedArray())
+                    }
                 }
             }
+            return input
         }
-        return input
     }
 }
